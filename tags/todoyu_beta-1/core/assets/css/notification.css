@@ -1,0 +1,89 @@
+#notifications {
+	position:fixed;
+	z-index:1000;
+	text-align:center;
+	width:100%;
+	left:0;
+	top:105px;
+}
+
+#notifications div.notes {
+	width:978px;
+	margin:0 auto;
+}
+
+#notifications div.note {
+	margin-left:283px;
+	width:658px;
+	padding:10px;
+	border:1px solid #AAA;
+	background-color:#FFF;
+	margin-bottom:2px;
+	opacity:0.94;
+}
+
+#notifications div.note td.icon {
+	width:25px;
+}
+
+#notifications div.note td.message {
+	font-weight:bold;
+	color:#333;
+	width:560px;
+	padding-right:20px;
+	text-align:center;
+}
+
+#notifications div.note td.countdown {
+	width:25px;
+	text-align:center;
+	padding-right:10px;
+	color:#666;
+}
+
+#notifications div.note td.close {
+	width:20px;
+	background:url(../img/notify/cancel.png) 0 0 no-repeat;
+	cursor:pointer;
+}
+
+
+
+/* -------------------
+	Success
+   ------------------- */
+
+#notifications div.success {
+	background-color:#00ff00;
+}
+
+#notifications div.success td.icon {
+	background:url(../img/notify/accept.png) 0 0 no-repeat;
+}
+
+
+
+/* -------------------
+	Error
+   ------------------- */
+
+#notifications div.error {
+	background-color:#ff8800;
+}
+
+#notifications div.error td.icon {
+	background:url(../img/notify/error.png) 0 0 no-repeat;
+}
+
+
+
+/* -------------------
+	Info
+   ------------------- */
+#notifications div.info {
+	background-color:#EFEFEF;
+}
+
+#notifications div.info td.icon {
+	background:url(../img/notify/information.png) 0 0 no-repeat;
+}
