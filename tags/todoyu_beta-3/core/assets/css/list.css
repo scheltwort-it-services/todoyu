@@ -1,0 +1,57 @@
+table.list {
+	width:650px;
+	margin-top:5px;
+}
+
+table.list tr.header {
+	height:28px;
+	background:url('../img/bg_headerline.png') no-repeat 0% 0%;
+	text-align:left;
+}
+
+table.list .header th {
+	border-bottom:1px dotted #aaa;
+}
+
+table.list .header th.last {
+	background:#fff url(../img/bg_headerline.png) no-repeat 100% 0%;
+}
+
+table.list th,
+table.list td {
+	padding:5px;
+}
+
+table.list td {
+	border-bottom:1px dotted #aaa;
+}
+
+
+
+/* -----------------------------
+	Hover
+   ----------------------------- */
+   
+table.list tr:hover,
+table.list tr:hover .odd,
+table.list tr:hover .even,
+li:hover .odd,
+li:hover .even {
+	background-color:#f2f2d2 !important;
+}
+
+
+
+/* -----------------------------
+	Odd and even alternation
+   ----------------------------- */
+   
+table.list tr.odd,
+li.odd {
+	background-color:#fff;
+}
+
+table.list tr.even,
+li.even {
+	background-color:#f3f3f3;
+}

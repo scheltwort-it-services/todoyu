@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<locallang>
+	<labels lang="en">
+		<label index="select.pleaseSelect">Please select</label>
+		<label index="select.pleaseChoose">Please choose</label>
+		<label index="field.isrequired">This is a required field</label>
+		<label index="field.hasError">The value entered is not valid</label>
+		<label index="field.save">Save</label>
+		<label index="field.cancel">Cancel</label>
+		<label index="icon.add">Add Record</label>
+		<label index="icon.remove">Remove Record</label>
+		<label index="icon.edit">Edit Record</label>
+		<label index="databaserelation.nolabel">[New entry]</label>
+		<label index="databaserelation.showAllRecords">Show all records</label>
+		<label index="error.notUnique">This entry already exists</label>
+		<label index="ac.noResults">Autocompleter: No Results found</label>
+	</labels>
+	<labels lang="de">
+		<label index="select.pleaseSelect">Bitte wählen</label>
+		<label index="select.pleaseChoose">Bitte wählen</label>
+		<label index="field.isrequired">Dieses Feld muss ausgefüllt werden</label>
+		<label index="field.hasError">Diese Eingabe ist ungültig</label>
+		<label index="field.save">Speichern</label>
+		<label index="field.cancel">Abbrechen</label>
+		<label index="icon.add">Datensatz anfügen</label>
+		<label index="icon.remove">Datensatz entfernen</label>
+		<label index="icon.edit">Datensatz bearbeiten</label>
+		<label index="databaserelation.nolabel">[Neuer Eintrag]</label>
+		<label index="databaserelation.showAllRecords">Alle Datensätze anzeigen</label>
+		<label index="error.notUnique">Dieser Eintrag existiert schon</label>
+		<label index="ac.noResults">Autovervollständigung: Keine Resultate gefunden</label>
+	</labels>
+</locallang>

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Todoyu Installer - {$title}</title>		
+	<link href="assets/css/todoyu-installer.css" rel="stylesheet" type="text/css" />
+	<link rel="shortcut icon" href="../favicon.ico" />
+	<script language="javascript" type="text/javascript" src="../lib/js/prototype.js"></script>
+	<script language="javascript" type="text/javascript" src="assets/js/TodoyuInstaller.js"></script>
+</head>
+	<body>
+		<div id="box">
+			<div id="panel">{* ------------ Panel -------------- *}
+				{include "licence.tmpl"}
+				<div class="content">
+					<span class="lt"></span><span class="rt"></span>
+					<h1><span class="title">Todoyu 2.0</span><span class="rgt"></span></h1>
+					<img src="assets/img/banner.jpg">
+				</div>
+				<div class="panelFooter"></div>
+			</div>{* ------------------- Panel end ------------- *}
+			<div id="contentBox">
+				<span class="lt"></span>
+				<span class="rt"></span>
+				<span class="lb"></span>
+				<span class="rb"></span>
+				<div class="content">
+					<div class="boxContent">
+						<h1>
+							<span class="title">Todoyu Installer - {$title}</span>
+							<span class="rgt"></span>
+						</h1>
+						{if $text}<p  class="{$textClass}">{$text}</p>{/if}
+						<form style="padding-left:12px;" method="post">
+							{* ------------ Content ---------------------- *}
+							<div class="blockcontent">{block name="box"}{/block}</div>
+							{* ----------- Submit: goto next step -------- *}
+							{if $next}
+								<button id="submit" type="submit"{if $hideSubmitInitial} style="display:none;"{/if}>
+									<span class="label">{$buttonLabel}</span>
+									<span class="rgt"></span>
+								</button>
+								<input type="hidden" name="action" value="{$nextStep}">
+							{/if}
+						</form><br />
+					</div>
+				</div>
+				{* ------------------- Footer ----------------- *}
+				<div id="footer">
+					<p>
+						<strong>todoyu.</strong> Copyright &copy; 2006-{date_format constant(TODOYU_UPDATE) "%Y"} Snowflake Productions, Z&uuml;rich<br />
+						Extensions are copyright of their respective owners. Go to <a href="http://www.todoyu.com" target="_blank">todoyu.com</a> for details. todoyu comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.<br />
+						Obstructing the appearance of this notice is prohibited by law.<br />
+						Installed version: {constant(TODOYU_VERSION)} ({constant(TODOYU_UPDATE)})
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
