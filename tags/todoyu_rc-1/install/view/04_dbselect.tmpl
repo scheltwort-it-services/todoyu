@@ -1,0 +1,22 @@
+{extends main.tmpl}
+
+{block name="box"}
+		<table style="margin-top:18px" width="500" border="0" cellspacing="0" cellpadding="3">
+			<tr>
+				<td width="109">{Label installer.selectDB}</td>
+				<td width="379">
+					<select name="database" type="text" id="database">
+						{foreach $databases database}
+							<option value="{$database}">{$database}</option>
+						{/foreach}
+					</select>
+				</td>
+			</tr><tr>
+				<td>{Label installer.orCreateDB}</td>
+				<td>
+					<input onkeyup="TodoyuInstaller.checkDbSelect()" type="text" id="database_new" name="database_new" value="{$postData.database_new}" />
+					<span id="error-newnameTaken" style="display:none;" class="error">{Label installer.error.nameTaken}</span>
+				</td>
+			</tr>
+		</table>
+{/block}

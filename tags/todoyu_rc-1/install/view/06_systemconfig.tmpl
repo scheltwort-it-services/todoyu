@@ -1,0 +1,36 @@
+{extends main.tmpl}
+
+{block name="box"}
+		<table width="500" border="0" cellspacing="0" cellpadding="3">
+			<tr>
+				<td width="109">{Label installer.systemconfig.name} *</td>
+				<td width="379">
+					<input name="name" type="text" id="name" value="{$postData.name|default:'Todoyu'}" />
+				</td>
+			</tr>
+			<tr>
+				<td>{Label installer.systemconfig.email} *</td>
+				<td><input type="text" name="email" id="email" value="{$postData.email}" /></td>
+			</tr>
+			<tr>
+				<td>{Label installer.systemconfig.language}</td>
+				<td>
+					<select name="language" id="language">
+						{foreach $languages language}
+							<option value="{$language.value}" {if $language.value==$userLanguage}selected="selected"{/if}>{$language.label}</option>
+						{/foreach}
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>{Label installer.systemconfig.locale}</td>
+				<td>
+					<select name="locale" id="locale">
+					{foreach $locales locale}
+						<option value="{$locale.value}" {if $locale.value==$userLocale}selected="selected"{/if}>{$locale.label}</option>
+					{/foreach}
+					</select>
+				</td>
+			</tr>
+		</table>
+{/block}
