@@ -1,0 +1,511 @@
+form {
+	margin:0;
+	padding:0 0 0 0;
+}
+	* html form {height:1%}
+
+	fieldset {
+		float:left; /* is a bugfix */
+		width:100%;
+		margin:0;
+		padding:0;
+		border:none;
+	}
+
+	* html fieldset {height:1%} /* IE6 */
+
+			/* buttons, footerline */
+		fieldset.buttons {
+			margin:10px 0 5px 0;
+			padding:0.2em 0;
+			text-align:right;
+			float:right;
+		}
+
+	legend {
+		display:none;
+	}
+
+textarea,
+select {
+	position:relative;
+	border:1px solid #000;
+	width:100%;
+}
+
+input {
+	position:relative;
+	border:1px solid #000;
+	width:99%;
+}
+
+	input.checkbox,
+	input.radio {
+		border:none;
+		width:auto;
+	}
+
+	input.button {
+		border:none;
+		width:auto;
+	}
+
+	input.datetime {
+		float:left;
+		width:95px;
+		margin-right:5px;
+	}
+
+	input.textinputAC {
+		background-image:url(../img/icons.png);
+		background-repeat:no-repeat;
+		background-position:5px -809px;
+		background-color:#e3eace;
+		text-indent:25px;
+	}
+
+
+textarea {
+	font-size:1.0em;
+}
+
+.scrollbarHide select {
+	min-width:107%;
+	width:100% !important;
+	width:107%;
+}
+
+select {
+	text-transform:none;
+}
+
+	select.auto {
+		width:auto;
+	}
+	select.day {
+		width:40px;
+		margin-right:2px;
+	}
+	select.month {
+		width:40px;
+		margin-right:2px;
+	}
+	select.monthnames {
+		margin-left:2px;
+	}
+	select.year {
+		width:60px;
+	}
+	select.datetime {
+		width:150px;
+	}
+
+	select option{
+	text-transform:none;
+}
+
+	select optgroup {
+		padding-top:10px;
+		font-size:11px;
+	}
+
+	select optgroup option {
+		background:#fff;
+	}
+
+	select option.error,
+	selectgrouped option.error {
+		color:#991010;
+	}
+
+label {}
+
+	label span.required {}
+
+/* -----------------
+	HTML building
+   -----------------*/
+
+div.fElement {
+	position:relative;
+	margin:0;
+	padding:3px 0;
+	height:auto !important;
+	height:1%;
+}
+
+	/* label */
+	div.fElement .fLabel {
+		display:inline;
+		float:left;
+		text-align:right;
+		width:40%;
+		position:relative;
+		right:10px;
+	}
+	
+	.noneFloatingInput .fLabel {
+		position:static !important;
+	}
+	
+	div.fElement .fLabel label {}
+
+	div.fElement .required {}
+	div.fElement .required label {}
+
+		/* input */
+	div.fElement .fField {
+		display:inline;
+		float:right;
+		width:60%;
+	}
+
+	div.fElement .fField input {
+	}
+
+
+
+	div.fElement .fClear {
+		clear:both;
+	}
+
+		/* Types */
+	.typeTextinput {}
+
+	.typeDateinput {}
+
+		div.typeDateinput .fField input {
+			float:left;
+			width:70px;
+			margin-right:5px;
+		}
+		div.typeDatetimeinput .fField input {
+			float:left;
+			width:90px;
+			margin-right:5px;
+		}
+		div.typeTimeinput .fField input,
+		div.typeDuration .fField input  {
+			float:left;
+			width:30px;
+		}
+
+	.typeCheckbox {
+	}
+
+		div.typeCheckbox .fLabel {
+			position:static !important;
+			float:right !important;
+			width:60%;
+			padding-right:0 !important;
+			padding-left:0 !important;
+			text-align:left !important;
+		}
+		
+		div.typeCheckbox .fLabel label {
+			position:relative !important;
+			z-index:2 !important;
+			left:20px !important;
+			padding-right:20px;
+		}
+		
+			/* checkbox in a fField element. */
+			/* example:Address in Ext Contact */
+			.fField div.typeCheckbox .fLabel {
+			}
+
+		div.typeCheckbox .fField {
+			position:absolute !important;
+			z-index:1!important;
+			right:0!important;
+			width:60%;
+			padding-left:0!important;
+			text-align:left!important;
+		}
+		
+		div.typeCheckbox .fField input.checkbox {
+			width:auto !important;
+		}
+
+	.typeDatabaseRelation {}
+
+		.typeDatabaseRelation .foreignRecordsActionControll {
+			display:block;
+		}
+
+		.typeDatabaseRelation button.addForeignRecord .icon {
+			background:url(../img/icons.png) no-repeat 2px -568px;
+		}
+
+		.typeDatabaseRelation .databaseRelation {
+			border-top:1px solid #ccc;
+		}
+		.typeDatabaseRelation .databaseRelation span.label {
+			float:left;
+			cursor:pointer;
+		}
+		.typeDatabaseRelation .databaseRelation span.additionalStuff {
+			float:right;
+		}
+		.typeDatabaseRelation .databaseRelation span.additionalStuff a.remove {
+			background:url(../img/icons.png) no-repeat 0 -539px;
+		}
+
+
+	.fElement .fField.hasWizard input{
+		width:80%;
+		float:left;
+	}
+
+	.fElement .fField.hasWizard .wizardIcon{
+		cursor:pointer;
+	}
+
+	fieldset.buttons div,
+	fieldset.buttons div.fElement .fField {
+		float:left;
+		width:auto;
+	}
+	fieldset.buttons div.fElement .fLabel {
+		display:none;
+		width:auto;
+	}
+
+
+
+/* -----------------
+	Design
+   -----------------*/
+
+input, textarea, select {
+	border-color:#848484 #e8e5de #e8e5de #848484;
+}
+
+fieldset {}
+
+	fieldset div.odd {
+		/*background-color:#ffffff;*/
+	}
+
+	fieldset div.even {}
+
+	fieldset.buttons,
+	fieldset.buttons div.odd,
+	fieldset.buttons div.even,
+	fieldset.buttons button span.rgt {
+		background-color:#e2e2e2;
+	}
+
+	fieldset.buttons div.fElement {
+		float:right;
+	}
+
+		/* none floating fields */
+	fieldset.noneFloatingInput div.fElement .fField,
+	fieldset.noneFloatingInput div.fElement .fLabel {
+		float:none;
+	}
+
+		/* --- right floating Input --- */
+	.formElement .formField {
+		width:58%;
+	}
+
+	.formElement .formField {
+		display:inline;
+		float:right;
+	}
+
+
+/*
+.formElement input,
+.formElement textarea,
+.formElement select {
+	width:100%;
+}
+
+.formElement textarea {
+	height:100px;
+}
+*/
+
+
+.dateElement input {
+	width:73px !important;
+	width:77px;
+	margin-right:10px;
+	float:left;
+}
+
+form .fElement.error,
+form .fElement.error .fLabel.error label,
+form div.error .fField span.errorMessage {
+	color:red;
+	font-style:italic;
+}
+
+	/* --- left floating radio --- */
+/*
+.formElement fieldset input {
+	clear:left;
+	float:left;
+	height:18px;
+}
+
+.formElement fieldset label {
+	float:left;
+	width:88% !important;
+	width:83%;
+	line-height:18px;
+}
+
+*+html .formElement fieldset label {
+	width:83% !important;
+}
+
+.formLabel .fieldHasError label{
+	color:red;
+}
+
+
+
+*/
+
+/* -------------------------
+	Autocompleter list
+   ------------------------- */
+.acResultContainer	{
+		z-index:100;
+	}
+
+	.acResultContainer li{
+		background:#F0F0EE;
+		border:0px solid #CCCCCC;
+		border-width:0 1px 1px 1px;
+		padding:2px 0 2px 3px;
+		cursor:pointer;
+		text-align:left;
+	}
+
+		.acResultContainer li.selected {
+			background:#d5dee5;
+		}
+
+	.acResultContainer .empty{
+		background:none;
+		border:none;
+		border-width:0 0 0 0;
+		padding:0 0 0 0;
+	}
+
+
+
+/* ----------------------------------
+	Formelement: databaseRelation
+   ---------------------------------- */
+.formElement .databaseRelation {
+	margin-top:5px;
+}
+
+.formElement .databaseRelation .formtrigger {
+	padding:5px 0 5px 19px;
+}
+
+.formElement .databaseRelation .formtrigger a.remove {
+	background:transparent url(../img/formelements.png) no-repeat 3px 3px;
+	height:16px;
+	width:16px;
+	position:absolute;
+	right:5px;
+}
+
+
+
+/* ----------------------------------------------
+	Formelement:foreignRecordsActionControll
+   ---------------------------------------------- */
+.formElement .foreignRecordsActionControll {
+	height:30px;
+	background-color:#a8c7de
+}
+
+.formElement .foreignRecordsActionControll a {
+	background:transparent url(../img/formelements.png) no-repeat 0 -30px;
+	height:16px;
+	width:17px;
+	position:absolute;
+	top:7px;
+	right:7px;
+}
+
+
+
+/* wizad icon */
+.fField span.wizardIcon  {
+	height:16px;
+	width:16px;
+	display:block;
+	float:right;
+	background:transparent url(../img/icons.png) no-repeat 0 -90px;
+}
+
+
+/* styles for lighbox creates */
+
+#quickcreate form,
+#quicktask form {
+	padding:10px 5px 0 5px;
+}
+
+#quickcreate.task .left,
+#quickcreate.project .left {
+	float:left;
+	padding:0 0 0 24px;
+	width:330px;
+}
+
+#quickcreate.task .left .fLabel,
+#quickcreate.project .left .fLabel {
+	text-align:left;
+	width:100%;
+	display:block;
+}
+
+#quickcreate.task .right,
+#quickcreate.project .right {
+	float:right;
+	width:43%;
+}
+
+#quickcreate.project .basic {
+	position:absolute;
+}
+
+#quickcreate.project .persons {
+	width:43%;
+	float:right;
+	margin-top:20px;
+	min-height:170px;
+}
+
+/* special styles for involved persons */
+
+form .databaseRelation {
+	margin-top:5px;
+	padding-top:5px;
+}
+
+form .fieldnamePersons .foreignRecordsActionControll,
+form .fieldnameContactinfo .foreignRecordsActionControll,
+form .fieldnameAddress .foreignRecordsActionControll,
+form .fieldnameCompany .foreignRecordsActionControll {
+	text-align:left;
+}
+
+form .formtrigger {
+	font-weight:bold;
+}
+
+form.formGeneral {
+	padding:10px 0 0 0;
+}

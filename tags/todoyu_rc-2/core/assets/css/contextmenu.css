@@ -1,0 +1,44 @@
+#contextmenu {
+	display:none;
+	position:absolute;
+	width:156px;
+	z-index:100000;
+	background-color:#f1f1f1;
+}
+
+	#contextmenu li {
+		border:1px solid #d5dee5;
+		margin-bottom:-1px;
+	}
+
+		#contextmenu li a,
+		#contextmenu li span {
+			display:block;
+			padding:0 10px 0 29px;
+			line-height:20px;
+			background-color:#F8F8F8;
+			cursor:pointer;
+			background-repeat:no-repeat;
+			text-align:left;
+		}
+
+			#contextmenu li a:hover,
+			#contextmenu li span:hover {
+				background-color:#E1E5D8;
+			}
+
+		#contextmenu li ul {
+			display:none;
+			position:absolute;
+			z-index:100001;
+			width:156px;
+		}
+
+		#contextmenu li.header a {
+			padding:0px 5px;
+			font-weight:bold;
+			background-color:#4F8AB4 !important;
+			color:#FFF;
+			font-size:10px;
+			cursor:default;
+		}

@@ -1,0 +1,14 @@
+{if ! $noFormTag }
+	<form name="{$name}" id="{$htmlId}" class="fForm form{ucfirst($name)} {$class}" method="{$method|default:'post'}" action="{$action}" onsubmit="{$onsubmit|default:'return false'}" {if $enctype}enctype="{$enctype}"{/if} {$extraAttributes}>
+{/if}
+
+{$hiddenFields}
+{$fieldsets}
+
+{if ! $noFormTag}
+	</form>
+
+	<script type="text/javascript">
+	Todoyu.Form.onFormDisplay('{$htmlId}');
+	</script>
+{/if}
