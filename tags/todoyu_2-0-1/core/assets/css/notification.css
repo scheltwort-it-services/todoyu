@@ -1,0 +1,91 @@
+#notifications {
+	position:fixed;
+	z-index:5000;
+	width:100%;
+	left:0;
+	top:0;
+}
+
+#notifications div.notes {
+	width:100%;
+	margin:0 auto;
+	/*border-bottom:1px solid #E7E8E4;*/
+}
+
+#notifications div.note {
+	width:100%;
+	padding:6px;
+	border-bottom:1px solid #8c9080;
+	background-color:#fff;
+	opacity:0.94;
+}
+
+#notifications div.note td.icon {
+	width:25px;
+}
+
+#notifications div.note td.message {
+	width:90%;
+	font-size:14px;
+	color:#222;
+	text-align:left;
+}
+
+#notifications div.note td.countdown {
+	width:25px;
+	font-size:14px;
+	padding-right:4px;
+	color:#666;
+}
+
+#notifications div.note td.close {
+	width:20px;
+	background:url(../img/notify.png) 0 -47px no-repeat;
+	cursor:pointer;
+	padding-right:12px;
+}
+
+.icon.iconNotifySmall {
+    background-image:url(../img/notify.png);
+	background-repeat:no-repeat;
+    background-position:0 -240px;
+}
+
+/* -------------------
+	Success
+   ------------------- */
+
+#notifications div.success {
+	background-color:#eff6bf;
+}
+
+#notifications div.success td.icon {
+	background:url(../img/notify.png) 0 -1px no-repeat;
+}
+
+
+
+/* -------------------
+	Error
+   ------------------- */
+
+#notifications div.error {
+	background-color:#f6e0e0;
+}
+
+#notifications div.error td.icon {
+	background:url(../img/notify.png) 0 -96px no-repeat;
+}
+
+
+
+/* -------------------
+	Info
+   ------------------- */
+#notifications div.info {
+	background-color:#efefef;
+}
+
+#notifications div.info td.icon {
+	background:url(../img/notify.png) 0 -189px no-repeat;
+}
