@@ -97,6 +97,22 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 			'localize'	=> false,
 			'compress'	=> true
 		),
+		array(
+			'file'		=> 'lib/js/highcharts-prototype-adapter.js',
+			'position'	=> 23,
+			'merge'		=> true,
+			'localize'	=> false,
+			'compress'	=> false
+		),
+		array(
+//			'file'		=> 'lib/js/highcharts/js/highcharts.src.js',
+			'file'		=> 'lib/js/highcharts/js/highcharts.js',
+			'position'	=> 23,
+			'merge'		=> true,
+			'localize'	=> false,
+			'compress'	=> false
+		),		
+
 /**
  * Note: JSCalendar lang file is added at end of initialization
  */
@@ -121,6 +137,10 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 		array(
 			'file'		=> 'core/assets/js/Todoyu.js',
 			'position'	=> 50
+		),
+		array(
+			'file'		=> 'core/assets/js/Ext.js',
+			'position'	=> 51
 		),
 		array(
 			'file'		=> 'core/lib/js/prototype/Autocompleter.js',
@@ -159,17 +179,17 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 			'position'	=> 55
 		),
 		array(
-			'file'		=> 'core/assets/js/AjaxResponders.js',
+			'file'		=> 'core/assets/js/Ajax.js',
 			'position'	=> 56
+		),
+		array(
+			'file'		=> 'core/assets/js/AjaxResponders.js',
+			'position'	=> 57
 		),
 		array(
 			'file'		=> 'core/assets/js/AjaxReplacer.js',
 			'position'	=> 57
-		),
-		array(
-			'file'		=> 'core/assets/js/Ajax.js',
-			'position'	=> 57
-		),
+		),		
 		array(
 			'file'		=> 'core/assets/js/Helper.js',
 			'position'	=> 58
@@ -221,6 +241,14 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 		array(
 			'file'		=> 'core/assets/js/Listing.js',
 			'position'	=> 68
+		),
+		array(
+			'file'		=> 'core/assets/js/PanelWidgetStatusSelector.js',
+			'position'	=> 69
+		),
+		array(
+			'file'		=> 'core/assets/js/LoaderBox.js',
+			'position'	=> 70
 		)
 	),
 
@@ -327,6 +355,11 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 		),
 		array(
 			'file'		=> 'core/assets/css/headlet-about.css',
+			'media'		=> 'all',
+			'position'	=> 10
+		),
+		array(
+			'file'		=> 'core/assets/css/loader-box.css',
 			'media'		=> 'all',
 			'position'	=> 10
 		)

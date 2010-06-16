@@ -17,6 +17,9 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
+/**
+ * @namespace	Todoyu.Ui
+ */
 Todoyu.Ui = {
 	
 	bodyClickObservers: [],
@@ -51,7 +54,7 @@ Todoyu.Ui = {
 		options = this._getDefaultOptions(options);
 
 		if( Todoyu.exists(container) ) {
-			return new Ajax.Replacer(container, url, options);
+			return new Todoyu.Ajax.Replacer(container, url, options);
 		} else {
 			Todoyu.log('You tried to replace "' + container + '" which is not part of the DOM!');
 		}
@@ -138,7 +141,7 @@ Todoyu.Ui = {
 	/**
 	 * Hide element
 	 *
-	 * @param	{String}	idElement
+	 * @param	{String|Element}	idElement
 	 */
 	hide: function(idElement) {
 		if( Todoyu.exists(idElement) ) {
@@ -480,7 +483,7 @@ Todoyu.Ui = {
 	 *
 	 * @param	{Number}		idElement
 	 * @param	{Array}		config
-	 * @return	TimePicker
+	 * @return	Todoyu.TimePicker
 	 */
 	showTimePicker: function(idElement, config) {
 		config = $H({
@@ -488,7 +491,7 @@ Todoyu.Ui = {
 			'rangeMinute':	[0,55]
 		}).merge(config).toObject();
 
-		return new TimePicker(idElement, config);
+		return new Todoyu.TimePicker(idElement, config);
 	},
 
 
@@ -497,7 +500,7 @@ Todoyu.Ui = {
 	 * Show duration picker
 	 *
 	 * @param	{String}		idElement
-	 * @return	TimePicker
+	 * @return	Todoyu.TimePicker
 	 */
 	showDurationPicker: function(idElement, config) {
 		config = config || {};
@@ -506,7 +509,7 @@ Todoyu.Ui = {
 			'rangeMinute':	[0,55]
 		}).merge(config).toObject();
 
-		return new TimePicker(idElement);
+		return new Todoyu.TimePicker(idElement);
 	},
 
 
@@ -631,6 +634,46 @@ Todoyu.Ui = {
 			event.preventDefault();
 			event.stopPropagation();
 		}	
+	},
+
+
+
+	/**
+	 * Removes tinyMCE controls and save the editor
+	 * Prevents "ghost" objects which will break the save process
+	 *
+	 * @param	{Element}	area		Area to look for tinyMCE instances (Can be a form, the whole window or the element itself)
+	 */
+	closeRTE: function(area) {
+		tinyMCE.triggerSave();
+
+			// Remove controls for all editors in the range
+		$(area).select('textarea.RTE').each(function(textarea){
+			tinyMCE.execCommand('mceRemoveControl', false, textarea.id);
+		});
+	},
+
+
+
+	/**
+	 * Center an element on the screen
+	 *
+	 * @param	{Element|String}	element
+	 */
+	centerElement: function(element) {
+		element			= $(element);
+		var elementDim	= element.getDimensions();
+		var screenDim	= document.viewport.getDimensions();
+
+		var left	= parseInt((screenDim.width-elementDim.width)/2);
+		var top		= parseInt((screenDim.height-elementDim.height)/2);
+
+		element.setStyle({
+			'top': top + 'px',
+			'left':left + 'px'
+		});
+
+		return element;
 	}
 
 };

@@ -187,15 +187,24 @@
 		<label index="zu">Zulu</label>
 	</labels>
 	<labels lang="de_DE">
-		<!-- Only currently used languages are translated -->
 		<label index="de">Deutsch</label>
-		<label index="en">Englisch</label>
-		<label index="pt">Portugiesisch</label>
 	</labels>
 	<labels lang="pt_BR">
-		<!-- Only currently used languages are translated -->
-		<label index="de">Alemão</label>
-		<label index="en">Inglês</label>
-		<label index="pt">Português</label>		
+		<label index="pt">Português</label>
+	</labels>
+	<labels lang="fr_FR">
+			<label index="fr">Français</label>
+	</labels>
+	<labels lang="nl_NL">
+		<label index="nl">Nederlands</label>
+	</labels>
+	<labels lang="ru_RU">
+		<label index="ru">Русский</label>
+	</labels>
+	<labels lang="cs_CZ">
+		<label index="cs">česky</label>
+	</labels>
+	<labels lang="ja_JP">
+		<label index="ja">日本語</label>
 	</labels>
 </locallang>

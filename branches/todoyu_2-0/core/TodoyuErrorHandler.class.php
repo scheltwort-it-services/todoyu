@@ -34,6 +34,13 @@ class TodoyuErrorHandler {
 	private static $ignoreErros = array(E_NOTICE, E_STRICT);
 
 
+	/**
+	 * Only handle error when true
+	 * Useful to suppress warnings. Be careful with this!
+	 */
+	private static $active	= true;
+
+
 
 	/**
 	 * Handler for TodoyuDbException. Print well formatted error information
@@ -45,7 +52,10 @@ class TodoyuErrorHandler {
 		if( Todoyu::$CONFIG['DEBUG'] ) {
 			ob_end_clean();
 
-				// Send error header
+				// Send HTTP error header
+			TodoyuHeader::sendHTTPErrorHeader();
+
+				// Send own error header
 			self::sendPhpErrorHeader('Database error: ' . $exception->getMessage());
 
 			$type = TodoyuHeader::getType();
@@ -78,10 +88,16 @@ class TodoyuErrorHandler {
 	 * @return	Boolean
 	 */
 	public static function handleError($errorno, $errorstr, $file, $line, $context) {
+		if( self::$active !== true ) {
+			return true;
+		}
 
 			// If not a notice, log it
 		if( ! in_array($errorno, self::$ignoreErros) ) {
 			Todoyu::log('PHP ERROR: [' . $errorno . '] ' . $errorstr, TodoyuLogger::LEVEL_ERROR);
+				// Send HTTP error header
+			TodoyuHeader::sendHTTPErrorHeader();
+
 			self::sendPhpErrorHeader($errorstr);
 		}
 
@@ -102,6 +118,9 @@ class TodoyuErrorHandler {
 	 */
 	public static function endScriptClean($message) {
 		ob_clean();
+
+			// Send HTTP error header
+		TodoyuHeader::sendHTTPErrorHeader();
 
 		TodoyuHeader::sendHeaderPlain();
 		die('ERROR: ' . $message);
@@ -135,6 +154,17 @@ class TodoyuErrorHandler {
 	 */
 	public static function sendPhpErrorHeader($errorMessage) {
 		TodoyuHeader::sendTodoyuHeader('Php-Error', $errorMessage);
+	}
+
+
+
+	/**
+	 * Enable/disable error handling. If disabled, all errors are ignored
+	 *
+	 * @param	Boolean		$active
+	 */
+	public static function setActive($active = true) {
+		self::$active = $active === true;
 	}
 
 }

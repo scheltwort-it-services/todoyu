@@ -30,15 +30,13 @@ Todoyu.DateField = {
 	format: null,
 
 
-
 	/**
-	 * Set date format to work with
-	 * This is the format which is defined to datetime fields (dateformat.datetime)
+	 * Get format for the date field with a JsCalendar config
 	 *
-	 * @param	{String}	format
+	 * @param	{String|Element}	field		ID or Element
 	 */
-	init: function(format) {
-		this.format = format;
+	getFormat: function(field) {
+		return Todoyu.JsCalFormat[$(field).id];
 	},
 
 
@@ -50,13 +48,13 @@ Todoyu.DateField = {
 	 * @return	{Date}
 	 */
 	getDate: function(field) {
-		return Date.parseDate($F(field), this.format);
+		return Date.parseDate($F(field), this.getFormat(field));
 	},
 
 
 
 	/**
-	 * Change time in a datetime field
+	 * Set formatted time string in a dateTime field from given values
 	 *
 	 * @param	{String|Element}	field
 	 * @param	{Number}			hour
@@ -68,9 +66,19 @@ Todoyu.DateField = {
 		date.setHours(hour);
 		date.setMinutes(minute);
 
-		$(field).value = date.print(this.format);
+		$(field).value = date.print(this.getFormat(field));
 	},
 
+
+
+	/**
+	 * Set input field value to formatted string of given date values
+	 *
+	 * @param	{String|Element}	field
+	 * @param	{Number}			year
+	 * @param	{Number}			month
+	 * @param	{Number}			day
+	 */
 	setDate: function(field, year, month, day) {
 		var date	= this.getDate(field);
 
@@ -78,13 +86,26 @@ Todoyu.DateField = {
 		date.setMonth(month);
 		date.setDate(day);
 
-		$(field).value = date.print(this.format);
+		$(field).value = date.print(this.getFormat(field));
 	},
 
+
+	
+	/**
+	 * Set input field value to formatted string of given date time values
+	 *
+	 * @param	{String|Element}	field
+	 * @param	{Number}			year
+	 * @param	{Number}			month
+	 * @param	{Number}			day
+	 * @param	{Number}			hour
+	 * @param	{Number}			minute
+	 * @param	{Number}			second
+	 */
 	setDateTime: function(field, year, month, day, hour, minute, second) {
 		var date	= new Date(year, month, day, hour, minute, second);
 
-		$(field).value = date.print(this.format);
+		$(field).value = date.print(this.getFormat(field));
 	}
 
 };

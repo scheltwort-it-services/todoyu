@@ -126,6 +126,29 @@ class TodoyuDatabase {
 			$this->printSelectDbError(mysql_error(), mysql_errno());
 			exit();
 		}
+
+		$this->initConnection();
+	}
+
+	
+
+	/**
+	 * Initialize database connection
+	 * Use utf8 names and clear sql_mode
+	 */
+	private function initConnection() {
+		$this->query("SET sql_mode='ANSI'");
+		$this->query('SET NAMES utf8;');
+	}
+
+
+	/**
+	 * Check if todoyu is connected to the database
+	 *
+	 * @return	Boolean
+	 */
+	public function isConnected() {
+		return is_null($this->link) === false;
 	}
 
 
@@ -1020,7 +1043,7 @@ class TodoyuDatabase {
 	 * @param	Resource	$result
 	 * @return	Array
 	 */
-	public function fetchRow($result) {
+	public static function fetchRow($result) {
 		return mysql_fetch_row($result);
 	}
 
@@ -1033,7 +1056,7 @@ class TodoyuDatabase {
 	 * @param	Resource	$result
 	 * @return	Array
 	 */
-	public function fetchAssoc($result) {
+	public static function fetchAssoc($result) {
 		return mysql_fetch_assoc($result);
 	}
 
@@ -1048,7 +1071,7 @@ class TodoyuDatabase {
 	 * @param	Array		$classParams
 	 * @return	Object
 	 */
-	public function fetchObject($result, $className = null, array $classParams = null) {
+	public static function fetchObject($result, $className = null, array $classParams = null) {
 		return mysql_fetch_object($result, $className, $classParams);
 	}
 
@@ -1066,14 +1089,14 @@ class TodoyuDatabase {
 
 
 	/**
-	 * Fetch all rows in a resultset into an array
+	 * Fetch all rows in a result set into an array
 	 * Use getArray() if you need all rows of a result
 	 *
 	 * @param	Resource	$resource
 	 * @param	String		$indexField
 	 * @return	Array
 	 */
-	public function resourceToArray($resource, $indexField = false) {
+	public static function resourceToArray($resource, $indexField = false) {
 		$array	= array();
 
 		while( $row = self::fetchAssoc($resource) ) {
@@ -1088,6 +1111,13 @@ class TodoyuDatabase {
 	}
 
 
+
+	/**
+	 * Get total found rows of last result
+	 * The last query had to include SQL_CALC_FOUND_ROWS
+	 *
+	 * @return	Integer
+	 */
 	public function getTotalFoundRows() {
 		$query	= 'SELECT FOUND_ROWS() as rows';
 
@@ -1107,7 +1137,7 @@ class TodoyuDatabase {
 	public function getTables() {
 		$dbName	= $this->config['database'];
 
-		$query	= 'SHOW TABLES FROM ' . $dbName;
+		$query	= 'SHOW TABLES FROM ' . $this->quoteFieldname($dbName);
 		$result	= $this->query($query);
 
 		$rows	= $this->resourceToArray($result);

@@ -92,6 +92,9 @@ Todoyu.Headlet = {
 	 * Initialize headlet management (observation)
 	 */
 	init: function() {
+		if( ! Todoyu.exists('headlets') ) {
+			
+		}
 		var headlets	= $('headlets').select('li.headlet');
 			// Observe headlet clicks
 		headlets.invoke('observe', 'click', this.onClick.bindAsEventListener(this));
@@ -283,7 +286,7 @@ Todoyu.Headlet = {
 
 
 
-	toggleContent: function(name, keepOthers) {
+	toggleContent: function(name) {
 		this.getContent(name).toggle();
 	},
 

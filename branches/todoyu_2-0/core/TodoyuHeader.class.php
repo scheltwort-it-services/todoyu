@@ -90,7 +90,7 @@ class TodoyuHeader {
 	 * @param	Integer		$fileSize
 	 * @param	Integer		$fileModTime
 	 */
-	public static function sendDownloadHeaders($mimeType, $filename, $fileSize, $fileModTime) {
+	public static function sendDownloadHeaders($mimeType, $filename, $fileSize, $fileModTime = null) {
 		$fileSize		= intval($fileSize);
 		$fileModTime	= intval($fileModTime);
 
@@ -98,9 +98,12 @@ class TodoyuHeader {
 		self::sendHeader('Content-disposition', 'attachment; filename="' . $filename . '"');
 		self::sendHeader('Content-length', $fileSize);
 		self::sendHeader('Expires', date('r', NOW + 600));
-		self::sendHeader('Last-Modified', date('r', $fileModTime));
 		self::sendHeader('Cache-Control', 'no-cache, must-revalidate');
 		self::sendHeader('Pragma', 'no-cache');
+
+		if( ! is_null($fileModTime) ) {
+			self::sendHeader('Last-Modified', date('r', $fileModTime));
+		}
 	}
 
 
@@ -136,7 +139,7 @@ class TodoyuHeader {
 
 
 	/**
-	 * Send plaintext header
+	 * Send plain text header
 	 */
 	public static function sendHeaderPlain() {
 		self::setType('PLAIN');
@@ -193,11 +196,32 @@ class TodoyuHeader {
 
 
 	/**
+	 * Send HTTP header
+	 *
+	 * @param	Integer		$code
+	 */
+	public static function sendHTTPHeader($code) {
+		header('HTTP/1.0 ' . $code);
+	}
+
+
+
+	/**
+	 * Send HTTP error header
+	 * 
+	 */
+	public static function sendHTTPErrorHeader() {
+		self::sendHTTPHeader(503);
+	}
+
+	
+
+	/**
 	 * Send Todoyu error header, which marks the current response as failed
 	 * This means mostly a submission (form value) was not valid and the form
 	 * has to be displayed again
 	 *
-	 * Can automaticly be checked by js: var hasError = response.hasTodoyuError()
+	 * Can automatically be checked by js: var hasError = response.hasTodoyuError()
 	 */
 	public static function sendTodoyuErrorHeader() {
 		self::sendTodoyuHeader('error', 1);

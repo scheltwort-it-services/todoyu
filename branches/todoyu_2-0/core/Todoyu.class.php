@@ -90,11 +90,15 @@ class Todoyu {
 	/**
 	 * Set system timezone
 	 */
-	public static function setTimezone() {
-		$timezone	= Todoyu::person()->getTimezone();
+	public static function setTimezone() {		
+		if( self::db()->isConnected() ) {
+			$timezone	= self::person()->getTimezone();
+		} else {
+			$timezone	= false;
+		}
 
 		if( $timezone === false ) {
-			$timezone = Todoyu::$CONFIG['SYSTEM']['timezone'];
+			$timezone = self::$CONFIG['SYSTEM']['timezone'];
 		}
 
 			// Set default timezone
@@ -182,7 +186,7 @@ class Todoyu {
 	 */
 	public static function logger() {
 		if( is_null(self::$logger) ) {
-			self::$logger = TodoyuLogger::getInstance();
+			self::$logger = TodoyuLogger::getInstance(self::$CONFIG['LOG_LEVEL']);
 		}
 
 		return self::$logger;
@@ -223,7 +227,7 @@ class Todoyu {
 		if( is_null(self::$locale) ) {
 			self::$locale = self::$CONFIG['SYSTEM']['locale'];
 
-			if( TodoyuAuth::isLoggedIn() ) {
+			if( TodoyuAuth::isLoggedIn() && self::db()->isConnected() ) {
 				$personLocale	= self::person()->getLocale();
 				if( $personLocale !== false ) {
 					self::$locale = $personLocale;
@@ -260,11 +264,11 @@ class Todoyu {
 			// Set internal locale
 		self::$locale = $locale;
 
-			// Set locale for system
-		$status	= TodoyuLocaleManager::setLocale($locale);
-
 			// Set locale for locallang files
 		TodoyuLanguage::setLocale($locale);
+
+			// Set locale for system
+		$status	= TodoyuLocaleManager::setSystemLocale($locale);		
 
 			// Log if operation fails
 		if( $status === false ) {

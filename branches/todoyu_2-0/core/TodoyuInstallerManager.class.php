@@ -122,7 +122,7 @@ class TodoyuInstallerManager {
 	 */
 	public static function processDbSelect(array $data) {
 		$result		= array();
-
+		
 		$database	= trim($data['database']);
 		$databaseNew= trim($data['database_new']);
 
@@ -507,7 +507,7 @@ class TodoyuInstallerManager {
 	 *
 	 * @param 	Array		$config
 	 */
-	private static function saveSystemConfig(array $config) {
+	public static function saveSystemConfig(array $config) {
 		$config['encryptionKey'] = self::makeEncryptionKey();
 		$tmpl	= 'install/view/configs/system.php.tmpl';
 		$file	= TodoyuFileManager::pathAbsolute('config/system.php');
@@ -536,7 +536,7 @@ class TodoyuInstallerManager {
 	/**
 	 * Import static data
 	 */
-	private static function importStaticData() {
+	public static function importStaticData() {
 		self::importSqlFromFile('install/db/static_data.sql');
 	}
 
@@ -545,7 +545,7 @@ class TodoyuInstallerManager {
 	/**
 	 * Import basic data
 	 */
-	private static function importBasicData() {
+	public static function importBasicData() {
 		self::importSqlFromFile('install/db/basic_data.sql');
 	}
 
@@ -554,7 +554,7 @@ class TodoyuInstallerManager {
 	/**
 	 * Import the demo data from sql file
 	 */
-	private static function importDemoData() {
+	public static function importDemoData() {
 		self::importSqlFromFile('install/db/demo_data.sql');
 	}
 
@@ -713,19 +713,7 @@ class TodoyuInstallerManager {
 	 * Clear cached files
 	 */
 	public static function clearCache() {
-		$paths	= array(
-			PATH_CACHE . '/css',
-			PATH_CACHE . '/js',
-			PATH_CACHE . '/img',
-			PATH_CACHE . '/language',
-			PATH_CACHE . '/tmpl/compile'
-		);
-
-		foreach($paths as $path) {
-			if( is_dir($path) ) {
-				TodoyuFileManager::deleteFolderContents($path, false);
-			}
-		}
+		TodoyuFileManager::deleteFolderContents(PATH_CACHE, false);
 	}
 
 
@@ -818,6 +806,195 @@ class TodoyuInstallerManager {
 			}
 		}
 	}
+
+
+
+	/**
+	 * Move task assets to a new and better structure
+	 * Move from tasks/TASKID/* to PROJECTID/TASKID/*
+	 * 
+	 */
+	public static function changeFilesAssetStructure() {
+		if( ! TodoyuInstaller::isUpdate() ) {
+			return false;
+		}
+
+			// Initialize todoyu to use all the functions
+		Todoyu::init();
+		require( PATH_CORE . '/inc/load_extensions.php' );
+
+			// Get base paths
+		$pathAssets		= TodoyuFileManager::pathAbsolute('files/assets');
+		$pathAssetTask	= TodoyuFileManager::pathAbsolute($pathAssets . '/task');
+
+			// If there is still an old task folder, process it
+		if( is_dir($pathAssetTask) ) {
+			$taskFolders	= TodoyuFileManager::getFoldersInFolder($pathAssetTask);
+
+				// All subfolders are task IDs, loop over them
+			foreach($taskFolders as $taskFolder) {
+				$idTask	= intval($taskFolder);
+
+					// If the folder is a (task-)number
+				if( $idTask > 0 ) {
+						// Find project ID
+					$idProject		= TodoyuTaskManager::getProjectID($idTask);
+						// New folder for task files
+					$pathTaskFiles	= TodoyuFileManager::pathAbsolute($pathAssets . '/' . $idProject . '/' . $idTask);
+						// Get all task files
+					$taskFiles		= TodoyuFileManager::getFilesInFolder($pathAssetTask . '/' . $taskFolder);
+						// Make new task folder
+					TodoyuFileManager::makeDirDeep($pathTaskFiles);
+
+						// Process all files of a task
+					foreach($taskFiles as $taskFile) {
+						$pathSource	= TodoyuFileManager::pathAbsolute($pathAssetTask . '/' . $taskFolder . '/' . $taskFile);
+						$pathDest	= TodoyuFileManager::pathAbsolute($pathTaskFiles . '/' . $taskFile);
+
+							// Rename file
+						rename($pathSource, $pathDest);
+
+							// Update database
+						$pathStorageOld	= str_replace($pathAssets . DIR_SEP, '', $pathSource);
+						$pathStorageNew	= str_replace($pathAssets . DIR_SEP, '', $pathDest);
+						$update	= array(
+							'file_storage'	=> $pathStorageNew
+						);
+						$where	= 'file_storage = ' . Todoyu::db()->quote($pathStorageOld, true);
+
+						Todoyu::db()->doUpdate('ext_assets_asset', $where, $update);
+					}
+				}
+			}
+
+				// Delete old task folder
+//			TodoyuFileManager::deleteFolder($pathAssetTask);
+		}
+
+	}
+
+	
+
+	/**
+	 * Run version updates.
+	 *
+	 */
+	public static function runVersionUpdates() {
+		TodoyuDebug::printInFireBug('runVersionUpdates');
+		$lastVersion	= self::getLastVersion();
+		
+		self::runVersionUpdatesSQL($lastVersion);
+		self::runVersionUpdatesPHP($lastVersion);
+
+		self::saveCurrentVersion();
+	}
+	
+
+
+	/**
+	 * Run version updates from SQL files
+	 *
+	 * @param	String		$lastVersion
+	 */
+	public static function runVersionUpdatesSQL($lastVersion) {
+		TodoyuDebug::printInFireBug('runVersionUpdatesSQL');
+		$baseFolder	= 'install/update/db';
+		$updateFiles= self::getUpdateFiles($baseFolder, 'sql', $lastVersion);
+
+		foreach($updateFiles as $updateFile) {
+			TodoyuSQLManager::executeQueriesFromFile($baseFolder . '/' . $updateFile);
+		}
+	}
+	
+
+
+	/**
+	 * Run version updates from PHP files
+	 *
+	 * @param	String		$lastVersion
+	 */
+	public static function runVersionUpdatesPHP($lastVersion) {
+		TodoyuDebug::printInFireBug('runVersionUpdatesPHP');
+		$baseFolder	= 'install/update/php';
+		$updateFiles= self::getUpdateFiles($baseFolder, 'php', $lastVersion);
+
+		foreach($updateFiles as $updateFile) {
+			$pathFile	= TodoyuFileManager::pathAbsolute($baseFolder . '/' . $updateFile);
+
+			include($pathFile);
+		}
+	}
+
+
+
+	/**
+	 * Scan a folder for version files, compare them with last version
+	 *
+	 * @param	String		$pathToFolder			Path to folder
+	 * @param	String		$extension				File extension to scan for
+	 * @param	String		$lastVersion			Last version. Look only for newer updates
+	 * @return	Array
+	 */
+	private static function getUpdateFiles($pathToFolder, $extension, $lastVersion) {
+		$pathToFolder	= TodoyuFileManager::pathAbsolute($pathToFolder);
+		$files			= TodoyuFileManager::getFilesInFolder($pathToFolder);
+		$updateFiles	= array();
+
+			// Sort the files by version number
+		usort($files, 'version_compare');
+
+			// Check all files if they are necessary for the update
+		foreach($files as $filename) {
+			$info		= pathinfo($pathToFolder . '/' . $filename);
+
+				// Only use file with the requested extension
+			if( $info['extension'] !== $extension ) {
+				continue;
+			}
+
+				// The filename is the version number
+			$fileVersion= $info['filename'];
+
+				// Get all version which are higher than the db version
+			if( version_compare($fileVersion, $lastVersion) === 1 ) {
+				$updateFiles[] = $filename;
+			}
+		}
+
+		return $updateFiles;
+	}
+
+
+	
+	/**
+	 * Find the last version of todoyu (and the database)
+	 * Tries to read to LAST_VERSION file. If not available, use to current todoyu version
+	 *
+	 * @return	String
+	 */
+	public static function getLastVersion() {
+		$pathFile	= TodoyuFileManager::pathAbsolute('install/config/LAST_VERSION');
+		$version	= TODOYU_VERSION;
+
+		if( is_file($pathFile) ) {
+			$version	= trim(file_get_contents($pathFile));
+		}
+
+		return $version;
+	}
+
+
+
+	/**
+	 * Save current todoyu version as DB version in the LAST_VERSION file
+	 *
+	 */
+	public static function saveCurrentVersion() {
+		$pathFile	= TodoyuFileManager::pathAbsolute('install/config/LAST_VERSION');
+
+		file_put_contents($pathFile, TODOYU_VERSION);
+	}
+
 }
 
 ?>

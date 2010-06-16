@@ -298,6 +298,18 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 
 	/**
+	 * Get absolute name of the field
+	 * Based on the position: fieldset-subfieldset-fieldname
+	 *
+	 * @return	String
+	 */
+	public function getAbsoluteName() {
+		return $this->getFieldset()->getAbsoluteName() . '-' . $this->name;
+	}
+
+
+
+	/**
 	 * Get form element label
 	 *
 	 * @return unknown
@@ -334,11 +346,14 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * Set field value ('attribute')
 	 *
 	 * @param	Mixed		$value
+	 * @param	Boolean		$updateForm		Update the form. Can be false if the form already has the value
 	 */
-	public function setValue($value) {
+	public function setValue($value, $updateForm = true) {
 		$this->setAttribute('value', $value);
-
-		$this->updateFormData($value);
+		
+		if( $updateForm ) {
+			$this->updateFormData($value);
+		}
 	}
 
 
@@ -372,7 +387,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @param	Mixed		$value
 	 */
 	protected function updateFormdata($value) {
-		$this->getForm()->setFieldFormData($this->name, $value);
+		$this->getForm()->setFieldFormData($this->getName(), $value);
 	}
 
 
@@ -543,7 +558,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @param	TodoyuFormElement		$field
 	 */
 	public function bubbleError(TodoyuFormElement $field) {
-		TodoyuDebug::printInFirebug($field->getName(), 'FIELD=' . $this->getName());
+//		TodoyuDebug::printInFirebug($field->getName(), 'FIELD=' . $this->getName());
 
 		$this->setErrorTrue();
 		$this->getFieldset()->bubbleError($field);
@@ -666,6 +681,37 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 		return $wizardConf;
 	}
 
+	
+
+	/**
+	 * Enable a form field
+	 *
+	 */
+	public function enable() {
+		unset($this->config['disabled']);
+	}
+
+
+
+	/**
+	 * Disable a form field
+	 *
+	 */
+	public function disable() {
+		$this->config['disabled'] = true;
+	}
+
+
+
+	/**
+	 * Check if a form field is disabled
+	 *
+	 * @return	Boolean
+	 */
+	public function isDisabled() {
+		return !empty($this->config['disabled']);
+	}
+
 
 
 	/**
@@ -675,8 +721,6 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 */
 	public function setAfterFieldText($text) {
 		$text		= TodoyuString::getLabel($text);
-
-//		TodoyuDebug::printInFirebug($text, 'set text');
 
 		$this->setAttribute('textAfterField', $text);
 	}

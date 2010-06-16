@@ -158,7 +158,8 @@ class TodoyuTime {
 
 
 	/**
-	 * Get weekday of a timestamp. With $mondayFirst monday will be 0 and sunday 6
+	 * Get weekday of a timestamp. Like date('w'), but starts with monday
+	 * With $mondayFirst monday will be 0 and sunday 6
 	 *
 	 * @param	Integer		$timestamp
 	 * @param	Boolean		$mondayFirst
@@ -202,6 +203,7 @@ class TodoyuTime {
 	/**
 	 * Get present amount of first hour of given amount of hours
 	 *
+	 * @todo	What does this function? Right place?
 	 * @param	Float $hours
 	 * @return	Float
 	 */
@@ -254,22 +256,23 @@ class TodoyuTime {
 	 *
 	 * @param	Integer		$seconds
 	 * @param	Boolean		$withSeconds
+	 * @param	Boolean		$round			Round or cut seconds
 	 * @return	String
 	 */
-	public static function formatTime($seconds, $withSeconds = false) {
+	public static function formatTime($seconds, $withSeconds = false, $round = true) {
 		$seconds	= intval($seconds);
 		$timeParts	= self::getTimeParts($seconds);
 
 		if( $withSeconds ) {
-			$formated	= sprintf('%02d:%02d:%02d', $timeParts['hours'], $timeParts['minutes'], $timeParts['seconds']);
+			$formatted	= sprintf('%02d:%02d:%02d', $timeParts['hours'], $timeParts['minutes'], $timeParts['seconds']);
 		} else {
-			if( $timeParts['seconds'] >= 30 ) {
+			if( $round && $timeParts['seconds'] >= 30 ) {
 				$timeParts['minutes'] += 1;
 			}
-			$formated	= sprintf('%02d:%02d', $timeParts['hours'], $timeParts['minutes']);
+			$formatted	= sprintf('%02d:%02d', $timeParts['hours'], $timeParts['minutes']);
 		}
 
-		return $formated;
+		return $formatted;
 	}
 
 
@@ -323,7 +326,7 @@ class TodoyuTime {
 		$time = self::parseDateTime($dateString);
 
 			// if parseDateTime did not work, try parseDate
-		if( $time === false ) {
+		if( $time === 0 ) {
 			$time = self::parseDate($dateString);
 		}
 
@@ -400,14 +403,14 @@ class TodoyuTime {
 	 * Parse time string
 	 * Timeformat is based on the format time or timesec
 	 *
-	 * @param	String		$timeString		Time string: 23:59 or 23:59:59 (for the second you have to set $withSeconds)
-	 * @param	Boolean		$withSeconds	Timestring
+	 * @param	String		$timeString		Time string: 23:59 or 23:59:59 (function autodetects seconds part)
 	 * @return	Integer		Seconds
 	 */
-	public static function parseTime($timeString, $withSeconds = false) {
-		$format		= $withSeconds ? self::getFormat('timesec') : self::getFormat('time') ;
+	public static function parseTime($timeString) {
+		$colons		= substr_count($timeString, ':');
+		$format		= $colons === 2 ? self::getFormat('timesec') : self::getFormat('time') ;
 		$timeParts	= strptime($timeString, $format);
-
+				
 		$hours	= intval($timeParts['tm_hour']);
 		$minutes= intval($timeParts['tm_min']);
 		$seconds= intval($timeParts['tm_sec']);
@@ -427,7 +430,7 @@ class TodoyuTime {
 	public static function parseDuration($timeString) {
 		$parts	= explode(':', $timeString);
 
-		return intval($parts[0])*3600 + TodoyuNumeric::intInRange($parts[1], 0, 60)*60;
+		return intval($parts[0])*3600 + intval($parts[1])*60;
 	}
 	
 
@@ -439,7 +442,7 @@ class TodoyuTime {
 	 * @param	Integer		$steps
 	 * @return	Integer		Rounded time
 	 */
-	public static function getRoundedTime($time = 0, $steps = 15) {
+	public static function getRoundedTime($time = 0, $steps = 5) {
 		$time	= intval($time);
 		$factor	= intval(60/$steps);
 
@@ -449,53 +452,13 @@ class TodoyuTime {
 
 		$currentMinutes	= intval(date('i', $time));
 		$roundedMinutes	= intval(round(($currentMinutes * $factor)/60, 0) * $steps);
-		$newTime		= $time + ($roundedMinutes - $currentMinutes) * 60;
+		$currentSeconds	= intval(date('s', $time));
+		$newTime		= $time + ($roundedMinutes - $currentMinutes) * 60 - $currentSeconds;
 
 		return $newTime;
 	}
 
-
-
-	/**
-	 * Get seconds of day's time (seconds since 00:00:00 of day of given timestamp)
-	 *
-	 * @param	Integer	$timestamp		UNIX timestamp
-	 * @return	Integer
-	 */
-	public function getSecondsOfDayTime($timestamp) {
-		$secondsOfHours		= date('G', $timestamp)	* 60 * 60;
-		$secondsOfMinutes	= date('i', $timestamp)	* 60;
-		$seconds			= date('s', $timestamp);
-
-		return $secondsOfHour + $secondsOfMinutes + $seconds;
-	}
-
-
-
-	/**
-	 * Get weeknumber (1-52) of year of given date
-	 *
-	 * @param 	Integer	$timestamp
-	 * @return	String	Number
-	 */
-	public static function getWeeknumber($timestamp) {
-
-		return date('W', $timestamp);
-	}
-
-
-
-	/**
-	 * Get number of week of month
-	 *
-	 * @param 	Integer $timestamp
-	 * @return	String	Date
-	 */
-	public static function getWeekOfMonth( $timestamp = NOW ) {
-		return ceil( date( 'j', $timestamp )/7 );
-	}
-
-
+	
 
 	/**
 	 * Get dates of the (days of) full week which the given date is in
@@ -503,7 +466,7 @@ class TodoyuTime {
 	 * @param		Mixed		$time		Timestamp
 	 * @return 		Array		Dates of the week
 	 */
-	public static function getDayTimesOfWeek($time) {
+	public static function getTimestampsForWeekdays($time) {
 		$time		= intval($time);
 		$weekRange	= self::getWeekRange($time);
 		$dayTimes	= array();
@@ -518,47 +481,28 @@ class TodoyuTime {
 
 
 	/**
-	 * Get amount of days in month (of timestamp, or in a "shifted" month before / after that, depending of "shiftMonthBy"-offset)
+	 * Get days in month for the month of the timestamp
+	 * Use monthDelta to query an other month (ex: last = -1, next = 1, etc)
 	 *
-	 * @param 	Integer	$month	Month to be searched
-	 * @param 	Integer	$year	Year to be searched
-	 * @return	Integer	Days of last month as a number
+	 * @param	Integer		$timestamp
+	 * @param	Integer		$monthDelta
+	 * @return	Integer
 	 */
-	public static function getAmountOfDaysInMonth($timestamp, $shiftMonthBy = 0) {
-		$year	= date('Y', $timestamp);
-		$month	= date('n', $timestamp);
+	public static function getDaysInMonth($timestamp, $monthDelta = 0) {
+		$monthDelta	= intval($monthDelta);
 
-			// get timestamp of previous month
-		$timestamp	= mktime(0, 0, 0, ($month + $shiftMonthBy), 1, $year);
+		if( $monthDelta !== 0 ) {
+			$year	= date('Y', $timestamp);
+			$month	= date('n', $timestamp);
 
-		return date( 't' , $timestamp );
-	}
-
-
-
-	/**
-	 * Finds whether the timespans within the given boundaries intersect
-	 *
-	 * @param	Integer	$start1		UNIX timestamp start of span1
-	 * @param	Integer	$end1		UNIX timestamp end of span1
-	 * @param	Integer	$start2		UNIX timestamp start of span2
-	 * @param	Integer	$end2		UNIX timestamp end of span2
-	 * @return	Boolean
-	 */
-	public static function spansIntersect($start1, $end1, $start2, $end2) {
-		$intersect = false;
-
-		if (	// span2 ends within span1 OR span2 lays within span1 OR span2 starts within span 1 OR span2 wraps span1
-			 ($end2 >= $start1 && $end2 <= $end1) || ($start2 >= $start1 && $end2 <= $end1) || ($start2 >= $start1 && $start2 <= $end1) ||	($start2 <= $start1 && $end2 >= $end1)
-			&& ! ($start2 == $end1 || $start1 == $end2)
-		) {
-			$intersect = true;
+				// get timestamp of previous month
+			$timestamp	= mktime(0, 0, 0, ($month + $monthDelta), 1, $year);
 		}
 
-		return $intersect;
+		return date('t', $timestamp);
 	}
 
-
+	
 
 	/**
 	 * Check if two time ranges overlap.
@@ -585,25 +529,20 @@ class TodoyuTime {
 
 
 	/**
-	 * Returns the timestamps of the last cyle borders as ass. array
-	 *
-	 * Example:
-	 * 	param = 1	- start/end of last month
-	 *	param = 3	- start/end of last quarter
-	 *
-	 * @param	Integer	$monthsPerCycle
-	 * @return	Array
+	 * Rounds UP given time in seconds to the next step
+	 * returns the time in seconds
+	 * 
+	 * @static
+	 * @param	Integer		$seconds
+	 * @param	Integer		 $steps
+	 * @return	Integer
 	 */
-	public static function getCycleBorderDates($monthsPerCycle = 0)	{
-		$monthStart = mktime(0, 0, 0, date('n') - $monthsPerCycle, 1, date('Y'));
+	public static function roundUpTime($seconds, $steps = 1)	{
+		$roundStepInSeconds	=	$steps * 60;
+		$newTime			=	ceil( intval($seconds) / $roundStepInSeconds ) * $roundStepInSeconds;
 
-		return array(
-			'start'	=> $monthStart,
-			'end'	=> mktime( 23, 59, 59, date('n') - $monthsPerCycle, date('t', $monthStart), date('Y') )
-		);
+		return $newTime;
 	}
-
-
 }
 
 ?>

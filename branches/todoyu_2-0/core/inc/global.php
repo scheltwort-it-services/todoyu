@@ -22,6 +22,8 @@
 @ini_set('session.cookie_httponly', 1);
 	// Ignore errors of type notice
 error_reporting(E_ALL ^ E_NOTICE);
+	// Set character encoding to utf-8
+//mb_internal_encoding("UTF-8");
 
 	// Start session
 session_start();
@@ -29,11 +31,6 @@ session_start();
 
 	// Define basic constants
 require_once( dirname(dirname(__FILE__)) . '/config/constants.php' );
-
-	// Store session modification timestamp
-if ( ! isset($_SESSION['mtime']) ) {
-	$_SESSION['mtime']	= NOW;
-}
 
 	// Add todoyu include path
 set_include_path(get_include_path() . PATH_SEPARATOR . PATH);
@@ -87,7 +84,7 @@ require_once( PATH_LIB . '/php/jsmin.php' );
 spl_autoload_register( array('Todoyu', 'autoloader') );
 
 	// Register error handler
-set_error_handler(array('TodoyuErrorHandler', 'handleError'));
+//set_error_handler(array('TodoyuErrorHandler', 'handleError'));
 
 	// Load global functions
 require_once( PATH_CORE . '/inc/version.php' );
