@@ -185,6 +185,15 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @return	Array
 	 */
 	protected function getData() {
+			// Parse all attributes with form data
+		foreach($this->config as $key => $value) {
+			if( ! is_array($value) ) {
+				if( strpos($value, '#') !== false ) {
+					$this->config[$key] = $this->getForm()->parseWithFormData($value);
+				}				
+			}
+		}
+
 		$this->config['htmlId']			= $this->getForm()->makeID($this->name);
 		$this->config['htmlName']		= $this->getForm()->makeName($this->name, $this->config['multiple']);
 		$this->config['label']			= TodoyuString::getLabel($this->config['label']);
@@ -233,6 +242,37 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 */
 	public function setAttribute($name, $value) {
 		$this->config[$name] = $value;
+	}
+
+
+
+	/**
+	 * Remove option with given value from options array of config (of <select> element)
+	 *
+	 * @param	Mixed	$value
+	 */
+	public function removeOptionByValue($value) {
+		$this->removeOptionsByValues(array($value));
+	}
+
+
+
+	/**
+	 * Remove options with any of the given values from options array of config (of <select> element)
+	 *
+	 * @param	Array	$values
+	 */
+	public function removeOptionsByValues(array $values) {
+		$options		= $this->config['options'];
+		$cleanOptions	= array();
+
+		foreach($options as $key => $option) {
+			if ( ! in_array($option['value'], $values) ) {
+				$cleanOptions[$key]	= $option;
+			}
+		}
+
+		$this->setAttribute('options', $cleanOptions);
 	}
 
 

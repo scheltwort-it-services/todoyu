@@ -193,7 +193,7 @@ class TodoyuDatabase {
 	 * @return	String
 	 */
 	public function escape($string) {
-		return mysql_real_escape_string($string, $this->link);
+		return is_float($string) ? str_replace(',', '.', (string)$string) : mysql_real_escape_string($string, $this->link);
 	}
 
 
@@ -396,10 +396,9 @@ class TodoyuDatabase {
 		$fieldNames		= implode(',', $this->backtickArray(array_keys($fieldNameValues)));
 		$fieldValues	= implode(',', $this->quoteArray(array_values($fieldNameValues), $noQuoteFields));
 
-		$query = '	INSERT INTO ' . $table . '
-						(' . $fieldNames . ')
-					VALUES (
-						' . $fieldValues . ')';
+		$query = '	INSERT INTO ' . $table
+			. ' (' . $fieldNames . ')'
+			. ' VALUES (' . $fieldValues . ')';
 
 		return $query;
 	}
@@ -561,7 +560,7 @@ class TodoyuDatabase {
 	 * @return	Boolean
 	 */
 	public function hasResult($fields, $table, $where, $groupBy = '', $limit = '') {
-		$cacheID	= 'hasresult:' . md5(serialize(func_get_args()));
+		$cacheID	= 'hasresult:' . sha1(serialize(func_get_args()));
 
 		if( ! TodoyuCache::isIn($cacheID) ) {
 			$result	= $this->doSelect($fields, $table, $where, $groupBy, '', $limit);
@@ -938,7 +937,7 @@ class TodoyuDatabase {
 	 * @return	Array
 	 */
 	public function getArray($fields, $table, $where = '', $groupBy = '', $orderBy = '', $limit = '', $indexField = false) {
-		$cacheID	= md5(serialize(func_get_args()));
+		$cacheID	= sha1(serialize(func_get_args()));
 
 		if( TodoyuCache::isIn($cacheID) ) {
 			return TodoyuCache::get($cacheID);
@@ -1221,7 +1220,7 @@ class TodoyuDatabase {
 	private function printConnectionError($error, $errorNo) {
 		ob_end_clean();
 
-		$title	= 'Cannot connect to the server "' . htmlentities($this->config['server']) . '"';
+		$title	= 'Cannot connect to the server "' . htmlentities($this->config['server'], ENT_QUOTES, 'UTF-8') . '"';
 		$message= $error . '<br/><br />Check server or change in config/db.php';
 
 		include('core/view/error.html');
@@ -1238,7 +1237,7 @@ class TodoyuDatabase {
 		ob_end_clean();
 
 		$title	= 'Failed selecting database';
-		$message= 'Cannot select database "' . htmlentities($this->config['database']) . '" on server ' . htmlentities($this->config['server']) . '<br />Check server or change in config/db.php<br />' . $error;
+		$message= 'Cannot select database "' . htmlentities($this->config['database'], ENT_QUOTES, 'UTF-8') . '" on server ' . htmlentities($this->config['server'], ENT_QUOTES, 'UTF-8') . '<br />Check server or change in config/db.php<br />' . $error;
 
 		include('core/view/error.html');
 	}

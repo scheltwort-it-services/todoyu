@@ -19,25 +19,23 @@
 *****************************************************************************/
 
 /**
- * FormElement: Selecticon
- *
- * Icon selector
- *
+ * [Enter Class Description]
+ * 
  * @package		Todoyu
- * @subpackage	Form
+ * @subpackage	[Subpackage]
  */
-class TodoyuFormElement_SelectIcon extends TodoyuFormElement {
+class TodoyuCountryManager {
 
 	/**
-	 * Constructor
 	 *
-	 * @param	String		$name
-	 * @param 	TodoyuFieldset	$fieldset
-	 * @param	Array		$config
+	 *  
+	 * @param	Integer		$idCountry
+	 * @return	TodoyuCountry
 	 */
-	public function __construct($name, TodoyuFieldset $fieldset, array $config = array()) {
-		parent::__construct('selectIcon', $name, $fieldset, $config);
+	public static function getCountry($idCountry) {
+		return TodoyuRecordManager::getRecord('TodoyuCountry', $idCountry);
 	}
+
 }
 
 ?>

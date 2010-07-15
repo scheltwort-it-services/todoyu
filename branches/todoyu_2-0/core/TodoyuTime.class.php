@@ -48,7 +48,6 @@ class TodoyuTime {
 
 
 
-
 	/**
 	 * Get timestamp of start of day
 	 *
@@ -103,7 +102,7 @@ class TodoyuTime {
 
 		return array(
 			'start'	=> $start,
-			'end'	=> $start + 7 * 86400 - 1
+			'end'	=> $start + self::SECONDS_WEEK - 1
 		);
 	}
 
@@ -117,11 +116,10 @@ class TodoyuTime {
 	public static function getMonthRange($timestamp) {
 		$timestamp	= intval($timestamp);
 		$start		= self::getMonthStart($timestamp);
-		$end		= mktime(0, 0, 0, date('n', $start) + 1, 1, date('Y', $start)) - 1;
 
 		return array(
 			'start'	=> $start,
-			'end'	=> $end
+			'end'	=> mktime(0, 0, 0, date('n', $start) + 1, 1, date('Y', $start)) - 1
 		);
 	}
 
@@ -130,16 +128,15 @@ class TodoyuTime {
 	/**
 	 * Get start and end timestamp of every day in the week of the timestamp
 	 *
-	 * @param		Integer		$timestamp		Timstamp
-	 * @return 		Integer		Timestamp of monday of the week the given timestamp belongs to
+	 * @param		Integer		$timestamp		Timestamp
+	 * @return 		Integer		Timestamp of beginning of week the given timestamp belongs to
 	 */
 	public static function getWeekStart($timestamp) {
 		$timestamp	= intval($timestamp);
 		$dayStart	= self::getStartOfDay($timestamp);
 		$weekday	= self::getWeekday($timestamp, true);
-		$weekStart	= $dayStart - $weekday * 86400;
 
-		return $weekStart;
+		return $dayStart - $weekday * self::SECONDS_DAY;
 	}
 
 
@@ -169,11 +166,7 @@ class TodoyuTime {
 		$timestamp	= intval($timestamp);
 		$weekday	= date('w', $timestamp);
 
-		if( $mondayFirst ) {
-			$weekday= ($weekday + 6) % 7;
-		}
-
-		return $weekday;
+		return ( $mondayFirst ) ? ($weekday + 6) % 7 : $weekday;
 	}
 
 	
@@ -186,10 +179,10 @@ class TodoyuTime {
 	 */
 	public static function getTimeParts($seconds) {
 		$seconds	= TodoyuNumeric::intPositive($seconds);
-		$hours		= floor($seconds / 3600);
-		$seconds	= $seconds - $hours * 3600;
-		$minutes	= floor($seconds / 60);
-		$seconds	= $seconds - $minutes * 60;
+		$hours		= floor($seconds / self::SECONDS_HOUR);
+		$seconds	= $seconds - $hours * self::SECONDS_HOUR;
+		$minutes	= floor($seconds / self::SECONDS_MIN);
+		$seconds	= $seconds - $minutes * self::SECONDS_MIN;
 
 		return array(
 			'hours'		=> $hours,
@@ -278,7 +271,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Format a timestamp with one of the default dateformats in todoyu
+	 * Format a timestamp with one of todoyu's default date formats
 	 *
 	 * @see		core/config/dateformat.xml
 	 * @param	Integer		$timestamp
@@ -287,11 +280,11 @@ class TodoyuTime {
 	 */
 	public static function format($timestamp, $formatName = 'datetime') {
 		$timestamp	= intval($timestamp);
-		$format		= self::getFormat($formatName);
 
+		$format		= self::getFormat($formatName);
 		$string		= strftime($format, $timestamp);
 
-			// If server locale file is not yet utf8, convert the string
+			// If server locale file is not yet UTF8, convert the string
 		if( ! TodoyuString::isUTF8($string) ) {
 			$string = utf8_encode($string);
 		}
@@ -336,10 +329,10 @@ class TodoyuTime {
 
 
 	/**
-	 * Parse date string
+	 * Parse date string (formatted according to current locale) to UNIX timestamp
 	 *
 	 * @param	String 		$dateString
-	 * @return	Integer		Unix timestamp
+	 * @return	Integer		UNIX timestamp
 	 */
 	public static function parseDate($dateString) {
 		$dateString	= trim($dateString);
@@ -529,19 +522,32 @@ class TodoyuTime {
 
 
 	/**
-	 * Rounds UP given time in seconds to the next step
-	 * returns the time in seconds
+	 * Rounds UP given time in seconds to given rounding minute
 	 * 
-	 * @static
-	 * @param	Integer		$seconds
-	 * @param	Integer		 $steps
+	 * @param	Integer		$timestamp
+	 * @param	Integer		$roundingMinute
+	 * @return	Integer							rounded time in seconds
+	 */
+	public static function roundUpTime($timestamp, $roundingMinute = 1)	{
+		$roundingSeconds	=	$roundingMinute * 60;
+
+		return intval( ceil( intval($timestamp) / $roundingSeconds ) * $roundingSeconds );
+	}
+
+
+
+	/**
+	 * Add days to date
+	 *
+	 * @param	Integer		$time
+	 * @param	Integer		$days
 	 * @return	Integer
 	 */
-	public static function roundUpTime($seconds, $steps = 1)	{
-		$roundStepInSeconds	=	$steps * 60;
-		$newTime			=	ceil( intval($seconds) / $roundStepInSeconds ) * $roundStepInSeconds;
-
-		return $newTime;
+	public static function addDays($time, $days) {
+		$time	= intval($time);
+		$days	= intval($days);
+		
+		return $time + $days * self::SECONDS_DAY;
 	}
 }
 

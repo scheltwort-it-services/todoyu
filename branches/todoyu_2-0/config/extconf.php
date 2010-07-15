@@ -20,7 +20,7 @@
 
 	// ****************************************************************************
 	// ATTENTION - TODOYU MANAGED FILE
-	// THIS FILE IS AUTOMATICLY UPDATED BY TODOYU
+	// THIS FILE IS AUTOMATICALLY UPDATED BY TODOYU
 	//
 	// EVERYTHING EXCEPT THE 'extConf' KEYS WILL BE REMOVED ON NEXT CONFIG UPDATE
 	// ****************************************************************************
@@ -40,7 +40,5 @@ Todoyu::$CONFIG['EXT']['contact']['extConf'] = unserialize(stripslashes('a:0:{}'
 Todoyu::$CONFIG['EXT']['comment']['extConf'] = unserialize(stripslashes('a:0:{}'));
 Todoyu::$CONFIG['EXT']['profile']['extConf'] = unserialize(stripslashes('a:0:{}'));
 Todoyu::$CONFIG['EXT']['assets']['extConf'] = unserialize(stripslashes('a:0:{}'));
-Todoyu::$CONFIG['EXT']['demologin']['extConf'] = unserialize(stripslashes('a:0:{}'));
-Todoyu::$CONFIG['EXT']['bugtracker']['extConf'] = unserialize(stripslashes('a:0:{}'));
 
 ?>

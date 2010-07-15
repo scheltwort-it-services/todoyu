@@ -80,6 +80,8 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 	protected function build() {
 			// Load the XML content from the template file
 		$this->loadXMLContent();
+			// Encode HTML entities
+		$this->encodeData();
 			// Prepare the XML content (move some markers)
 		$this->prepareXML();
 			// Render the XML into $xmlParsed
@@ -95,17 +97,16 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 	 * Move sections markers where necessary
 	 */
 	private function prepareXML() {
-		TodoyuHeader::sendHeaderXML();
-//		echo $this->xmlContent;
-//		exit();
-
 		$this->prepareListXML();
 		$this->prepareRowXML();
 		$this->prepareConditionXML();
 		$this->preparePhpXML();
+		$this->prepareDwooTagSpans();
+		$this->prepareForeach();
 
 //		TodoyuHeader::sendHeaderXML();
-//		die($this->xmlContent);
+//		echo $this->xmlContent;
+//		exit();
 	}
 
 
@@ -140,6 +141,8 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 
 			// Find all rows
 		preg_match_all($patternRow, $this->xmlContent, $rowMatches);
+		
+//		TodoyuDebug::printInFireBug($rowMatches, 'rows');
 
 			// Check for the row syntax in the matched row parts and modify the row
 		foreach($rowMatches[0] as $rowXML) {
@@ -175,7 +178,10 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 
 
 
-	
+	/**
+	 * Prepare the XML to include php code
+	 *
+	 */
 	private function preparePhpXML() {
 		$replace	= array(
 			'[--PHP:'	=> '<?php',
@@ -185,6 +191,69 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 		);
 
 		$this->xmlContent = str_replace(array_keys($replace), array_values($replace), $this->xmlContent);
+	}
+
+
+
+	/**
+	 * Prepare the XML for Dwoo tags in span
+	 * Between Dwoo braces, there may be <span> tags which add formatting information.
+	 * Move them out of the Dwoo tags
+	 *
+	 */
+	private function prepareDwooTagSpans() {
+		$pattern	= '/{.*?}/';
+
+		$this->xmlContent = preg_replace_callback($pattern, array($this, 'replaceStyleTagsInDwooTags'), $this->xmlContent);
+	}
+
+
+	/**
+	 * Callback to replace office style tags in dwoo tags
+	 *
+	 * @param	Array	$matchingElements
+	 * @return	String
+	 */
+	private function replaceStyleTagsInDwooTags(array $matchingElements) {
+		$dwooTag	= $matchingElements[0];
+
+			// Replace space tags
+		$dwooTag	= str_replace('<text:s/>', '', $dwooTag);
+
+			// Pattern for open and closing tags
+		$patternWrappings	= '/(<(.*?) ?[^>]*?>)(.*?)(<\/\2>)/';
+		$replaceWrappings	= '\3';
+
+		$dwooTag	= preg_replace($patternWrappings, $replaceWrappings, $dwooTag);
+
+
+			// Move single opening tags to the start of the string
+		$patternOpen	= '/({.*?)(<[^\/]*?:[^ ] ?[^>]*?>)(.*?})/';
+		$replaceOpen	= '\2\1\3';
+
+		$dwooTag	= preg_replace($patternOpen, $replaceOpen, $dwooTag);
+		
+
+			// Move single closign tags to the end of the string
+		$patternClose	= '/({.*?)(<\/.*?>)(.*?})/';
+		$replaceClose	= '\1\3\2';
+
+		$dwooTag	= preg_replace($patternClose, $replaceClose, $dwooTag);
+
+		return $dwooTag;
+	}
+
+
+	private function prepareForeach() {
+		$pattern	= '/(<text:[^>]*?>)({[\/]?foreach[^\}]*?})(<\/text:[^>]*?>)/';
+		$replace	= '\2';
+
+		$this->xmlContent	= preg_replace($pattern, $replace, $this->xmlContent);
+
+		$pattern	= '/(<text:p [^>]*?>)({foreach[^}]*?})(.*?)(<\/text:p>)/';
+		$replace	= '\2\1\3\4';
+
+		$this->xmlContent	= preg_replace($pattern, $replace, $this->xmlContent);		
 	}
 
 
@@ -234,6 +303,17 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 
 
 	/**
+	 * Encode HTML special chars into their entities to generate valid XML
+	 * when the data is inserted
+	 *
+	 */
+	private function encodeData() {
+		$this->data	= TodoyuArray::htmlspecialchars($this->data);
+	}
+
+
+
+	/**
 	 * Build the archive/odt file
 	 */
 	private function buildArchive() {
@@ -244,6 +324,8 @@ class TodoyuTemplateDocumentOdt extends TodoyuTemplateDocumentAbstract implement
 		copy($this->template, $this->pathOdt);
 
 		$zip	= new PclZip($this->pathOdt);
+
+		$zip->delete(PCLZIP_OPT_BY_NAME, 'content.xml');				
 
 		$zip->add($this->pathXML, PCLZIP_OPT_REMOVE_ALL_PATH);
 	}

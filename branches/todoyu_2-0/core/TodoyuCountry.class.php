@@ -19,34 +19,57 @@
 *****************************************************************************/
 
 /**
- * Ajax loader headlet
- * Shows AJAX loading icon (spinner animation) if a request is active
- *
+ * [Enter Class Description]
+ * 
  * @package		Todoyu
- * @subpackage	Core
+ * @subpackage	[Subpackage]
  */
-class TodoyuHeadletAjaxLoader extends TodoyuHeadletTypeButton {
+class TodoyuCountry extends TodoyuBaseObject {
+	
+	public function __construct($idCountry) {
+		parent::__construct($idCountry, 'static_country');		
+	}
+	
+	public function getPhoneCode() {
+		return $this->get('phone');
+	}
+	
+	public function getCode2() {
+		return $this->get('iso_alpha2');
+	}
+	
+	
+	public function getCode3() {
+		return $this->get('iso_alpha3');
+	}
 
-	/**
-	 * Initialize headlets
-	 */
-	protected function init() {
-			// Set javaScript object which handles events
-		$this->setJsHeadlet('Todoyu.Headlet.AjaxLoader');
-
-		$this->addButtonAttribute('style', 'display:none;');
+	public function getIsoNum() {
+		return $this->get('iso_num');
 	}
 
 
-
 	/**
-	 * Get headlet label
+	 * Get currency of the country
 	 *
-	 * @return	String
+	 * @return		TodoyuCurrency
 	 */
-	public function getLabel() {
-		return Label('core.headlet.ajaxloader.label');
+	public function getCurrency() {
+		$field	= 'id';
+		$table	= 'static_currency';
+		$where	= 'iso_num = ' . $this->getIsoNum();
+
+		$idCurrency	= Todoyu::db()->getFieldValue($field, $table, $where);
+
+		return TodoyuCurrencyManager::getCurrency($idCurrency);
 	}
+	
+	public function getLabel() {
+		return TodoyuLanguage::getLabel('static_country.' . $this->getCode3());
+	}
+
+
+	
+	
 
 }
 

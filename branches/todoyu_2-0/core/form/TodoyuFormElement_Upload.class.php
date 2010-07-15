@@ -21,7 +21,7 @@
 /**
  * FormElement: Upload
  *
- * Single line textinput, <input type="text">
+ * Upload field
  *
  * @package		Todoyu
  * @subpackage	Form
@@ -45,7 +45,7 @@ class TodoyuFormElement_Upload extends TodoyuFormElement {
 	 * Init
 	 */
 	protected function init() {
-		$this->getForm()->setAttribute('enytype', 'multipart/form-data');
+		$this->getForm()->setAttribute('enctype', 'multipart/form-data');
 		$this->getForm()->setAttribute('method', 'post');
 	}
 
