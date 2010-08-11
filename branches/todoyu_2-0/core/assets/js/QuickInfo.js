@@ -194,13 +194,13 @@ Todoyu.QuickInfo = {
 	 */
 	showPopUp: function(x, y) {
 			// Check hide-flag (prevent lapse due to running request while mouseOut happened)
-		if ( ! this.hidden ) {
+		if( ! this.hidden ) {
 			x += 8;
 			y -= 12;
 
 			var popupWidth	= $(this.popupID).getDimensions().width;
 
-			if ( x + 20 > window.innerWidth - popupWidth) {
+			if( x + 20 > window.innerWidth - popupWidth) {
 				x = x - popupWidth - 20;
 			}
 
@@ -217,7 +217,7 @@ Todoyu.QuickInfo = {
 	 * Hide quick-info tooltip
 	 */
 	hide: function() {
-		if ( $(this.popupID) ) {
+		if( $(this.popupID) ) {
 			$(this.popupID).hide();
 
 				// hide-flag: comprehend overlapping of mouseOut and running show request
@@ -269,7 +269,7 @@ Todoyu.QuickInfo = {
 
 		this.loading = false;
 
-		if ( ! this.hidden ) {
+		if( ! this.hidden ) {
 			this.display(name, elementKey, event.pointerX(), event.pointerY());
 		}
 	},
@@ -291,7 +291,7 @@ Todoyu.QuickInfo = {
 		json.each(function(item){
 				// Ensure maxiumum word length not to break layout: add wordwrap
 			item.label	= Todoyu.Helper.wordwrap(item.label, 16, ' ', true);
-				
+
 				// Add template row with item
 			content += this.template.evaluate(item);
 		}.bind(this));
@@ -302,7 +302,7 @@ Todoyu.QuickInfo = {
 
 
 	/**
-	 * Update popup content
+	 * Update popUp content
 	 *
 	 * @param	{String}	content
 	 */
@@ -313,7 +313,7 @@ Todoyu.QuickInfo = {
 
 
 	/**
-	 * Add quickinfo content to cache
+	 * Add quickInfo content to cache
 	 *
 	 * @param	{String}		cacheID		ID of the cached element
 	 * @param	{String}		content		cached content

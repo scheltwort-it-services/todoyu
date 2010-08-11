@@ -65,12 +65,12 @@ class TodoyuPanelWidgetManager {
 		$panelWidgets	= self::getDefaultPanelWidgets($ext);
 
 		foreach($panelWidgets as $widgetData) {
-			if ( $widgetData['widget'] == $widgetName ) {
-				if ( $configKey == '' ) {
+			if( $widgetData['widget'] == $widgetName ) {
+				if( $configKey == '' ) {
 					return $widgetData['config'];
 				} else {
 					foreach($widgetData['config'] as $key => $value) {
-						if ( $key == $configKey ) {
+						if( $key == $configKey ) {
 							return $value;
 						}
 					}
@@ -93,7 +93,7 @@ class TodoyuPanelWidgetManager {
 	public static function getUserPanelWidgets($ext) {
 		$idPerson	= TodoyuAuth::getPersonID();
 		$extID 		= TodoyuExtensions::getExtID($ext);
-		
+
 		$fields		= 'widget, position, config';
 		$table		= self::TABLE;
 		$where		= '		id_person	= ' . $idPerson .

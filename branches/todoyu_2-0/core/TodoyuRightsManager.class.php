@@ -72,7 +72,7 @@ class TodoyuRightsManager {
 		$roleIDs	= TodoyuAuth::getPerson()->getRoleIDs();
 
 			// If person has roles, get rights for the roles and compile them
-		if( sizeof($roleIDs) > 0 )	{
+		if( sizeof($roleIDs) > 0 ) {
 			$fields	= '	ext, `right`';
 			$table	= self::TABLE;
 			$where	= '	id_role IN(' . implode(',', $roleIDs) . ')';
@@ -119,7 +119,7 @@ class TodoyuRightsManager {
 	public static function getLastChangeTime() {
 		$timestampFile	= PATH_CACHE . DIR_SEP . 'timeLastRightsChange';
 
-		if ( TodoyuFileManager::isFile($timestampFile) ) {
+		if( TodoyuFileManager::isFile($timestampFile) ) {
 				// Get modification time of file
 			$fileMtime	= filemtime($timestampFile);
 		} else {
@@ -197,7 +197,7 @@ class TodoyuRightsManager {
 		$rightName		= $rightParts[1];
 
 		$found			= false;
-		
+
 		foreach(self::$checkRightsCache[$extKey] as $section) {
 			foreach($section as $sectionElements) {
 				if( $rightSection === $sectionElements['@attributes']['name'] ) {
@@ -226,8 +226,14 @@ class TodoyuRightsManager {
 			Todoyu::log('Right not found: ' . $extKey . '::' . $right . ' **' . $path . ':' . $position['line'] . '**', TodoyuLogger::LEVEL_SECURITY);
 		}
 	}
-	
-	
+
+
+
+	/**
+	 * Get step number within rights check
+	 *
+	 * @return	Mixed
+	 */
 	private static function getRightsCheckPosition() {
 		$backtrace	= debug_backtrace();
 		$functions	= array('allowed');

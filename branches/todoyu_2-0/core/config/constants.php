@@ -22,13 +22,13 @@
 define('TODOYU', true);
 
 	// Directory separator shorthand
-if ( ! defined('DIR_SEP') ) {
+if( ! defined('DIR_SEP') ) {
 	define('DIR_SEP', DIRECTORY_SEPARATOR);
 }
 
 	// Paths
 define( 'PATH', 			dirname(dirname(dirname(__FILE__))) );
-define( 'PATH_WEB',			dirname($_SERVER['SCRIPT_NAME']) );
+define( 'PATH_WEB',			defined('PATH_WEB_OVERRIDE') ? PATH_WEB_OVERRIDE : dirname($_SERVER['SCRIPT_NAME']) );
 define( 'PATH_CACHE',		PATH . DIR_SEP . 'cache' );
 define( 'PATH_CORE',		PATH . DIR_SEP . 'core' );
 define( 'PATH_EXT',			PATH . DIR_SEP . 'ext' );

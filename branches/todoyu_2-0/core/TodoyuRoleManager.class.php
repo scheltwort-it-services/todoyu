@@ -181,7 +181,7 @@ class TodoyuRoleManager {
 
 			// New created record?
 		$idRole	= intval($data['id']);
-		if ( $idRole == 0 ) {
+		if( $idRole == 0 ) {
 			$idRole	= self::addRole(array());
 		}
 
@@ -320,18 +320,18 @@ class TodoyuRoleManager {
 
 
 	/**
-	 * Delete Usergroup (set deleted flag to 1)
+	 * Delete role (set deleted flag to 1)
 	 *
-	 * @param	Integer		$idUsergroup
+	 * @param	Integer		$idRole
 	 */
-	public static function deleteRole($idRole)	{
+	public static function deleteRole($idRole) {
 		return TodoyuRecordManager::deleteRecord(self::TABLE, $idRole);
 	}
 
 
 
 	/**
-	 * Get IDs of the group users
+	 * Get IDs of the group persons
 	 *
 	 * @param	Integer		$idRole
 	 * @return	Array

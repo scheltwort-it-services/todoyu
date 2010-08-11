@@ -32,19 +32,10 @@ class TodoyuInstaller {
 	public static function run() {
 			// Start output buffer
 		ob_start();
-		
+
 			// No installation step or restart? initialize installer
 		if( ! self::hasStep() || self::isRestart() ) {
-				// Clear all cache
-			TodoyuInstallerManager::clearCache();
-
-				// Initialize step in session
-			self::initStep();
-
-				// Run update scripts and sql
-			if( self::isUpdate() ) {
-				TodoyuInstallerManager::runVersionUpdates();
-			}
+			self::firstRun();
 		}
 
 		$step	= self::getStep();
@@ -61,7 +52,7 @@ class TodoyuInstaller {
 		if( $locale != '' ) {
 			Todoyu::setLocale($locale);
 		}
-		
+
 			// Process current step of installation
 		$result	= self::process($step, $postData);
 
@@ -76,13 +67,31 @@ class TodoyuInstaller {
 
 
 	/**
+	 * Todo on first run of installer
+	 *
+	 */
+	private static function firstRun() {
+		$_SESSION = array();
+		session_regenerate_id();
+
+			// Clear all cache
+		TodoyuInstallerManager::clearCache();
+
+			// Initialize step in session
+		self::initStep();
+
+			// Run update scripts and sql
+		if( self::isUpdate() ) {
+			TodoyuInstallerManager::runVersionUpdates();
+		}
+	}
+
+
+
+	/**
 	 * Cleanup installation before initializing
 	 */
 	private static function onInitCleanup() {
-
-
-
-
 
 
 
@@ -177,6 +186,12 @@ class TodoyuInstaller {
 		} else {
 			self::setStep(INSTALLER_INITIALSTEP_INSTALL);
 			self::setMode('install');
+		}
+
+			// Try to detect to cookie locale
+		$cookieLocale = TodoyuLocaleManager::getCookieLocale();
+		if( $cookieLocale !== false ) {
+			TodoyuSession::set('installer/locale', $cookieLocale);
 		}
 	}
 
@@ -303,7 +318,7 @@ class TodoyuInstaller {
 	}
 
 
-	
+
 	/**
 	 * Get locale options with localized labels
 	 *

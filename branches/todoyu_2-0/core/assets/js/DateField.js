@@ -19,7 +19,7 @@
 
 /**
  * Helper functions for date fields
- * Requires the jscalendar functions Date.parseDate and Date.print
+ * Requires the jsCalendar functions Date.parseDate and Date.print
  */
 Todoyu.DateField = {
 
@@ -90,7 +90,7 @@ Todoyu.DateField = {
 	},
 
 
-	
+
 	/**
 	 * Set input field value to formatted string of given date time values
 	 *

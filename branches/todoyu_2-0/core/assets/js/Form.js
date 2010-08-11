@@ -51,17 +51,17 @@ Todoyu.Form = {
 	 * @param	{String}		fieldName
 	 * @param	{Number}		index
 	 */
-	toggleRecordForm: function(idRecord, fieldName, index)	{
+	toggleRecordForm: function(idRecord, fieldName, index) {
 		var baseName	= 'foreignrecord-' + idRecord + '-' + fieldName + '-' + index;
 		var formHtml	= baseName + '-formhtml';
 		var trigger		= baseName + '-trigger';
-		
+
 		if( Todoyu.exists(trigger) ) {
 			$(formHtml).toggle();
-			
+
 			$(trigger).down('span')[$(formHtml).visible() ? 'addClassName' : 'removeClassName']('expanded');
 		}
-		
+
 		/*
 		var idForm = 'foreignrecord-' + idRecord + '-' + fieldName + '-' + index + '-formhtml';
 
@@ -146,27 +146,27 @@ Todoyu.Form = {
 	focusFirstRecordField: function(idRecord, fieldName, index) {
 		var formHTML= $('foreignrecord-' + idRecord + '-' + fieldName + '-' + index + '-formhtml');
 		var field	= formHTML.select('input[type!=hidden]', 'select', 'textarea').first();
-		
+
 		if( field )  {
 			field.focus();
 		}
 	},
-	
-	
-	
+
+
+
 	/**
 	 * Focus first form field
 	 * 
 	 * @param	{String}	formID
 	 */
-	focusFirstFormField: function(formID)	{
-		if( $(formID) )	{
+	focusFirstFormField: function(formID) {
+		if( $(formID) ) {
 			var field = $(formID).select('input[type!=hidden]', 'select', 'textarea').first();
-			
-			if( field )	{
+
+			if( field ) {
 				if( field.visible() ) {
 					field.focus();
-				}				
+				}
 			}
 		}
 	},
@@ -182,23 +182,23 @@ Todoyu.Form = {
 		fieldNames = fieldNames || [];
 
 		fieldNames.each(function(fieldName){
-			var parentField = $$('form div.fieldname' + fieldName.capitalize()).first();
-			if ( parentField ) {
+			var parentField = $$('form div.fieldname' + fieldName.replace(/_/g,'').capitalize()).first();
+			if( parentField !== undefined ) {
 				var subForms	= parentField.select('div.databaseRelation div.databaseRelationFormhtml');
 
 				subForms.invoke('show');
 			}
 		});
 	},
-	
-	
-	
+
+
+
 	/**
 	 * Show formHTML of invalid form elements in foreign records
 	 * 
 	 * @param	{String}		formID
 	 */
-	expandInvalidForeignRecords: function(formID) {			
+	expandInvalidForeignRecords: function(formID) {
 		$(formID).select('div.error').each(function(errorField){
 			var formHTML = $(errorField).up('div.databaseRelationFormhtml');
 			if( formHTML ) {
@@ -222,7 +222,7 @@ Todoyu.Form = {
 	 * @param	{String}		title
 	 * @return	{String}
 	 */
-	openWizard: function(idRecord, idField, extension, controller, action, height, width, title)	{
+	openWizard: function(idRecord, idField, extension, controller, action, height, width, title) {
 		var url		= Todoyu.getUrl(extension,	controller);
 		var options	= {
 			'parameters': {
@@ -232,12 +232,25 @@ Todoyu.Form = {
 			}
 		};
 		var idPopup	= 'popup-' + idField;
-		
-		title	= title ? title : 'Form Wizard';
-		width	= width > 0 ? width : 480;
-		height	= height > 0 ? height : 300;
+
+		title	= ( title ) ? title : 'Form Wizard';
+		width	= ( width > 0 ) ? width : 480;
+		height	= ( height > 0 ) ? height : 300;
 
 		return Todoyu.Popup.openWindow(idPopup, title, width, url, options);
+	},
+
+
+
+	/**
+	 * Live-validation and correction of float value input field: on keyUp event replace ',' by '.'
+	 *
+	 * @param	{Element}	field
+	 */
+	assistFloatInput: function(field) {
+		var val	= $F(field).replace(',', '.');
+
+		$(field).value = val;
 	},
 
 
@@ -246,7 +259,7 @@ Todoyu.Form = {
 	 * Add an iFrame to the document body
 	 *
 	 * @param	{String}		key			Identifier
-	 * @return	{Element}		IFrame element
+	 * @return	{Element}					IFrame element
 	 */
 	addIFrame: function(key) {
 		var idIFrame= 'upload-iframe-' + key;
@@ -259,7 +272,6 @@ Todoyu.Form = {
 			});
 
 			iFrame.hide();
-
 			$(document.body).insert(iFrame);
 		}
 
@@ -280,9 +292,22 @@ Todoyu.Form = {
 
 
 	/**
+	 * Open an iframe URL
+	 * 
+	 * @param	{String}	key
+	 * @param	{String}	url
+	 */
+	openIFrame: function(key, url) {
+		this.addIFrame(key);
+		this.getIFrame(key).contentWindow.location.href = url;
+	},
+
+
+
+	/**
 	 * Remove a hidden iFrame
 	 *
-	 * @param	{String}		key
+	 * @param	{String}	key
 	 */
 	removeIFrame: function(key) {
 		var iFrame	= this.getIFrame(key);
@@ -291,21 +316,22 @@ Todoyu.Form = {
 			iFrame.remove();
 		}
 	},
-	
-	
-	
+
+
+
 	/**
-	 * Sets the value of the choosen icon to the hidden field
+	 * Sets the value of the chosen icon to the hidden field
 	 */
-	setIconSelectorValue: function(value, baseID)	{
+	setIconSelectorValue: function(value, baseID) {
 		$(baseID).value = value;
-		
+
 		var selectedOld = $(baseID + '-selector').select('.selected').first();
 
-		if(selectedOld)	{
+		if(selectedOld) {
 			selectedOld.toggleClassName('selected');
 		}
-		
+
 		$(baseID + '-listItem-' + value).toggleClassName('selected');
 	}
+
 };

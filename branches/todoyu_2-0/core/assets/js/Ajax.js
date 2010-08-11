@@ -28,14 +28,29 @@ Todoyu.Ajax = {
 	 * Cancel execution and show error message if so
 	 *
 	 * @function	checkNoAccessHeader
-	 * @param		{Ajax.Response}	response
+	 * @param		{Ajax.Response}		response
 	 */
 	checkNoAccessHeader: function(response) {
 		if( response.hasNoAccess() ) {
-				// Delete onComplete handler to prevent processing an empty respone
+				// Delete onComplete handler to prevent processing an empty response
 			delete response.request.options.onComplete;
 			var missingRight = response.getTodoyuHeader('noAccess-right');
 			Todoyu.notifyError('[LLL:core.noAccess.errorMessage] (' + missingRight + ')');
+		}
+	},
+
+
+
+	/**
+	 * Check whether not logged in header was sent
+	 *
+	 * @param	{Ajax.Response}		response
+	 */
+	checkNotLoggedInHeader: function(response) {
+		if( response.isNotLoggedIn() ) {
+				// Delete onComplete handler to prevent processing an empty response
+			delete response.request.options.onComplete;
+			Todoyu.notifyError('[LLL:core.notLoggedIn.errorMessage]', 0);
 		}
 	},
 

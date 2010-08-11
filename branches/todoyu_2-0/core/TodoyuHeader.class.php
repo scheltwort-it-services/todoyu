@@ -94,8 +94,8 @@ class TodoyuHeader {
 		$fileSize		= intval($fileSize);
 		$fileModTime	= intval($fileModTime);
 
-		self::sendHeader('Content-type', $mimeType);
-		self::sendHeader('Content-disposition', 'attachment; filename="' . $filename . '"');
+		self::sendHeader('Content-Type', $mimeType);
+		self::sendHeader('Content-disposition', 'attachment; filename="' . addslashes($filename) . '"');
 		self::sendHeader('Content-length', $fileSize);
 		self::sendHeader('Expires', date('r', NOW + 600));
 		self::sendHeader('Cache-Control', 'no-cache, must-revalidate');
@@ -214,7 +214,7 @@ class TodoyuHeader {
 		self::sendHTTPHeader(503);
 	}
 
-	
+
 
 	/**
 	 * Send Todoyu error header, which marks the current response as failed
@@ -244,10 +244,7 @@ class TodoyuHeader {
 	 * @param	String		$name
 	 * @param	String		$value
 	 */
-	public static function sendHeader($name, $value, $isUTF8 = true) {
-//		if( $isUTF8 ) {
-//			$value = utf8_decode($value);
-//		}
+	public static function sendHeader($name, $value) {
 		header($name . ': ' . $value);
 	}
 

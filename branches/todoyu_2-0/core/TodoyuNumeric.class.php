@@ -35,7 +35,7 @@ class TodoyuNumeric {
 	 * @param	Integer		$max
 	 * @return	Integer
 	 */
-	public static function intInRange($integer, $min = 0, $max = 2000000000)	{
+	public static function intInRange($integer, $min = 0, $max = 2000000000) {
 		$integer = intval($integer);
 
 		if( $integer < $min ) {
@@ -71,33 +71,30 @@ class TodoyuNumeric {
 
 	/**
 	 * Get integer representation of version string
-	 * Borrowed from typo3
+	 * Borrowed from TYPO3
 	 *
 	 * @param	String		$version
 	 * @return	Integer
 	 */
 	public static function getIntVersion($version) {
-		if (!preg_match('/^(\d+)\.(\d+)\.(\d+)(?:(?:\.|-(rc|dev|beta|alpha))(\d+)?)?$/', $version, $matches)) {
+		if(!preg_match('/^(\d+)\.(\d+)\.(\d+)(?:(?:\.|-(rc|dev|beta|alpha))(\d+)?)?$/', $version, $matches)) {
 			return false;
 		}
 
 		// Increase value for subversions
 		if( ! empty($matches[4]) ) {
-			switch ($matches[4]) {
+			switch($matches[4]) {
 				case 'rc':
 					$added = 30;
 					break;
-
 
 				case 'beta':
 					$added = 20;
 					break;
 
-
 				case 'alpha':
 					$added = 10;
 					break;
-
 
 				case 'dev':
 					$added = 0;
@@ -114,7 +111,7 @@ class TodoyuNumeric {
 		return $matches[1] * 1000000 + $matches[2] * 10000 + $matches[3] * 100 + $added;
 	}
 
-	
+
 
 	/**
 	 * Get percent of a value
@@ -145,7 +142,7 @@ class TodoyuNumeric {
 	 * @return	Integer
 	 */
 	public static function fraction($fraction = 75, $total = 300) {
-		if ($total > 0) {
+		if($total > 0) {
 			$rc = intval (($fraction/ $total) * 100);
 		} else {
 			TodoyuDebug::printHtml('error in fraction(...) - division by 0!');

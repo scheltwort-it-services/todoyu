@@ -27,7 +27,7 @@ p.installMessage.error {
 }
 
 p.installMessage.info {
-	
+
 }
 
 #footer {
@@ -71,6 +71,7 @@ select#database option.disabled {
 }
 
 
+
 /* -----------------------------------
 	Panel: steps of installation
    ----------------------------------- */
@@ -80,10 +81,10 @@ select#database option.disabled {
 	margin-bottom:10px;
 }
 #panelwidget-installprogress .content {
-	
+
 }
 #panelwidget-installprogress ul {
-	
+
 }
 #panelwidget-installprogress ul li {
 	font-size:12px;
@@ -103,7 +104,7 @@ select#database option.disabled {
 
 
 table.dbstruct {
-	
+
 }
 
 table.dbstruct th,
@@ -151,7 +152,8 @@ select#language,
 select#locale,
 select#timezone,
 select#database,
-input#database_new {
+input#database_new,
+input#database_manual {
 	width:250px;
 }
 
@@ -277,6 +279,8 @@ input#email.adminaccount {
 	background:#e3eace url('../img/panel-footer.png') no-repeat 0 0;
 }
 
+
+
 /* ----------------------------
  	Todoyu Panelwidget Slogan
    ---------------------------- */
@@ -296,6 +300,8 @@ input#email.adminaccount {
 	font-weight:bold;
 	text-align:right;
 }
+
+
 
 /* --------------------------
 	License agreement
@@ -317,7 +323,7 @@ input#email.adminaccount {
 		font-family:monospace;
 		font-size:12px !important;
 	}
-	
+
 	#licenseagreement h2 {
 		font-weight:normal;
 		font-size:11px;
@@ -332,7 +338,7 @@ input#email.adminaccount {
 		background-color:#fff;
 		margin:8px 0 26px 0;
 	}
-	
+
 		ul.thirdPartyLibs li {
 			list-style-type:disc;
 			padding:2px;
@@ -407,9 +413,9 @@ h1.deniedOpen span.rgt {
 
 
 
-/* -----------------------------
+/* ---------------------------------------
 	Hyperlinks, buttons, labels, etc.
-   ----------------------------- */
+   --------------------------------------- */
 a, a:link {
 	color:#414e1c;
 }
@@ -417,6 +423,8 @@ a, a:link {
 label {
 	cursor:pointer;
 }
+
+
 
 /* ----------------------------
 	Icons, decorations
@@ -440,8 +448,6 @@ label {
 .toggler.expanded {
 	background:transparent url('../img/icons.png') no-repeat 4px -85px;
 }
-
-
 
 td {
 	padding:4px 0 8px 0;

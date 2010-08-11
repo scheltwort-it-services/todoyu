@@ -190,7 +190,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 			if( ! is_array($value) ) {
 				if( strpos($value, '#') !== false ) {
 					$this->config[$key] = $this->getForm()->parseWithFormData($value);
-				}				
+				}
 			}
 		}
 
@@ -267,7 +267,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 		$cleanOptions	= array();
 
 		foreach($options as $key => $option) {
-			if ( ! in_array($option['value'], $values) ) {
+			if( ! in_array($option['value'], $values) ) {
 				$cleanOptions[$key]	= $option;
 			}
 		}
@@ -289,7 +289,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 			// Ensure listed attributes are an array, so new ones are addable
 		$isAttributesArray = TodoyuArray::getFirstKey($userValidator) !== '@attributes';
-		if ( ! $isAttributesArray ) {
+		if( ! $isAttributesArray ) {
 			$attributes		= $userValidator;
 			$userValidator	= array('0'	=> $attributes);
 		}
@@ -365,7 +365,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 *
 	 * @return	String
 	 */
-	public function getType()	{
+	public function getType() {
 		return $this->type;
 	}
 
@@ -390,7 +390,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 */
 	public function setValue($value, $updateForm = true) {
 		$this->setAttribute('value', $value);
-		
+
 		if( $updateForm ) {
 			$this->updateFormData($value);
 		}
@@ -494,7 +494,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 		foreach($validations as $validatorName => $validatorConfigs) {
 				// If multiple validators with the same name are defined, they are
 				// stored in an array, loop over them
-			if( isset($validatorConfigs['0']) ) {
+			if( !is_string($validatorConfigs) && isset($validatorConfigs['0']) ) {
 					// Loop over all instances of a validator type
 				foreach($validatorConfigs as $validatorConfig) {
 					$result	= $this->runValidator($validatorName, $validatorConfig, $formData);
@@ -505,6 +505,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 				}
 			} else {
 					// A validator type was only used once for this field, run normal
+				$validatorConfigs	= TodoyuArray::assure($validatorConfigs, true);
 				$result	= $this->runValidator($validatorName, $validatorConfigs, $formData);
 
 				if( $result === false ) {
@@ -534,6 +535,13 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 
 
+	/**
+	 * Run the validator
+	 *
+	 * @param	String		$validatorName
+	 * @param	Array		$validatorConfig
+	 * @return	Boolean
+	 */
 	private final function runValidator($validatorName, array $validatorConfig) {
 		$isValid = TodoyuFormValidator::validate($validatorName, $this->getStorageData(), $validatorConfig, $this, $this->getForm()->getFormData());
 
@@ -694,7 +702,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 *
 	 * @return	Array
 	 */
-	public function getWizardConfiguration()	{
+	public function getWizardConfiguration() {
 		if( $this->hasAttribute('wizard') )	{
 			$wizardConf = array(
 				'hasWizard'		=> true,
@@ -703,15 +711,15 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 			$wizardConf['wizardConf']['idRecord']	= intval($this->getForm()->getRecordID());
 
-			if( $wizardConf['wizardConf']['displayCondition'] )	{
+			if( $wizardConf['wizardConf']['displayCondition'] ) {
 				$wizardConf['hasWizard'] = TodoyuFunction::callUserFunctionArray($wizardConf['wizardConf']['displayCondition'], $wizardConf);
 			}
 
-			if( $wizardConf['wizardConf']['restrict'] && $wizardConf['hasWizard'] )	{
+			if( $wizardConf['wizardConf']['restrict'] && $wizardConf['hasWizard'] ) {
 				$wizardConf['hasWizard'] = false;
 
-				foreach($wizardConf['wizardConf']['restrict'] as $allowed)	{
-					if(allowed($allowed['@attributes']['ext'], $allowed['@attributes']['right']))	{
+				foreach($wizardConf['wizardConf']['restrict'] as $allowed) {
+					if(allowed($allowed['@attributes']['ext'], $allowed['@attributes']['right'])) {
 						$wizardConf['hasWizard'] = true;
 					}
 				}
@@ -721,7 +729,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 		return $wizardConf;
 	}
 
-	
+
 
 	/**
 	 * Enable a form field

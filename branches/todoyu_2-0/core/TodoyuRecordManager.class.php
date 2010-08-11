@@ -67,6 +67,9 @@ class TodoyuRecordManager {
 		$cacheKey	= self::makeClassKey($className, $idRecord);
 
 		TodoyuCache::remove($cacheKey);
+
+			// Call cache cleanup hooks
+		TodoyuHookManager::callHook('core', 'removeCacheRecord', array($className, $idRecord, $cacheKey));
 	}
 
 
@@ -83,6 +86,9 @@ class TodoyuRecordManager {
 		$cacheKey	= self::makeRecordQueryKey($table, $idRecord);
 
 		TodoyuCache::remove($cacheKey);
+
+			// Call cache cleanup hooks
+		TodoyuHookManager::callHook('core', 'removeCacheQuery', array($table, $idRecord, $cacheKey));
 	}
 
 
@@ -122,7 +128,7 @@ class TodoyuRecordManager {
 	 * @return	Array
 	 */
 	public static function getAllRecords($table, $where = 'deleted = 0', $order = 'title') {
-		
+
 		return Todoyu::db()->getArray('*', $table, $where, '', $order);
 	}
 
@@ -161,7 +167,7 @@ class TodoyuRecordManager {
 			self::updateRecord($table, $idRecord, $data, $noQuoteFields);
 		}
 
-		return $idRecord;		
+		return $idRecord;
 	}
 
 
@@ -181,7 +187,7 @@ class TodoyuRecordManager {
 		$data['date_create']		= NOW;
 		$data['date_update']		= NOW;
 		$data['id_person_create']	= personid();
-		
+
 		return Todoyu::db()->addRecord($table, $data, $noQuoteFields);
 	}
 
@@ -198,7 +204,7 @@ class TodoyuRecordManager {
 	 */
 	public static function updateRecord($table, $idRecord, array $data, array $noQuoteFields = array()) {
 		$idRecord	= intval($idRecord);
-		
+
 		unset($data['id']);
 		unset($data['date_create']);
 		unset($data['id_person_create']);

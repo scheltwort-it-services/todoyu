@@ -111,7 +111,7 @@ class TodoyuFormXmlParser {
 	 */
 	private static function parseTopFieldsets() {
 		$children	= self::$xml->fieldsets->children();
-		if (is_object($children)) {
+		if(is_object($children)) {
 			foreach( $children as $fieldset ) {
 				self::addFieldset(self::$form, $fieldset);
 			}
@@ -194,7 +194,7 @@ class TodoyuFormXmlParser {
 		if( ! self::isAllowed($config) ) {
 			return false;
 		}
-		
+
 		$field	= TodoyuFormFactory::createField($type, $name, $fieldset, $config);
 
 		if( $field instanceof TodoyuFormElement ) {

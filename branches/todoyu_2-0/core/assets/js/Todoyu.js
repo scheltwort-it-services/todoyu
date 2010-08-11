@@ -83,11 +83,15 @@ var Todoyu = {
 	 * @param		{String}		controller
 	 * @return		{String}
 	 */
-	getUrl: function(ext, controller) {
+	getUrl: function(ext, controller, params) {
 		var url = 'index.php?ext=' + ext;
 
-		if(controller)	{
+		if( controller ) {
 			url = url + '&controller=' + controller;
+		}
+
+		if( typeof params === 'object' ) {
+			url += '&' + Object.toQueryString(params);
 		}
 
 		return url;
@@ -104,12 +108,12 @@ var Todoyu = {
 	 * @param		{Hash}		params
 	 * @param		{String}	hash
 	 */
-	goTo: function(ext, controller, params, hash) {
+	goTo: function(ext, controller, params, hash, newWindow) {
 		var url =  this.getUrl(ext, controller);
 
 		if( typeof params === 'object' ) {
 			url += '&' + Object.toQueryString(params);
-		}	
+		}
 
 		if( Object.isString(hash) ) {
 			this.goToHashURL(url, hash);
@@ -130,12 +134,12 @@ var Todoyu = {
 	 */
 	goToHashURL: function(url, hash) {
 		var searchPart	= url.substr(url.indexOf('?'));
-		
+
 		if( location.search === searchPart && Todoyu.exists(hash) ) {
 			if( $(hash).getHeight() > 0 ) {
 				$(hash).scrollToElement();
 				return;
-			}			
+			}
 		}
 
 			// Fallback
@@ -166,8 +170,8 @@ var Todoyu = {
 	 * @param		{Element|String}		element		Element or its ID
 	 */
 	exists: function(element) {
-		if( typeof element === 'object' ) {
-			element = element.id;
+		if( Object.isElement(element) ) {
+			return true;
 		}
 
 		return document.getElementById(element) !== null;
@@ -184,8 +188,8 @@ var Todoyu = {
 	getArea: function() {
 		return document.body.id.split('-').last();
 	},
-	
-	
+
+
 
 	/**
 	 * Show error notification
@@ -254,7 +258,7 @@ var Todoyu = {
 	 */
 	callIfExists: function(functionReference, context /*, args */) {
 		var args = $A(arguments).slice(2);
-		
+
 		if( typeof functionReference === 'function' ) {
 			functionReference.apply(context, args);
 		} else {
@@ -275,10 +279,10 @@ var Todoyu = {
 		var namespaces 	= functionName.split(".");
 		var func 		= namespaces.pop();
 		var context		= window;
-		
+
 		for(var i = 0; i < namespaces.length; i++) {
 			context = context[namespaces[i]];
-			
+
 			if( context === undefined ) {
 				alert("Function: " + functionName + " not found!");
 			}
@@ -313,4 +317,5 @@ var Todoyu = {
 			}
 		}
 	}
+
 };

@@ -27,7 +27,7 @@ Todoyu.Ajax.Responders = {
 
 	/**
 	 * Hooks called when request is completed
-	 * @var	{Function[]}	completeHooks	
+	 * @var	{Function[]}	completeHooks
 	 */
 	completeHooks: [],
 
@@ -45,6 +45,7 @@ Todoyu.Ajax.Responders = {
 			'onException':	this.onException.bind(this)
 		});
 
+		this.addOnCompleteHook(Todoyu.Ajax.checkNotLoggedInHeader.bind(Todoyu.Ajax));
 		this.addOnCompleteHook(Todoyu.Ajax.checkNoAccessHeader.bind(Todoyu.Ajax));
 		this.addOnCompleteHook(Todoyu.Ajax.checkPhpErrorHeader.bind(Todoyu.Ajax));
 		this.addOnCompleteHook(Todoyu.Notification.checkNoteHeader.bind(Todoyu.Notification));
@@ -155,4 +156,5 @@ Todoyu.Ajax.Responders = {
 			$(hash).scrollToElement();
 		}
 	}
+
 };

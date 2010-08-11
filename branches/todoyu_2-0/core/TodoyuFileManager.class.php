@@ -80,26 +80,36 @@ class TodoyuFileManager {
 	/**
 	 * Delete all files inside given folder
 	 *
-	 * @param	String	$pathToFolder
+	 * @param	String		$pathToFolder
+	 * @param	Boolean		Deletion of all files was successful
 	 */
 	public static function deleteFolderContents($folderPath, $deleteHidden = false) {
-		$folderPath 	= self::pathAbsolute($folderPath);
-		$folders		= self::getFoldersInFolder($folderPath, $deleteHidden);
-		$files			= self::getFilesInFolder($folderPath);
+		$folderPath = self::pathAbsolute($folderPath);
+		$folders	= self::getFoldersInFolder($folderPath, $deleteHidden);
+		$files		= self::getFilesInFolder($folderPath);
+		$success	= true;
 
 			// Delete folders with contents
 		foreach($folders as $foldername) {
 			$pathFolder	= $folderPath . DIR_SEP . $foldername;
 
 			if( is_dir($pathFolder) ) {
-				self::deleteFolderContents($pathFolder, $deleteHidden);
+				$successContents = self::deleteFolderContents($pathFolder, $deleteHidden);
+
+				if( $successContents === false ) {
+					$success = false;
+				}
 
 					// Check if there are still elements in the folder
 				$elementsInFolder	= self::getFolderContents($pathFolder, true);
 
 					// Only delete the folder if empty
 				if( sizeof($elementsInFolder) === 0 ) {
-					self::deleteFolder($pathFolder);
+					$successFolder = self::deleteFolder($pathFolder);
+
+					if( $successFolder === false ) {
+						$success = false;
+					}
 				}
 			}
 		}
@@ -109,9 +119,19 @@ class TodoyuFileManager {
 			$pathFile	= $folderPath . DIR_SEP . $filename;
 
 			if( is_file($pathFile) ) {
-				unlink($pathFile);
+				if( is_writable($pathFile) ) {
+					unlink($pathFile);
+				} else {
+					Todoyu::log('Can\'t delete file. File not writable: ' . $pathFile, TodoyuLogger::LEVEL_ERROR);
+					$success = false;
+				}
+			} else {
+				Todoyu::log('Can\'t delete file. File not found: ' . $pathFile, TodoyuLogger::LEVEL_ERROR);
+				$success = false;
 			}
 		}
+
+		return $success;
 	}
 
 
@@ -128,20 +148,23 @@ class TodoyuFileManager {
 			return false;
 		}
 
+		$success	= true;
+
 		$pathFolder	= self::pathAbsolute($pathFolder);
 
 		if( is_dir($pathFolder) ) {
 			self::deleteFolderContents($pathFolder, true);
 
 			$result	= rmdir($pathFolder);
-			if ( $result === false ) {
+			if( $result === false ) {
 				Todoyu::log('Folder deletion failed: ' . $pathFolder, TodoyuLogger::LEVEL_NOTICE);
+				$success = false;
 			}
 		} else {
-			$result	= false;
+			$success = false;
 		}
 
-		return $result;
+		return $success;
 	}
 
 
@@ -153,7 +176,7 @@ class TodoyuFileManager {
 	 * @return	String
 	 */
 	public static function makeCleanFilename($dirtyFilename, $replaceBy = '_') {
-		$pattern	= '|[^A-Za-z0-9\.-_\[\]()]|';
+		$pattern	= '|[^A-Za-z0-9\.\-_\[\]()]|';
 
 		return preg_replace($pattern, $replaceBy, $dirtyFilename);
 	}
@@ -252,14 +275,14 @@ class TodoyuFileManager {
 	/**
 	 * Move a file to the folder structure
 	 *
-	 * @param	String		$path
-	 * @param	String		$sourceFile
-	 * @param	String		$uploadFileName
-	 * @return	Boolean
+	 * @param	String			$path
+	 * @param	String			$sourceFile
+	 * @param	String			$uploadFileName
+	 * @return	String|Boolean	New file path or FALSE
 	 */
 	public static function addFileToStorage($path, $sourceFile, $uploadFileName, $prependWithTimestamp = true) {
 		$fileName	= ( $prependWithTimestamp === true ? NOW . '_' . $fileName : '') . self::makeCleanFilename($uploadFileName);
-		$filePath	= $path . DIR_SEP . $fileName;
+		$filePath	= self::pathAbsolute($path . '/' . $fileName);
 
 		$fileMoved	= move_uploaded_file($sourceFile, $filePath);
 
@@ -317,16 +340,35 @@ class TodoyuFileManager {
 	/**
 	 * Save content in file
 	 *
-	 * @param	String		$path
+	 * @param	String		$pathFile
 	 * @param	String		$content
 	 */
-	public static function saveFileContent($path, $content) {
-		$path	= self::pathAbsolute($path);
+	public static function saveFileContent($pathFile, $content) {
+		$pathFile	= self::pathAbsolute($pathFile);
 
-		if( is_file($path) && is_writable($path) ) {
-			file_put_contents($path, $content);
+		if( is_file($pathFile) && is_writable($pathFile) ) {
+			file_put_contents($pathFile, $content);
 		} else {
-			Todoyu::log('Can\'t open file! File: ' . $file, TodoyuLogger::LEVEL_ERROR);
+			Todoyu::log('Can\'t open file: ' . $pathFile, TodoyuLogger::LEVEL_ERROR);
+		}
+	}
+
+
+
+	/**
+	 * Get file content
+	 *
+	 * @param	String		$pathFile
+	 * @return	String
+	 */
+	public static function getFileContent($pathFile) {
+		$pathFile	= self::pathAbsolute($pathFile);
+
+		if( is_file($pathFile) && is_readable($pathFile) ) {
+			return file_get_contents($pathFile);
+		} else {
+			Todoyu::log('Can\'t open file! File: ' . $pathFile, TodoyuLogger::LEVEL_ERROR);
+			return '';
 		}
 	}
 
@@ -383,6 +425,9 @@ class TodoyuFileManager {
 	 * @return	Boolean		File was allowed to download and sent to browser
 	 */
 	public static function sendFile($absoluteFilePath, $mimeType = null, $filename = null) {
+			// Clear output buffer to prevent invalid file content
+		ob_clean();
+			// Get real path
 		$pathFile	= realpath($absoluteFilePath);
 
 		if( $pathFile !== false ) {
@@ -392,6 +437,7 @@ class TodoyuFileManager {
 					$filesize	= filesize($pathFile);
 					$filename	= is_null($filename) ? basename($pathFile) : $filename;
 					$filemodtime= filemtime($pathFile);
+
 					TodoyuHeader::sendDownloadHeaders($mimeType, $filename, $filesize, $filemodtime);
 
 						// Send file data
@@ -409,7 +455,7 @@ class TodoyuFileManager {
 				Todoyu::log('sendFile() failed because file was not readable: ' . $pathFile, TodoyuLogger::LEVEL_ERROR, $pathFile);
 			}
 		} else {
-			Todoyu::log('sendFile() failed because file was not found: ' . $pathFile, TodoyuLogger::LEVEL_ERROR, $pathFile);
+			Todoyu::log('sendFile() failed because file was not found: "' . $pathFile . '"', TodoyuLogger::LEVEL_ERROR, $pathFile);
 		}
 
 		return false;
@@ -480,12 +526,12 @@ class TodoyuFileManager {
 		foreach($elements as $element) {
 			if( is_file($pathFolder . DIR_SEP . $element) ) {
 					// No filters defined: add file to results array
-				if ( sizeof($filters) === 0) {
+				if( sizeof($filters) === 0) {
 					$files[] = $element;
 				} else {
 						// Check string filters
 					foreach($filters as $filterString) {
-						if ( strpos($element, $filterString) !== false ) {
+						if( strpos($element, $filterString) !== false ) {
 							$files[] = $element;
 							break;
 						}
@@ -523,25 +569,6 @@ class TodoyuFileManager {
 
 
 	/**
-	 * Get file content
-	 *
-	 * @param	String		$path
-	 * @return	String
-	 */
-	public static function getFileContent($path) {
-		$path	= self::pathAbsolute($path);
-
-		if( is_file($path) && is_readable($path) ) {
-			return file_get_contents($path);
-		} else {
-			Todoyu::log('Can\'t open file! File: ' . $file, TodoyuLogger::LEVEL_ERROR);
-			return '';
-		}
-	}
-
-
-
-	/**
 	 * Get file extension
 	 *
 	 * @param	String	$filename
@@ -549,6 +576,175 @@ class TodoyuFileManager {
 	 */
 	public static function getFileExtension($filename) {
 		return pathinfo($filename, PATHINFO_EXTENSION);
+	}
+
+
+	/**
+	 * Download a file from an external server and return the content
+	 * Use the options parameters to specify special options
+	 *
+	 * @todo	Implement other transfer methods. See t3lib_div::getURL() function
+	 * @param	String		$url		URL to resource. Should be as complete as possible. Ex: http://www.todoyu.com/archive.zip
+	 * @param	Array		$options	Several options
+	 * @return	String|Array|Boolean	String if download succeeded, FALSE if download failed, Array for special options config (ex: headers)
+	 */
+	public static function downloadFile($url, array $options = array()) {
+		if( function_exists('curl_init') ) {
+			$content		= self::downloadFile_CURL($url, $options);
+		} elseif( function_exists('fsockopen') ) {
+			$content		= self::downloadFile_SOCKET($url, $options);
+		} else {
+			$content		= 'NOT IMPLEMENTED YET';
+		}
+
+		return $content;
+	}
+
+	private static function downloadFile_CURL($url, array $options = array()) {
+		$ch	= curl_init();
+
+		if( $ch === false ) {
+			Todoyu::log('Failed to init curl', TodoyuLogger::LEVEL_FATAL);
+			return false;
+		}
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FAILONERROR, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+
+		if( $options['fullRequest'] || $options['onlyHeaders'] ) {
+			curl_setopt($ch, CURLOPT_HEADER, true);			
+		}
+
+		if( sizeof($options['requestHeaders']) > 0 ) {
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $options['requestHeaders']);
+		}
+
+		if( sizeof($options['curl']) > 0 ) {
+			curl_setopt_array($ch, $options['curl']);
+		}
+
+		$content = curl_exec($ch);
+
+		curl_close($ch);
+
+		if( $options['onlyHeaders'] ) {
+			$content	= TodoyuString::extractHttpHeaders($content);
+		}
+
+		return $content;
+	}
+
+
+
+
+	private static function downloadFile_SOCKET($url, array $options = array()) {
+		$parsedURL	= parse_url($url);
+		$port		= intval($parsedURL['port']);
+		$path		= trim($parsedURL['path']);
+		$query		= trim($parsedURL['query']);
+
+		if( $parsedURL['scheme'] === 'http' ) {
+			$scheme	= 'tcp://';
+		} elseif( $parsedURL['scheme'] === 'https' ) {
+			$scheme	= 'ssl://';
+		}
+
+		if( $port === 0 ) {
+			if( $parsedURL['scheme'] === 'http' ) {
+				$port	= 80;
+			} elseif( $parsedURL['scheme'] === 'https' ) {
+				$port	= 443;
+			}
+		}
+
+		if( $path === '' ) {
+			$path = '/';
+		}
+
+		if( $query !== '' ) {
+			$query = '?' . $query;
+		}
+		
+		$fp = @fsockopen($scheme . $parsedURL['host'], $port, $errno, $errstr, 2.0);
+
+			// Connection failed
+		if( $fp === false ) {
+			Todoyu::log('File download with socket failed. URL=' . $url . ' - ' . $errno . ' - ' . $errstr, TodoyuLogger::LEVEL_ERROR);
+			return false;
+		}
+
+
+		$requestHeaders	= array();
+
+		$requestHeaders[]	= 'GET ' . $path . $query . ' HTTP/1.0';
+		$requestHeaders[]	= 'Host: ' . $parsedURL['host'];
+		$requestHeaders[]	= 'Connection: close';
+
+		if( sizeof($options['requestHeaders']) > 0 ) {
+			$requestHeaders = array_merge($requestHeaders, $options['requestHeaders']);
+		}
+
+		$requestHead	= implode($requestHeaders, "\r\n") . "\r\n\r\n";
+		
+		fputs($fp, $requestHead);
+
+		$content	= '';
+
+		while( ! feof($fp) ) {
+			$line = fgets($fp, 2048);
+
+			$content .= $line;
+		}
+
+		fclose($fp);
+
+		if( $options['fullResponse'] ) {
+			// Do nothing
+		} else {
+			if($options['onlyHeaders']) {
+				$content		= TodoyuString::extractHttpHeaders($content);
+			} else {
+				$requestParts	= explode("\r\n\r\n", $content);
+				$content		= $requestParts[1];
+			}
+		}
+
+		return $content;
+	}
+
+
+
+	/**
+	 * Save a local copy of a file from an external server
+	 *
+	 * @param	String			$url
+	 * @param	String|Boolean	$targetPath			Path to locale file or FALSE for temp file
+	 * @param	Array			$options
+	 * @return	String|Boolean	Path to local file or FALSE
+	 */
+	public static function saveLocalCopy($url, $targetPath = false, array $options = array()) {
+		$content	= self::downloadFile($url, $options);
+
+		if( is_string($content) ) {
+			if( $targetPath === false || $targetPath === '' ) {
+				$targetPath	= self::pathAbsolute(PATH_CACHE . '/temp/' . md5($url.time()));
+			} else {
+				$targetPath	= self::pathAbsolute($targetPath);
+			}
+
+			self::makeDirDeep(dirname($targetPath));
+
+			file_put_contents($targetPath, $content);
+
+			return $targetPath;
+		} else {
+			Todoyu::log('saveLocalCopy of ' . $url . ' failed', TodoyuLogger::LEVEL_ERROR);
+			return false;
+		}		
 	}
 
 }

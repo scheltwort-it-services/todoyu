@@ -60,9 +60,9 @@ class TodoyuPasswordValidator {
 
 		foreach($functions as $function) {
 				// Only check if config is not set to FALSE
-			if ( $this->checks[$function] !== false ) {
+			if( $this->checks[$function] !== false ) {
 					// Check if validtor exists
-				if ( method_exists($this, $function) ) {
+				if( method_exists($this, $function) ) {
 					call_user_func(array($this, $function), $value, $this->checks[$function]);
 				} else {
 					Todoyu::log('Invalid password validator function: ' . $function, TodoyuLogger::LEVEL_ERROR);
@@ -124,7 +124,7 @@ class TodoyuPasswordValidator {
 		$value	= trim($value);
 		$length	= intval($config);
 
-		if ( strlen($value) < $length ) {
+		if( strlen($value) < $length ) {
 			$errorMessage = str_replace('%s', $length, Label('LLL:contact.password.minLengthIfNotEmpty'));
 			$this->addError($errorMessage);
 		}
@@ -139,7 +139,7 @@ class TodoyuPasswordValidator {
 		$pattern= '/[0-9]+/';
 		$valid	= preg_match($pattern, $value);
 
-		if ( ! $valid ) {
+		if( ! $valid ) {
 			$this->addError(Label('contact.password.numbers'));
 		}
 	}
@@ -149,11 +149,11 @@ class TodoyuPasswordValidator {
 	/**
 	 * Checks password for lower case
 	 */
-	private function hasLowerCase($value, $config)	{
+	private function hasLowerCase($value, $config) {
 		$pattern= '/[a-z]+/';
 		$valid	= preg_match($pattern, $value);
 
-		if ( ! $valid ) {
+		if( ! $valid ) {
 			$this->addError(Label('contact.password.lower'));
 		}
 	}
@@ -163,11 +163,11 @@ class TodoyuPasswordValidator {
 	/**
 	 * Checks password for upper case
 	 */
-	private function hasUpperCase($value, $config)	{
+	private function hasUpperCase($value, $config) {
 		$pattern= '/[A-Z]+/';
 		$valid	= preg_match($pattern, $value);
 
-		if ( ! $valid ) {
+		if( ! $valid ) {
 			$this->addError(Label('contact.password.upper'));
 		}
 	}
@@ -181,7 +181,7 @@ class TodoyuPasswordValidator {
 		$pattern= '/[^a-zA-Z0-9]+/';
 		$valid	= preg_match($pattern, $value);
 
-		if ( ! $valid ) {
+		if( ! $valid ) {
 			$this->addError(Label('contact.password.special'));
 		}
 	}

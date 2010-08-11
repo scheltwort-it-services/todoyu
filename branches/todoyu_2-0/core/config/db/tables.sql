@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- Table structure for table  `history`
+-- Table structure for table `system_log`
 --
 
 CREATE TABLE `system_log` (
@@ -17,7 +17,7 @@ CREATE TABLE `system_log` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table  `log`
+-- Table structure for table `system_errorlog`
 --
 
 CREATE TABLE `system_errorlog` (
@@ -36,7 +36,7 @@ CREATE TABLE `system_errorlog` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table  `static_country`
+-- Table structure for table `static_country`
 --
 
 CREATE TABLE `static_country` (
@@ -52,7 +52,7 @@ CREATE TABLE `static_country` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table  `static_country_zone`
+-- Table structure for table `static_country_zone`
 --
 
 CREATE TABLE `static_country_zone` (
@@ -67,27 +67,7 @@ CREATE TABLE `static_country_zone` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table  `static_currency`
---
-
-CREATE TABLE IF NOT EXISTS `static_currency` (
-	`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-	`code` char(3) NOT NULL,
-	`iso_num` int(11) unsigned NOT NULL,
-	`symbol_left` varchar(12) NOT NULL,
-	`symbol_right` varchar(12) NOT NULL,
-	`sign_thousand` char(1) NOT NULL,
-	`sign_decimal` char(1) NOT NULL,
-	`decimal_digits` tinyint(3) unsigned NOT NULL,
-	`decimal_round` smallint(4) unsigned NOT NULL,
-	`decimal_divisor` int(11) NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table  `static_territory`
+-- Table structure for table `static_territory`
 --
 
 CREATE TABLE `static_territory` (
@@ -100,7 +80,7 @@ CREATE TABLE `static_territory` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table  `static_language`
+-- Table structure for table `static_language`
 --
 
 CREATE TABLE `static_language` (
@@ -167,7 +147,6 @@ CREATE TABLE `system_preference` (
 	KEY `fast` (`id_person`,`ext`,`preference`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-
 -- --------------------------------------------------------
 
 --
@@ -182,7 +161,6 @@ CREATE TABLE `system_right` (
 	PRIMARY KEY (`id`),
 	KEY `ext` (`ext`,`id_role`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 
 -- --------------------------------------------------------
 
@@ -200,31 +178,33 @@ CREATE TABLE `static_timezone` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `system_freeze`
+-- Table structure for table `system_freeze`
 --
 
 CREATE TABLE IF NOT EXISTS `system_freeze` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date_create` int(11) NOT NULL,
-  `date_update` int(11) NOT NULL,
-  `id_person_create` int(11) NOT NULL,
-  `element_type` varchar(255) NOT NULL,
-  `element_id` int(11) NOT NULL,
-  `data` text NOT NULL,
-  `hash` varchar(32) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `original` (`element_type`,`element_id`)
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`date_create` int(11) NOT NULL,
+	`date_update` int(11) NOT NULL,
+	`id_person_create` int(11) NOT NULL,
+	`element_type` varchar(255) NOT NULL,
+	`element_id` int(11) NOT NULL,
+	`data` text NOT NULL,
+	`hash` varchar(32) NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `original` (`element_type`,`element_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+-- --------------------------------------------------------
+
 --
--- Tabellenstruktur für Tabelle `system_lock`
+-- Table structure for table `system_lock`
 --
 
 CREATE TABLE `system_lock` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ext` smallint(6) NOT NULL,
-  `table` varchar(60) NOT NULL,
-  `id_record` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`ext` smallint(6) NOT NULL,
+	`table` varchar(60) NOT NULL,
+	`id_record` int(11) NOT NULL,
+	PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

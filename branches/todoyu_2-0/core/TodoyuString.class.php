@@ -57,7 +57,7 @@ class TodoyuString {
 	 * @return	String
 	 */
 	public static function getAsUtf8($string) {
-		return self::isUTF8($string) ? $string : self::convertToUTF8($string);		
+		return self::isUTF8($string) ? $string : self::convertToUTF8($string);
 	}
 
 
@@ -68,7 +68,7 @@ class TodoyuString {
 	 * @param	String		Input string to evaluate
 	 * @return	Boolean		Returns true if the $email address (input string) is valid; Has a "@", domain name with at least one period and only allowed a-z characters.
 	 */
-	public static function isValidEmail($email)	{
+	public static function isValidEmail($email) {
 		$email = trim ($email);
 		if( strstr($email,' ') ) {
 			return false;
@@ -122,7 +122,7 @@ class TodoyuString {
 	 * @param	String	$wrap			<tag>|</tag>
 	 * @return	String
 	 */
-	public static function wrap($string, $wrap)	{
+	public static function wrap($string, $wrap) {
 		return str_replace('|', $string, $wrap);
 	}
 
@@ -222,7 +222,7 @@ class TodoyuString {
 	 * @param	String		$listSeparator		List element separating character
 	 * @return	Boolean
 	 */
-	public static function isInList($item, $listString, $listSeparator = ',')	{
+	public static function isInList($item, $listString, $listSeparator = ',') {
 		$list	= explode($listSeparator, $listString);
 
 		return in_array($item, $list);
@@ -426,6 +426,33 @@ class TodoyuString {
 		$info['status']		= $status;
 
 		return $info;
+	}
+
+
+	/**
+	 * Extract the headers from a full HTTP response (including headers and content)
+	 *
+	 * @param	String		$responseContent
+	 * @return	Array
+	 */
+	public static function extractHttpHeaders($responseContent) {
+			// Split header and content
+		list($header) = explode("\r\n\r\n", $responseContent);
+
+			// Split header pairs
+		$headerPairs= explode("\r\n", $header);
+		$headers	= array();
+
+			// Add HTTP staus as status key
+		$headers['status'] = array_shift($headerPairs);
+
+			// Add the rest of the header pairs
+		foreach($headerPairs as $headerPair) {
+			list($key, $value) = explode(':', $headerPair);
+			$headers[trim($key)] = trim($value);
+		}
+
+		return $headers;
 	}
 
 }

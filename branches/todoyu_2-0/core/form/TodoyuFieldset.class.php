@@ -290,20 +290,20 @@ class TodoyuFieldset implements ArrayAccess {
 
 
 	/**
-	 * Add all elements of a form to this fieldset
+	 * Add all elements of a form to this field set
 	 *
-	 * @param	 $xmlPath		Path to sub form XML file
+	 * @param	String		$xmlPath		Path to sub form XML file
 	 */
 	public function addElementsFromXML($xmlPath, $position = null) {
 		$xmlPath	= TodoyuFileManager::pathAbsolute($xmlPath);
 		$form		= TodoyuFormManager::getForm($xmlPath);
 
-		$fieldsets	= $form->getFieldsets();
+		$fieldSets	= $form->getFieldsets();
 
-		foreach($fieldsets as $fieldset) {
-			$this->injectFieldset($fieldset, $position);
+		foreach($fieldSets as $fieldSet) {
+			$this->injectFieldset($fieldSet, $position);
 
-			$position = 'after:' . $fieldset->getName();
+			$position = 'after:' . $fieldSet->getName();
 		}
 	}
 
@@ -523,15 +523,15 @@ class TodoyuFieldset implements ArrayAccess {
 
 
 	/**
-	 * Returns all subfieldsets
+	 * Return all sub fieldSets
 	 *
 	 * @return	Array
 	 */
-	public function getFieldsets()	{
+	public function getFieldsets() {
 		$fieldsets = array();
 
-		foreach($this->elements as $element)	{
-			if( $element instanceof Fieldset )	{
+		foreach($this->elements as $element) {
+			if( $element instanceof Fieldset ) {
 				$fieldsets[] = $element;
 			}
 		}
@@ -546,11 +546,11 @@ class TodoyuFieldset implements ArrayAccess {
 	 *
 	 * @param TodoyuForm $form
 	 */
-	public function setFieldsToForm(TodoyuForm $form)	{
-		foreach($this->elements as $element)	{
-			if( $element instanceof TodoyuFormElement )	{
+	public function setFieldsToForm(TodoyuForm $form) {
+		foreach($this->elements as $element) {
+			if( $element instanceof TodoyuFormElement ) {
 				$form->registerField($element);
-			} else if( $element instanceof TodoyuFieldset )	{
+			} else if( $element instanceof TodoyuFieldset ) {
 				$element->setFieldsToForm($form);
 			}
 		}

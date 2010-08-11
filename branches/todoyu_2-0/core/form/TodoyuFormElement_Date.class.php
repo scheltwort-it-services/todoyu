@@ -37,6 +37,7 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 	 */
 	public function __construct($name, TodoyuFieldset $fieldset, array $config = array()) {
 		parent::__construct('date', $name, $fieldset, $config);
+		parent::setValue(false);
 	}
 
 
@@ -130,7 +131,7 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 		return TodoyuTime::parseDate($dateString);
 	}
 
-	
+
 
 	/**
 	 * Set field value
@@ -140,7 +141,7 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 	 * @param	Mixed		$value
 	 */
 	public function setValue($value) {
-			// Check for "no-data" values
+				// Check for "no-data" values
 		if( $value === false || intval($value) === 0 || trim($value) == '' || trim($value) == '0000-00-00')	 {
 			$value = false;
 		} elseif( ! is_numeric($value) ) {
@@ -173,11 +174,11 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 	 */
 	public function getStorageData() {
 			// Check for no storage flag
-		if( $this->isNoStorageField() ) {
+		if( $this->isNoStorageField() && $this->hasValidations() === false ) {
 			return false;
 		} else {
 			$storageData= $this->getValue();
-			
+
 				// If storeAsDate, format in mysql date format
 			if( $this->hasAttribute('storeAsDate') ) {
 					// Set to zero if no data entered

@@ -37,6 +37,7 @@ class TodoyuInstallerManager {
 
 		if( array_key_exists('locale', $data) ) {
 			TodoyuSession::set('installer/locale', $data['locale']);
+			TodoyuLocaleManager::setLocaleCookie($data['locale']);
 			TodoyuInstaller::setStep('license');
 			TodoyuHeader::location('index.php');
 		}
@@ -122,11 +123,18 @@ class TodoyuInstallerManager {
 	 */
 	public static function processDbSelect(array $data) {
 		$result		= array();
-		
-		$database	= trim($data['database']);
-		$databaseNew= trim($data['database_new']);
 
-		if( !empty($database) || !empty($databaseNew) ) {
+		$database		= trim($data['database']);
+		$databaseNew	= trim($data['database_new']);
+		$databaseManual	= trim($data['database_manual']);
+
+			// Database has been specified manually
+		if ( ! empty($databaseManual) && empty($database) ) {
+			$database	= $databaseManual;
+		}
+
+			// Setup usage of selected database or create new one as specified
+		if( ! empty($database) || ! empty($databaseNew) ) {
 			$dbConf		= TodoyuSession::get('installer/db');
 			$databases	= TodoyuDbAnalyzer::getDatabasesOnServer($dbConf);
 			$success	= false;
@@ -134,6 +142,7 @@ class TodoyuInstallerManager {
 			$createDb	= false;
 
 			if( ! empty($databaseNew) ) {
+					// Create new database for todoyu
 				if( ! in_array($databaseNew, $databases) ) {
 					$useDatabase= $databaseNew;
 					$createDb	= true;
@@ -142,6 +151,7 @@ class TodoyuInstallerManager {
 					$result['textClass']= 'error';
 				}
 			} else {
+					// Use specified existing database for todoyu
 				$useDatabase	= $database;
 			}
 
@@ -246,12 +256,12 @@ class TodoyuInstallerManager {
 		if( isset($data['password']) && isset($data['company']) && isset($data['firstname']) && isset($data['lastname']) ) {
 			$emailOk	= TodoyuString::isValidEmail(trim($data['email']));
 			$companyOk	= strlen(trim($data['company'])) >= 1;
-			$firstnameOk= strlen(trim($data['firstname'])) >= 1;
-			$lastnameOk	= strlen(trim($data['lastname'])) >= 1;			
+			$firstNameOk= strlen(trim($data['firstname'])) >= 1;
+			$lastNameOk	= strlen(trim($data['lastname'])) >= 1;
 			$passwordOk	= strlen(trim($data['password'])) >= 5 && $data['password'] === $data['password_confirm'];
 
 				// Verified. save account data
-			if( $emailOk && $companyOk && $firstnameOk && $lastnameOk && $passwordOk ) {
+			if( $emailOk && $companyOk && $firstNameOk && $lastNameOk && $passwordOk ) {
 				self::saveInternalCompanyName($data['company']);
 				self::saveAdminAccountData($data['email'], $data['password'], $data['firstname'], $data['lastname']);
 
@@ -396,7 +406,7 @@ class TodoyuInstallerManager {
 
 
 	/**
-	 * Disable the installer, remove redirector files, clear session and go to login
+	 * Disable the installer, remove redirection files, clear session and go to login
 	 */
 	public static function finishInstallerAndJumpToLogin() {
 		self::disableInstaller();
@@ -433,7 +443,7 @@ class TodoyuInstallerManager {
 	 * Jump to log-in page
 	 */
 	public static function goToLogInPage() {
-		TodoyuHeader::location(dirname(TODOYU_URL) . '/index.php', true);
+		TodoyuHeader::location(TODOYU_URL . '/index.php', true);
 	}
 
 
@@ -462,11 +472,13 @@ class TodoyuInstallerManager {
 	 * @param	String		$name
 	 */
 	private static function saveInternalCompanyName($name) {
+		$name	= trim($name);
+
 		$table	= 'ext_contact_company';
 		$where	= 'id = 1';
 		$update	= array(
-			'title'		=> trim($name),
-			'shortname'	=> trim($name),
+			'title'		=> $name,
+			'shortname'	=> $name,
 			'date_enter'=> NOW
 		);
 
@@ -474,13 +486,14 @@ class TodoyuInstallerManager {
 	}
 
 
-	
+
 	/**
 	 * Update admin-user password (and username)
 	 *
+	 * @param	String		$email
+	 * @param	String		$password
 	 * @param	String		$firstName
 	 * @param	String		$lastName
-	 * @param	String		$password
 	 */
 	private static function saveAdminAccountData($email, $password, $firstName, $lastName) {
 		$email		= trim($email);
@@ -488,14 +501,17 @@ class TodoyuInstallerManager {
 		$lastName	= trim($lastName);
 		$password	= trim($password);
 
+		$shortName	= strtoupper(substr($firstName, 0, 2) . substr($lastName, 0, 2));
+		$passHash	= md5($password);
+
 		$table	= 'ext_contact_person';
 		$where	= 'username = \'admin\'';
 		$update	= array(
 			'email'			=> $email,
 			'firstname'		=> $firstName,
 			'lastname'		=> $lastName,
-			'shortname'		=> strtoupper(substr($firstName, 0, 2) . substr($lastName, 0, 2)),
-			'password'		=> md5($password)
+			'shortname'		=> $shortName,
+			'password'		=> $passHash
 		);
 
 		Todoyu::db()->doUpdate($table, $where, $update);
@@ -519,7 +535,7 @@ class TodoyuInstallerManager {
 
 
 	/**
-	 * Import data from .sql file
+	 * Import data from SQL file
 	 *
 	 * @param	String		$file
 	 */
@@ -573,7 +589,7 @@ class TodoyuInstallerManager {
 
 
 	/**
-	 * Check if installed php version is at least 5.2
+	 * Check if installed PHP version is at least 5.2
 	 *
 	 * @return	String
 	 */
@@ -593,7 +609,6 @@ class TodoyuInstallerManager {
 			'error'	=> false,
 			'files'	=> array()
 		);
-
 
 		foreach($elements as $element) {
 			$path	= TodoyuFileManager::pathAbsolute($element);
@@ -686,7 +701,7 @@ class TodoyuInstallerManager {
 	 * @param	Array		$dbConfig
 	 * @return	Boolean
 	 */
-	public static function addDatabase($databaseName, array $dbConfig)	{
+	public static function addDatabase($databaseName, array $dbConfig) {
 		$link	= mysql_connect($dbConfig['server'], $dbConfig['username'], $dbConfig['password']);
 		$query	= 'CREATE DATABASE `' . $databaseName . '` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;';
 
@@ -736,7 +751,7 @@ class TodoyuInstallerManager {
 			$deletionFiles	= TodoyuArray::assure(Todoyu::$CONFIG['INSTALLER']['oldFiles']['deleteFiles']);
 			foreach($deletionFiles as $pathFile) {
 				$pathFile	= TodoyuFileManager::pathAbsolute($pathFile);
-				if ( is_file($pathFile) ) {
+				if( is_file($pathFile) ) {
 					unlink($pathFile);
 				}
 			}
@@ -745,7 +760,7 @@ class TodoyuInstallerManager {
 			$deletionFolderContents	= TodoyuArray::assure(Todoyu::$CONFIG['INSTALLER']['oldFiles']['deleteFolderContents']);
 			foreach($deletionFolderContents as $pathFolder) {
 				$pathFolder	= TodoyuFileManager::pathAbsolute($pathFolder);
-				if ( is_dir($pathFolder) ) {
+				if( is_dir($pathFolder) ) {
 					TodoyuFileManager::deleteFolderContents($pathFolder);
 				}
 			}
@@ -754,7 +769,7 @@ class TodoyuInstallerManager {
 			$deletionFolders	= TodoyuArray::assure(Todoyu::$CONFIG['INSTALLER']['oldFiles']['deleteFolders']);
 			foreach($deletionFolders as $pathFolder) {
 				$pathFolder	= TodoyuFileManager::pathAbsolute($pathFolder);
-				if ( is_dir($pathFolder) ) {
+				if( is_dir($pathFolder) ) {
 					TodoyuFileManager::deleteFolder($pathFolder);
 				}
 			}
@@ -791,10 +806,10 @@ class TodoyuInstallerManager {
 		$currentString	= '$CONFIG[';
 		$newString		= 'Todoyu::$CONFIG[';
 
-		foreach($files as $file)	{
+		foreach($files as $file) {
 			$file	= TodoyuFileManager::pathAbsolute('config/' . $file);
 
-			if( is_file($file) )	{
+			if( is_file($file) ) {
 				$content	= file_get_contents($file);
 
 				if( ! strstr($content, $newString) ) {
@@ -874,7 +889,7 @@ class TodoyuInstallerManager {
 
 	}
 
-	
+
 
 	/**
 	 * Run version updates.
@@ -883,13 +898,13 @@ class TodoyuInstallerManager {
 	public static function runVersionUpdates() {
 		TodoyuDebug::printInFireBug('runVersionUpdates');
 		$lastVersion	= self::getLastVersion();
-		
+
 		self::runVersionUpdatesSQL($lastVersion);
 		self::runVersionUpdatesPHP($lastVersion);
 
 		self::saveCurrentVersion();
 	}
-	
+
 
 
 	/**
@@ -906,7 +921,7 @@ class TodoyuInstallerManager {
 			TodoyuSQLManager::executeQueriesFromFile($baseFolder . '/' . $updateFile);
 		}
 	}
-	
+
 
 
 	/**
@@ -966,7 +981,7 @@ class TodoyuInstallerManager {
 	}
 
 
-	
+
 	/**
 	 * Find the last version of todoyu (and the database)
 	 * Tries to read to LAST_VERSION file. If not available, use to current todoyu version

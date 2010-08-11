@@ -9,19 +9,6 @@
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
-
--- --------------------------------------------------------
-
---
--- Data for Table `ext_assets_asset`
---
-
-INSERT INTO `ext_assets_asset` (`id`, `date_create`, `date_update`, `id_person_create`, `deleted`, `id_parent`, `parenttype`, `is_public`, `file_ext`, `file_storage`, `file_name`, `file_size`, `file_mime`, `file_mime_sub`) VALUES
-(1, 1264699957, 1264699957, 17, 0, 60, 1, 0, 'jpg', 'task/60/1264699957_humor_cartoon_42304c994c0da5c1ec2fd8e5d2dba52b_h.jpg', 'humor,cartoon-42304c994c0da5c1ec2fd8e5d2dba52b_h.jpg', 31922, 'image', 'jpeg'),
-(2, 1264700333, 1264700333, 17, 0, 106, 1, 0, 'jpg', 'task/106/1264700333_humor_cartoon_42304c994c0da5c1ec2fd8e5d2dba52b_h.jpg', 'humor,cartoon-42304c994c0da5c1ec2fd8e5d2dba52b_h.jpg', 31922, 'image', 'jpeg'),
-(3, 1264777318, 1264777318, 18, 0, 60, 1, 1, 'jpg', 'task/60/1264777318_startsprung.jpg', 'startsprung.jpg', 2629, 'image', 'jpeg'),
-(4, 1264778177, 1264778177, 18, 0, 134, 1, 0, 'jpg', 'task/134/1264778177_gettodoyu.jpg', 'gettodoyu.jpg', 1222, 'image', 'jpeg');
-
 -- --------------------------------------------------------
 
 --
@@ -263,7 +250,7 @@ INSERT INTO `ext_project_project` (`id`, `date_create`, `date_update`, `id_perso
 (11, 1264679825, 1264681779, 1, 0, 1264633200, 1267225200, 1267225200, 'Monthly support', '<p>Monthly support</p>', 8, 9),
 (12, 1264680252, 1264681686, 1, 0, 1231110000, 1234479600, 1235084400, 'Redesign', '<p>Redesign</p>', 8, 12),
 (13, 1264680885, 1264681744, 1, 0, 1243461600, 1248645600, 1248645600, 'Redesign', '<p>Redesign</p>', 9, 15),
-(14, 1264777540, 1264777661, 12, 0, 1266793200, 1269558000, 1269558000, 'New Opensource Server', '<p>Build a new server for opensource projects</p>', 1, 15);
+(14, 1264777540, 1264777661, 12, 0, 1266793200, 1269558000, 1269558000, 'New Opensource Server', '<p>Build a new server for opensource projects</p>', 3, 15);
 
 -- --------------------------------------------------------
 
@@ -448,14 +435,14 @@ INSERT INTO `ext_project_role` (`id`, `date_create`, `id_person_create`, `date_u
 -- Data for Table `ext_project_worktype`
 --
 
-INSERT INTO `ext_project_worktype` (`id`, `date_update`, `id_person_create`, `date_create`, `deleted`, `title`, `type`) VALUES
-(1, 1254232852, 1, 1254232852, 0, 'Consulting', 0),
-(2, 1254232863, 1, 1254232863, 0, 'Java-Development', 0),
-(3, 1254232867, 1, 1254232867, 0, 'Design', 0),
-(4, 1254232876, 1, 1254232876, 0, 'Testing', 0),
-(5, 0, 1, 1264696282, 0, 'Frontend Engineering', 0),
-(6, 0, 1, 1264696297, 0, 'Database Engineering', 0),
-(7, 0, 17, 1264778822, 0, 'Documentation', 0);
+INSERT INTO `ext_project_worktype` (`id`, `date_update`, `id_person_create`, `date_create`, `deleted`, `title`) VALUES
+(1, 1254232852, 1, 1254232852, 0, 'Consulting'),
+(2, 1254232863, 1, 1254232863, 0, 'Java-Development'),
+(3, 1254232867, 1, 1254232867, 0, 'Design'),
+(4, 1254232876, 1, 1254232876, 0, 'Testing'),
+(5, 0, 1, 1264696282, 0, 'Frontend Engineering'),
+(6, 0, 1, 1264696297, 0, 'Database Engineering'),
+(7, 0, 17, 1264778822, 0, 'Documentation');
 
 -- --------------------------------------------------------
 
@@ -577,18 +564,18 @@ INSERT INTO `ext_contact_address` (`id`, `date_create`, `date_update`, `id_perso
 -- Data for Table `ext_contact_company`
 --
 
-INSERT INTO `ext_contact_company` (`id`, `date_create`, `date_update`, `id_person_create`, `deleted`, `title`, `shortname`, `id_currency`, `date_enter`, `is_internal`, `ext_projectbilling_reduction`) VALUES
-(8, 1264581712, 1269508233, 1, 0, 'Eisbergen GmbH', 'Eisbergen', 0, 1262300400, 0, 0),
-(9, 1264581965, 1269508901, 1, 0, 'Gripgrap Communications', 'Gripgrap', 0, 1262300400, 0, 0),
-(10, 1264582231, 1269509705, 1, 0, 'Transmetric Measure Co.', 'TransMeas', 0, 1217541600, 0, 0),
-(11, 1264582333, 1269508400, 1, 0, 'ABC-Tec Holding', 'ABCT', 0, 1262300400, 0, 0),
-(12, 1264582503, 1269508373, 1, 0, 'World Watches Fedaration', 'WWF', 0, 1262300400, 0, 0),
-(13, 1264583324, 1269509036, 1, 0, 'Innovacation Inc.', 'InnoVac', 0, 978303600, 0, 0),
-(14, 1264583514, 1269508492, 1, 0, 'Goodmonth', 'Goodmonth', 0, 1262300400, 0, 0),
-(15, 1264583707, 1269509362, 1, 0, 'Sugarion', 'sugarion', 0, 1262300400, 0, 0),
-(16, 1264583917, 1269508153, 1, 0, 'Customers ACME', 'Customers', 0, 1262300400, 0, 0),
-(17, 1264584243, 1269508609, 1, 0, 'Rainbowflag Ltd.', 'RBF', 0, 0, 0, 0),
-(18, 1264587852, 1269509105, 1, 0, 'snowman production AG', 'smp', 0, 1262300400, 1, 0);
+INSERT INTO `ext_contact_company` (`id`, `date_create`, `date_update`, `id_person_create`, `deleted`, `title`, `shortname`, `id_currency`, `date_enter`, `is_internal`) VALUES
+(8, 1264581712, 1269508233, 1, 0, 'Eisbergen GmbH', 'Eisbergen', 0, 1262300400, 0),
+(9, 1264581965, 1269508901, 1, 0, 'Gripgrap Communications', 'Gripgrap', 0, 1262300400, 0),
+(10, 1264582231, 1269509705, 1, 0, 'Transmetric Measure Co.', 'TransMeas', 0, 1217541600, 0),
+(11, 1264582333, 1269508400, 1, 0, 'ABC-Tec Holding', 'ABCT', 0, 1262300400, 0),
+(12, 1264582503, 1269508373, 1, 0, 'World Watches Fedaration', 'WWF', 0, 1262300400, 0),
+(13, 1264583324, 1269509036, 1, 0, 'Innovacation Inc.', 'InnoVac', 0, 978303600, 0),
+(14, 1264583514, 1269508492, 1, 0, 'Goodmonth', 'Goodmonth', 0, 1262300400, 0),
+(15, 1264583707, 1269509362, 1, 0, 'Sugarion', 'sugarion', 0, 1262300400, 0),
+(16, 1264583917, 1269508153, 1, 0, 'Customers ACME', 'Customers', 0, 1262300400, 0),
+(17, 1264584243, 1269508609, 1, 0, 'Rainbowflag Ltd.', 'RBF', 0, 0, 0),
+(18, 1264587852, 1269509105, 1, 0, 'snowman production AG', 'smp', 0, 1262300400, 1);
 
 -- --------------------------------------------------------
 

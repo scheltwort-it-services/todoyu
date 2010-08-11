@@ -21,7 +21,7 @@
  * @namespace	Todoyu.Ui
  */
 Todoyu.Ui = {
-	
+
 	bodyClickObservers: [],
 
 	/**
@@ -105,7 +105,7 @@ Todoyu.Ui = {
 	 * @param	{String}	url
 	 * @param	{Object}	options
 	 */
-	insert: function(container, url, options)	{
+	insert: function(container, url, options) {
 		options = this._getDefaultOptions(options);
 		options.insertion = 'bottom';
 
@@ -308,7 +308,7 @@ Todoyu.Ui = {
 	 * @param	{Boolean}		showLoader
 	 */
 	ajaxLoader: function(showLoader) {
-		Todoyu.Headlet.show(showLoader);	
+		Todoyu.Headlet.show(showLoader);
 	},
 
 
@@ -398,7 +398,7 @@ Todoyu.Ui = {
 	scrollToElement: function(element) {
 		element = $(element);
 		element.scrollTo();
-				
+
 		if( Todoyu.exists('header') ) {
 			var headerHeight	= $('header').getHeight();
 			var scrollOffset	= element.cumulativeScrollOffset().top;
@@ -537,7 +537,7 @@ Todoyu.Ui = {
 	 * Get document title, without the " - todoyu" postfix (shown in browser window title bar)
 	 * 
 	 * @return String
-	 */	
+	 */
 	getTitle: function(strip) {
 		if( strip === false ) {
 			return document.title;
@@ -554,7 +554,7 @@ Todoyu.Ui = {
 	 * @param	{String}		filename
 	 * @todo	NOT USED...
 	 */
-	loadJSFile: function(filename)	{
+	loadJSFile: function(filename) {
 		var fileref=document.createElement( 'script' );
 		fileref.setAttribute( "type" , "text/javascript" );
 		fileref.setAttribute( "src" , filename );
@@ -570,7 +570,7 @@ Todoyu.Ui = {
 	 * @param	{String}		filename
 	 * @todo	NOT USED...
 	 */
-	loadCSSFile: function(filename)	{
+	loadCSSFile: function(filename) {
 		var fileref=document.createElement( "link" );
 		fileref.setAttribute( "rel" , "stylesheet" );
 		fileref.setAttribute( "type" , "text/css" );
@@ -586,14 +586,14 @@ Todoyu.Ui = {
 	 *
 	 * @param	fileref
 	 */
-	appendAssetToHead: function(fileref)	{
-		if (typeof fileref!="undefined")	{
-			 document.getElementsByTagName( "head" )[0].appendChild( fileref );
+	appendAssetToHead: function(fileref) {
+		if( typeof fileref!="undefined" ) {
+			 document.getElementsByTagName( "head" )[0].appendChild(fileref);
 		}
 	},
-		
-	
-	
+
+
+
 	/**
 	 * Observe body for click events
 	 */
