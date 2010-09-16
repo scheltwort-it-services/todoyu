@@ -17,6 +17,12 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
+/**
+ * Notification
+ *
+ * @namespace	Todoyu.Notification
+ */
+
 Todoyu.Notification = {
 
 	SUCCESS:	'success',
@@ -164,6 +170,9 @@ Todoyu.Notification = {
 
 
 
+	/**
+	 *	Fade-out all notifications
+	 */
 	fadeAllNotes: function() {
 		$$('.note').each(function(note){
 			Effect.Fade(note.id, {'duration': 0.3});
@@ -172,6 +181,9 @@ Todoyu.Notification = {
 
 
 
+	/**
+	 * Close first (topmost) of the currently displayed notifications
+	 */
 	closeFirstNote: function() {
 		var notes = $('notes').select('div.note');
 
@@ -254,7 +266,7 @@ Todoyu.Notification = {
 
 
 	/**
-	 * Check if the header of the response
+	 * Check whether the todoyu specific 'note' HTTP header was received
 	 * 
 	 * @param	{Ajax.Response}		response
 	 */

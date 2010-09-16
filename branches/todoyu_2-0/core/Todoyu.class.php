@@ -73,6 +73,14 @@ class Todoyu {
 	private static $person;
 
 
+	/**
+	 * Currently used timezone
+	 *
+	 * @var	String
+	 */
+	private static $timezone;
+
+
 
 	/**
 	 * Initialize static Todoyu class
@@ -89,20 +97,44 @@ class Todoyu {
 
 	/**
 	 * Set system timezone
+	 *
+	 * @param	String|Boolean	$forceTimezone		Set new timezone
 	 */
-	public static function setTimezone() {
-		if( self::db()->isConnected() ) {
-			$timezone	= self::person()->getTimezone();
+	public static function setTimezone($forceTimezone = false) {
+		if( $forceTimezone === false ) {
+			$timezone	= self::getTimezone();
 		} else {
-			$timezone	= false;
-		}
-
-		if( $timezone === false ) {
-			$timezone = self::$CONFIG['SYSTEM']['timezone'];
+			$timezone		= $forceTimezone;
+			self::$timezone	= $forceTimezone;
 		}
 
 			// Set default timezone
 		date_default_timezone_set($timezone);
+	}
+
+
+
+	/**
+	 * Get active timezone
+	 *
+	 * @return	String		Timezone string
+	 */
+	public static function getTimezone() {
+		if( is_null(self::$timezone) ) {
+			if( self::db()->isConnected() ) {
+				$timezone	= self::person()->getTimezone();
+			} else {
+				$timezone	= false;
+			}
+
+			if( $timezone === false ) {
+				$timezone = self::$CONFIG['SYSTEM']['timezone'];
+			}
+
+			self::$timezone = $timezone;
+		}
+
+		return self::$timezone;
 	}
 
 
@@ -181,7 +213,7 @@ class Todoyu {
 
 	/**
 	 * Get logger instance
-	 * 
+	 *
 	 * @return		TodoyuLogger
 	 */
 	public static function logger() {

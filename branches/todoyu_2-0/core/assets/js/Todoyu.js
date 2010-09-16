@@ -18,8 +18,8 @@
 *****************************************************************************/
 
 /**
- * Todoyu main container. All other JS containers are (sub-)nodes
- * of this container
+ * Todoyu main container. All other JS containers are (sub-)nodes of this container
+ *
  * @namespace	Todoyu
  */
 var Todoyu = {
@@ -108,12 +108,8 @@ var Todoyu = {
 	 * @param		{Hash}		params
 	 * @param		{String}	hash
 	 */
-	goTo: function(ext, controller, params, hash, newWindow) {
-		var url =  this.getUrl(ext, controller);
-
-		if( typeof params === 'object' ) {
-			url += '&' + Object.toQueryString(params);
-		}
+	goTo: function(ext, controller, params, hash) {
+		var url =  this.getUrl(ext, controller, params);
 
 		if( Object.isString(hash) ) {
 			this.goToHashURL(url, hash);

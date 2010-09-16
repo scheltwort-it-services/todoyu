@@ -51,7 +51,7 @@ class TodoyuContextMenu {
 
 
 	/**
-	 * Initialize context menu with id of the processed element
+	 * Initialize context menu with ID of the processed element
 	 *
 	 * @param	String		$type
 	 * @param	Integer		$idElement
@@ -140,7 +140,7 @@ class TodoyuContextMenu {
 	 * Print json encoded context menu struct
 	 */
 	public function printJSON() {
-		TodoyuHeader::sendHeaderJSON();
+		TodoyuHeader::sendTypeJSON();
 
 		echo $this->getJSON();
 	}

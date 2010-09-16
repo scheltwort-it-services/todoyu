@@ -243,16 +243,28 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 			'position'	=> 68
 		),
 		array(
-			'file'		=> 'core/assets/js/PanelWidgetStatusSelector.js',
+			'file'		=> 'core/assets/js/Cookie.js',
 			'position'	=> 69
 		),
 		array(
+			'file'		=> 'core/assets/js/DelayedTextObserver.js',
+			'position'	=> 71
+		),
+		array(
+			'file'		=> 'core/assets/js/PanelWidgetStatusSelector.js',
+			'position'	=> 72
+		),
+		array(
 			'file'		=> 'core/assets/js/LoaderBox.js',
-			'position'	=> 70
+			'position'	=> 73
 		),
 		array(
 			'file'		=> 'core/assets/js/Highcharts.js',
-			'position'	=> 71
+			'position'	=> 74
+		),
+		array(
+			'file'		=> 'core/assets/js/OverflowWindow.js',
+			'position'	=> 75
 		)
 	),
 
@@ -364,6 +376,11 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 		),
 		array(
 			'file'		=> 'core/assets/css/loader-box.css',
+			'media'		=> 'all',
+			'position'	=> 10
+		),
+		array(
+			'file'		=> 'core/assets/css/overflow-window.css',
 			'media'		=> 'all',
 			'position'	=> 10
 		)

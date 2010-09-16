@@ -17,6 +17,11 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
+/**
+ * Headlet
+ *
+ * @namespace	Todoyu.Headlet
+ */
 Todoyu.Headlet = {
 
 	/**
@@ -31,11 +36,13 @@ Todoyu.Headlet = {
 
 	openStatusTimeout: null,
 
+	openHeadlet: null,
+
 
 
 	/**
 	 * Get the headlet element from an event
-	 * 
+	 *
 	 * @param	{Event}		event
 	 * @return	{Element}
 	 */
@@ -47,7 +54,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Get the headlets name from an event
-	 * 
+	 *
 	 * @param	{Event}		event
 	 * @return	{String}
 	 */
@@ -59,8 +66,8 @@ Todoyu.Headlet = {
 
 
 	/**
-	 * Check if event happend in the content div of an overlay headlet
-	 * 
+	 * Check if event happened in the content div of an overlay headlet
+	 *
 	 * @param	{Event}		event
 	 * @return	{Boolean}
 	 */
@@ -73,7 +80,7 @@ Todoyu.Headlet = {
 	/**
 	 * Call the handler of a headlet if it has the specific function
 	 * Possible handlers: onButtonClick, onContentClick, onMouseOver, onMouseOut
-	 * 
+	 *
 	 * @param	{String}	name		Name of the headlet
 	 * @param	{String}	eventType	Event type (handler name)
 	 * @param	{Event}		event		Event object
@@ -110,7 +117,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Add a headlet object
-	 * 
+	 *
 	 * @param	{String}		name
 	 * @param	{Object}		headletObject
 	 */
@@ -143,7 +150,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Handler for hovering a headlet
-	 * 
+	 *
 	 * @param	{Event}		event
 	 */
 	onOverHeadlet: function(event) {
@@ -169,7 +176,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Handler for hovering the headlet container
-	 * 
+	 *
 	 * @param	{Event}		event
 	 */
 	onOverContainer: function(event) {
@@ -193,7 +200,7 @@ Todoyu.Headlet = {
 	/**
 	 * On click handler
 	 * Calls one of the click handlers when on a headlet
-	 * 
+	 *
 	 * @param	{Event}		event
 	 */
 	onClick: function(event) {
@@ -235,7 +242,7 @@ Todoyu.Headlet = {
 	/**
 	 * On menu click handler
 	 * Calls the onMenuClick handler on the headlet object
-	 * 
+	 *
 	 * @param	{Event}		event
 	 */
 	onMenuClick: function(event) {
@@ -253,7 +260,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Check if a headlet exists
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	exists: function(name) {
@@ -264,7 +271,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Set a headlet active
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	setActive: function(name) {
@@ -294,7 +301,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Check if content of a headlet is visible
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	isContentVisible: function(name) {
@@ -305,7 +312,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Show content of a headlet
-	 * 
+	 *
 	 * @param	{String}		name
 	 * @param	{Boolean}		keepOthers
 	 */
@@ -323,7 +330,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Hide content of a headlet
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	hideContent: function(name) {
@@ -336,7 +343,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Check if headlet has a content element
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	hasContent: function(name) {
@@ -347,7 +354,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Hide all content except
-	 * 
+	 *
 	 * @param	{String}	exceptName
 	 */
 	hideAllContent: function(exceptName) {
@@ -363,7 +370,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Get headlet element
-	 * 
+	 *
 	 * @param	{String}		name
 	 * @return	{Element}
 	 */
@@ -375,7 +382,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Get button element of a headlet
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	getButton: function(name) {
@@ -386,7 +393,7 @@ Todoyu.Headlet = {
 
 	/**
 	 * Get content element of a headlet
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	getContent: function(name) {
@@ -414,7 +421,7 @@ Todoyu.Headlet = {
 	/**
 	 * Handler when clicked on body, fired by Todoyu.Ui.onBodyClick()
 	 * If clicked outside the headlets, hide all content boxes
-	 * 
+	 *
 	 * @param	{Event}		event
 	 */
 	onBodyClick: function(event) {
@@ -439,20 +446,31 @@ Todoyu.Headlet = {
 	/**
 	 * Save open status of a headlet
 	 * Setup a timeout for the save function
-	 * 
+	 *
 	 * @param	{String}		name
 	 */
 	saveOpenStatus: function(name) {
 		var headlet		= false;
 			// Find open headlet
-		var openOverlay	= $('headlets').select('li.overlay ul').detect(function(overlay){
+		var openOverlay	= $('headlets').select('li.overlay > ul').detect(function(overlay){
 			return overlay.visible();
 		});
+
+
 
 			// Extract headlet name
 		if( openOverlay !== undefined ) {
 			headlet	= openOverlay.id.split('-')[1];
 		}
+
+
+
+		if( this.openHeadlet === false && headlet === false ) {
+			return ;
+		}
+
+
+		this.openHeadlet = headlet;
 
 			// Clear current timeout
 		window.clearTimeout(this.openStatusTimeout);

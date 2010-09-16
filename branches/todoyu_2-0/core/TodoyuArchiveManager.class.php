@@ -19,19 +19,28 @@
 *****************************************************************************/
 
 /**
- * Interface for extension setup classes
- * 
+ * Manage zip archives
+ *
  * @package		Todoyu
  * @subpackage	Core
  */
-interface TodoyuExtSetupIf {
+class TodoyuArchiveManager {
 
-	public static function install();
+	/**
+	 * Extract an archive to a folder
+	 *
+	 * @param	String			$zipFile
+	 * @param	String			$targetFolder
+	 * @param	String|Array	$entries
+	 */
+	public static function extract($zipFile, $targetFolder, $entries = null) {
+		@set_time_limit(60);
 
-	public static function update();
-
-	public static function uninstall();
-	
+		$zip	= new ZipArchive();
+		$zip->open($zipFile);
+		$zip->extractTo($targetFolder, $entries);
+		$zip->close();
+	}
 }
 
 ?>

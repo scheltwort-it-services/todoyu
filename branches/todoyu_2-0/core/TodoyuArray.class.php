@@ -503,7 +503,7 @@ class TodoyuArray {
 				$array[$index] = $wrapBefore . $item . $wrapAfter;
 			} else {
 				unset($array[$index]);
-				Todoyu::log('Item was not quoted because was not string or number', TodoyuLogger::LEVEL_NOTICE, $item);
+				Todoyu::log('Item was not quoted because was not string or number: ' . serialize($array[$index]), TodoyuLogger::LEVEL_NOTICE, $item);
 			}
 		}
 
@@ -573,6 +573,19 @@ class TodoyuArray {
 		$merged		= call_user_func_array('array_merge', $funcArgs);
 
 		return array_values(array_unique($merged));
+	}
+
+
+
+	/**
+	 * Merge two array. Works also if one of the parameters is not an array (it's ignored)
+	 *
+	 * @param	Mixed	$arrayA
+	 * @param	Mixed	$arrayB
+	 * @return	Array
+	 */
+	public static function merge($arrayA, $arrayB) {
+		return array_merge(self::assure($arrayA), self::assure($arrayB));
 	}
 
 
@@ -696,6 +709,22 @@ class TodoyuArray {
 		}
 
 		return $array;
+	}
+
+
+
+	/**
+	 * Implode trimmed values
+	 * Combination of foreach, trim and implode
+	 *
+	 * @param	String		$glue
+	 * @param	Array		$array
+	 * @return	String
+	 */
+	public static function trimImplode($glue, array $array) {
+		$array = self::trim($array);
+
+		return implode($glue, $array);
 	}
 
 

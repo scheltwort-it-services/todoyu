@@ -335,6 +335,19 @@ function Dwoo_Plugin_cleanHtml_compile(Dwoo_Compiler $compiler, $html) {
 
 
 /**
+ * Substitute URLs by hyperlinks
+ *
+ * @param 	Dwoo		$dwoo
+ * @param	String		$text
+ * @return	String
+ */
+function Dwoo_Plugin_linkUrls_compile(Dwoo_Compiler $compiler, $text) {
+	return 'TodoyuString::replaceUrlWithLink(' . $text . ')';
+}
+
+
+
+/**
  * Button template
  *
  * @param 	Dwoo		$dwoo
@@ -389,39 +402,6 @@ function Dwoo_Plugin_Header(Dwoo $dwoo, $title, $class = '') {
  */
 function Dwoo_Plugin_Title_compile(Dwoo_Compiler $compiler, $title) {
 	return '\'<h5>\' . htmlentities(TodoyuString::getLabel(' . $title . '), ENT_QUOTES, \'UTF-8\') . \'</h5>\'';
-}
-
-
-
-/**
- * Index letter generator
- * Generates letters from A-Z with links the the anchors
- *
- * @param	Dwoo		$dwoo
- * @param	Array		$records		Record array the list is based on
- * @param	String		$field			Field to check if a record with this letter exists
- * @param	String		$indexName		Name of the anchor (default is index)
- * @return	String
- */
-function Dwoo_Plugin_IndexLetters(Dwoo $dwoo, array $records, $field, $indexName = 'index') {
-	$letters = array();
-
-	for($i = 65; $i < 91; $i++) {
-		$letters[chr($i)] = false;
-	}
-
-	foreach($records as $record) {
-		$key = strtoupper(substr($record[$field], 0, 1));
-		$letters[$key] = true;
-	}
-
-	$tmpl	= 'core/view/indexLetters.tmpl';
-	$data	= array(
-		'letters'	=> $letters,
-		'indexName'	=> $indexName
-	);
-
-	return render($tmpl, $data);
 }
 
 
@@ -556,7 +536,7 @@ function Dwoo_Plugin_html2text_compile(Dwoo_Compiler $compiler, $html) {
  * @param	Array		$value		Array to allow for multi selection
  * @return	String
  */
-function Dwoo_Plugin_select(Dwoo $dwoo, array $options, array $value, $id = '', $name = '', $class = '', $size = 0, $multiple = false, $disabled = false, $onchange = '') {
+function Dwoo_Plugin_select(Dwoo $dwoo, array $options, array $value = array(), $id = '', $name = '', $class = '', $size = 0, $multiple = false, $disabled = false, $onchange = '') {
 	$tmpl	= 'core/view/select.tmpl';
 	$data	= array(
 		'htmlId'	=> $id,
@@ -575,6 +555,32 @@ function Dwoo_Plugin_select(Dwoo $dwoo, array $options, array $value, $id = '', 
 	}
 
 	return render($tmpl, $data);
+}
+
+
+
+/**
+ * Replace line breaks "\n" with ODT style line breaks
+ *
+ * @param	Dwoo_Compiler	$compiler
+ * @param	String			$text
+ * @return	String
+ */
+function Dwoo_Plugin_OdtLinebreaks_compile(Dwoo_Compiler $compiler, $text) {
+	return 'str_replace("\n", \'<text:line-break/>\', ' . $text . ')';
+}
+
+
+/**
+ * Replace spaces with &nbsp; entities
+ * Prevent line breaks on spaces
+ *
+ * @param	Dwoo_Compiler 	$compiler
+ * @param	String			$text
+ * @return	String
+ */
+function Dwoo_Plugin_nobreak_compile(Dwoo_Compiler $compiler, $text) {
+	return 'str_replace(\' \', \'&nbsp;\', ' . $text . ')';
 }
 
 ?>

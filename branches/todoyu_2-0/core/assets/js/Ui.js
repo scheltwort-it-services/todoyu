@@ -18,6 +18,8 @@
 *****************************************************************************/
 
 /**
+ * User Interface
+ *
  * @namespace	Todoyu.Ui
  */
 Todoyu.Ui = {
@@ -416,6 +418,14 @@ Todoyu.Ui = {
 		}
 	},
 
+
+
+	/**
+	 * Scroll window content by given values
+	 *
+	 * @param	{Number}	x
+	 * @param	{Number}	y
+	 */
 	scrollBy: function(x, y) {
 		//alert('scroll: ' + y);
 		window.scrollBy(x, y);
@@ -524,7 +534,7 @@ Todoyu.Ui = {
 
 	/**
 	 * Set document title (shown in browser window title bar)
-	 * 
+	 *
 	 * @param	{String}		title
 	 */
 	setTitle: function(title) {
@@ -535,7 +545,7 @@ Todoyu.Ui = {
 
 	/**
 	 * Get document title, without the " - todoyu" postfix (shown in browser window title bar)
-	 * 
+	 *
 	 * @return String
 	 */
 	getTitle: function(strip) {
@@ -543,52 +553,6 @@ Todoyu.Ui = {
 			return document.title;
 		} else {
 			return document.title.replace(/ - todoyu/, '');
-		}
-	},
-
-
-
-	/**
-	 * Creates a JS file reference and appends it to head
-	 *
-	 * @param	{String}		filename
-	 * @todo	NOT USED...
-	 */
-	loadJSFile: function(filename) {
-		var fileref=document.createElement( 'script' );
-		fileref.setAttribute( "type" , "text/javascript" );
-		fileref.setAttribute( "src" , filename );
-
-		Todoyu.Ui.appendAssetToHead(fileref);
-	},
-
-
-
-	/**
-	 * Creates a CSS filereference and appends it to head
-	 *
-	 * @param	{String}		filename
-	 * @todo	NOT USED...
-	 */
-	loadCSSFile: function(filename) {
-		var fileref=document.createElement( "link" );
-		fileref.setAttribute( "rel" , "stylesheet" );
-		fileref.setAttribute( "type" , "text/css" );
-		fileref.setAttribute( "href" , filename );
-
-		Todoyu.Ui.appendAssetToHead(fileref);
-	},
-
-
-
-	/**
-	 * Appends given filereference to HTML head
-	 *
-	 * @param	fileref
-	 */
-	appendAssetToHead: function(fileref) {
-		if( typeof fileref!="undefined" ) {
-			 document.getElementsByTagName( "head" )[0].appendChild(fileref);
 		}
 	},
 
@@ -605,7 +569,7 @@ Todoyu.Ui = {
 
 	/**
 	 * Handler when clicked on the body
-	 * 
+	 *
 	 * @param	{Event}	event
 	 */
 	onBodyClick: function(event) {
@@ -618,7 +582,7 @@ Todoyu.Ui = {
 
 	/**
 	 * Add an observer for the body
-	 * 
+	 *
 	 * @param	{Function}	func
 	 */
 	addBodyClickObserver: function(func) {
@@ -631,7 +595,7 @@ Todoyu.Ui = {
 	 * Stop event bubbling
 	 * Useful when handling onclick-events of nested elements
 	 * whose parents have onclick handlers which should be not fired than
-	 * 
+	 *
 	 * @param	{Event}	event
 	 */
 	stopEventBubbling: function(event) {
@@ -641,7 +605,42 @@ Todoyu.Ui = {
 		} else{
 			event.preventDefault();
 			event.stopPropagation();
-		}	
+		}
+	},
+
+
+
+	/**
+	 * Simulate sending a keystroke to RTE to initialize it, so that focus is given also for special keys like [BACKSPACE], [CTRL]+[A], etc.
+	 * Neccessary if there are more than one instance of tiny_mce open
+	 *
+	 * @param	{Element}	textControlElement
+	 */
+	initRTEfocus: function(textControlElement) {
+		var textControl = tinyMCE.get(textControlElement);
+
+		if ( textControl ) {
+				// get content
+			var tempContent = textControl.getContent();
+
+				// return content
+			textControl.setContent(tempContent);
+		}
+	},
+
+
+
+	/**
+	 * Save all RTEs in the document
+	 * Sometimes, double instances exist. Prevents saving if missing instances of an editor
+	 * Use this function instead of tinyMCE.triggerSave();
+	 */
+	saveRTE: function() {
+		window.tinyMCE.editors.each(function(editor){
+			if( editor ) {
+				editor.save();
+			}
+		});
 	},
 
 
@@ -653,7 +652,7 @@ Todoyu.Ui = {
 	 * @param	{Element}	area		Area to look for tinyMCE instances (Can be a form, the whole window or the element itself)
 	 */
 	closeRTE: function(area) {
-		tinyMCE.triggerSave();
+		this.saveRTE();
 
 		if( ! Todoyu.exists(area) ) {
 			area = document.body;
@@ -686,6 +685,27 @@ Todoyu.Ui = {
 		});
 
 		return element;
+	},
+
+
+
+	/**
+	 * Set selected options of a select element
+	 *
+	 * @param	{Element}	element
+	 * @param	{Array}		selection
+	 */
+	selectOptions: function(element, selection) {
+		element		= $(element);
+		selection	= selection.constructor === Array ? selection : [selection];
+
+		element.selectedIndex = -1;
+
+		$A(element.options).each(function(selection, option){
+			if( selection.include(option.value) ) {
+				option.selected = true;
+			}
+		}.bind(this, selection));
 	}
 
 };

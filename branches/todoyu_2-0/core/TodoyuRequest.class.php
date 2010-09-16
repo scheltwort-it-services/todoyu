@@ -71,10 +71,10 @@ class TodoyuRequest {
 		$get	= $_GET;
 		$post	= $_POST;
 
-		if( PHP_OS === 'Linux' ) {
+		if( function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() === 1 ) {
 			$get	= TodoyuArray::stripslashes($get);
 			$post	= TodoyuArray::stripslashes($post);
-	}
+		}
 
 		return array_merge($get, $post);
 	}

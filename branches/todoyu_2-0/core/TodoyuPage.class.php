@@ -103,10 +103,8 @@ class TodoyuPage {
 		$extKeys	= TodoyuExtensions::getInstalledExtKeys();
 
 		foreach($extKeys as $ext) {
-			//if( allowed($ext, 'general:use') || ! TodoyuAuth::isLoggedIn() ) {
-				self::addExtJavascript($ext);
-				self::addExtStylesheets($ext);
-			//}
+			self::addExtJavascript($ext);
+			self::addExtStylesheets($ext);
 		}
 	}
 
@@ -237,6 +235,40 @@ class TodoyuPage {
 
 
 	/**
+	 * Set content marker content
+	 *
+	 * @param	String		$content
+	 */
+	public static function setContent($content) {
+		self::set('content', $content);
+	}
+
+
+
+	/**
+	 * Set tabs marker content
+	 *
+	 * @param	String		$tabs
+	 */
+	public static function setTabs($tabs) {
+		self::set('tabs', $tabs);
+	}
+
+
+
+	/**
+	 * Set fullContent marker content
+	 * tabs and content marker are ignored then
+	 *
+	 * @param	String		$fullContent
+	 */
+	public static function setFullContent($fullContent) {
+		self::set('fullContent', $fullContent);
+	}
+
+
+
+	/**
 	 * Set body ID
 	 *
 	 * @param	String		$bodyID
@@ -293,55 +325,6 @@ class TodoyuPage {
 	 */
 	public static function addJavascript($pathToFile, $position = 100, $compress = true, $merge = true, $localize = true) {
 		TodoyuPageAssetManager::addJavascript($pathToFile, $position, $compress, $merge, $localize);
-	}
-
-
-
-	/**
-	 * Get inline JS of given type from given extension 
-	 *
-	 * @param	String	$ext
-	 * @param	String	$type
-	 * @return	String
-	 */
-	public static function getExtJSinline($ext, $type = 'public') {
-		TodoyuExtensions::loadAllAssets();
-		$js		= '';
-		$files	= Todoyu::$CONFIG['EXT'][$ext]['assets'][$type]['js'];
-
-		if( is_array($files) ) {
-			foreach($files as $file) {
-				$js	.= 'Todoyu.Ui.loadJSFile(\'' . $file['file'] . '\');';
-			}
-			$js	= TodoyuString::wrapScript($js);
-		}
-
-		return $js;
-	}
-
-
-
-	/**
-	 * Adds inline CSS of given type from given extension
-	 *
-	 * @param	String		$ext
-	 * @param	String		$type
-	 * @return	String
-	 */
-	public static function getExtCSSinline($ext, $type = 'public') {
-		TodoyuExtensions::loadAllAssets();
-
-		$files	= Todoyu::$CONFIG['EXT'][$ext]['assets'][$type]['css'];
-		$js		= '';
-
-		if( is_array($files) ) {
-			foreach($files as $file) {
-				$js	.= 'Todoyu.Ui.loadCSSFile(\'' . $file['file'] . '\');';
-			}
-			$js	= TodoyuString::wrapScript($js);
-		}
-
-		return $js;
 	}
 
 

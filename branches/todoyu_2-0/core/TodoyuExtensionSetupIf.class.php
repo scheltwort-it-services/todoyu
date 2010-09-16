@@ -19,47 +19,18 @@
 *****************************************************************************/
 
 /**
- * FormElement: Textarea
- *
- * Multi line text, <textarea></textarea>
+ * Interface for extension setup
  *
  * @package		Todoyu
- * @subpackage	Form
+ * @subpackage	Core
  */
-class TodoyuFormElement_Textarea extends TodoyuFormElement {
+interface TodoyuExtensionSetupIf {
 
-	/**
-	 * Constructor
-	 *
-	 * @param	String		$name
-	 * @param	TodoyuFieldset	$fieldset
-	 * @param	Array		$config
-	 */
-	public function __construct($name, TodoyuFieldset $fieldset, array $config = array()) {
-		parent::__construct('textarea', $name, $fieldset, $config);
-	}
+	public static function install();
 
+	public static function uninstall();
 
-
-	/**
-	 * Initialize text area form element
-	 */
-	protected function init() {
-		$this->setValue($this->getValue());
-	}
-
-
-
-	/**
-	 * Set text area form element value
-	 *
-	 * @param	String	$value
-	 */
-	public function setValue($value) {
-//		$value	= str_replace('\n', "\n", $value);
-
-		parent::setValue($value);;
-	}
+	public static function update();
 
 }
 

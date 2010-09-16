@@ -127,7 +127,7 @@ class TodoyuDatabase {
 		$this->initConnection();
 	}
 
-	
+
 
 	/**
 	 * Initialize database connection
@@ -896,8 +896,8 @@ class TodoyuDatabase {
 	 * @param	String		$groupBy					Group
 	 * @param	String		$orderBy					Order
 	 * @param	String		$limit						Limit
-	 * @param	String		$resultFieldName			Fieldname which will be in the SQL result. (ex: "id as idTask"). Not needed if identical with $field
-	 * @param	String		$indexField					Field to use as index instead of automaticaly generated numeric indexes
+	 * @param	String		$resultFieldName			Field name which will be in the SQL result. (ex: "id as idTask"). Not needed if identical with $field
+	 * @param	String		$indexField					Field to use as index instead of automatically generated numeric indexes
 	 * @return	Array
 	 */
 	public function getColumn($field, $table, $where = '', $groupBy = '', $orderBy = '', $limit = '', $resultFieldName = '', $indexField = '') {
@@ -911,7 +911,6 @@ class TodoyuDatabase {
 		$rows	= $this->getArray($fields, $table, $where, $groupBy, $orderBy, $limit);
 		$key	= $resultFieldName === '' ? $field : $resultFieldName ;
 		$column	= array();
-
 
 		foreach($rows as $row) {
 			if( $indexField === '' ) {
@@ -1151,6 +1150,47 @@ class TodoyuDatabase {
 
 
 	/**
+	 * Check whether a table exists in the database
+	 *
+	 * @param	String		$table
+	 * @return	Boolean
+	 */
+	public function hasTable($table) {
+		return in_array($table, $this->getTables());
+	}
+
+
+
+	/**
+	 * Truncate a table
+	 *
+	 * @param	String		$table
+	 * @return	Boolean
+	 */
+	public function truncate($table) {
+		if( $this->hasTable($table) ) {
+			$this->query('TRUNCATE TABLE ' . $this->quoteFieldname($table));
+
+			return $this->getAffectedRows() > 0;
+		} else {
+			return false;
+		}		
+	}
+
+
+
+	/**
+	 * Drop a table
+	 *
+	 * @param	String		$table
+	 */
+	public function drop($table) {
+		$this->query('DROP TABLE IF EXISTS ' . $this->quoteFieldname($table));
+	}
+
+
+
+	/**
 	 * Get fields of a table
 	 *
 	 * @param	String		$table
@@ -1213,7 +1253,7 @@ class TodoyuDatabase {
 	}
 
 
-	
+
 	/**
 	 * Get version of database server
 	 *

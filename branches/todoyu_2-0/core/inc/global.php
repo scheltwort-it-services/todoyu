@@ -18,12 +18,14 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
-	// Set session cookie HTTPonly
+	// Set session cookie HTTP only
 @ini_set('session.cookie_httponly', 1);
 	// Ignore errors of type notice
 error_reporting(E_ALL ^ E_NOTICE);
 	// Set character encoding to utf-8
 mb_internal_encoding('UTF-8');
+	// Set session lifetime to 5 hours
+session_cache_expire(300);
 
 	// Start session
 session_start();
@@ -37,7 +39,8 @@ set_include_path(get_include_path() . PATH_SEPARATOR . PATH);
 	// Add PEAR to include path
 set_include_path(get_include_path() . PATH_SEPARATOR . PATH_PEAR);
 
-
+	// Load dwoo
+require_once( PATH_LIB . '/php/dwoo/dwooAutoload.php' );
 
 	// Load basic classes
 require_once( PATH_CORE . '/Todoyu.class.php' );
@@ -72,9 +75,6 @@ require_once( PATH_EXT .  '/contact/model/TodoyuContactPreferences.class.php' );
 	// Load development classes
 require_once( PATH_CORE . '/TodoyuDebug.class.php' );
 require_once( PATH_LIB . '/php/FirePHP/FirePHP.class.php' );
-
-	// Load dwoo
-require_once( PATH_LIB . '/php/dwoo/dwooAutoload.php' );
 
 	// Load CSS and JS minimizer
 require_once( PATH_LIB . '/php/cssmin.php' );

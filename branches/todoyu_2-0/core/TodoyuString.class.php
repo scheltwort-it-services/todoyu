@@ -64,7 +64,7 @@ class TodoyuString {
 
 	/**
 	 * Checking syntax of input email address
-	 * 
+	 *
 	 * @param	String		Input string to evaluate
 	 * @return	Boolean		Returns true if the $email address (input string) is valid; Has a "@", domain name with at least one period and only allowed a-z characters.
 	 */
@@ -226,6 +226,21 @@ class TodoyuString {
 		$list	= explode($listSeparator, $listString);
 
 		return in_array($item, $list);
+	}
+
+
+
+	/**
+	 * Remove duplicate entries from list
+	 *
+	 * @param	String	$listString
+	 * @return	String
+	 */
+	public static function listUnique($listString, $listSeparator = ',') {
+		$list = TodoyuArray::trimExplode($listSeparator, $listString);
+		$list = array_unique($list);
+
+		return implode($listSeparator, $list);
 	}
 
 
@@ -429,6 +444,23 @@ class TodoyuString {
 	}
 
 
+
+	/**
+	 * Explode string and trim the parts
+	 * Alias of TodoyuArray::trimExplode()
+	 *
+	 * @see		TodoyuArray::trimExplode()
+	 * @param	String		$delimiter
+	 * @param	String		$string
+	 * @param	Boolean		$removeEmptyValues
+	 * @return	Array
+	 */
+	public static function trimExplode($delimiter, $string, $removeEmptyValues = false) {
+		return TodoyuArray::trimExplode($delimiter, $string, $removeEmptyValues);
+	}
+
+
+
 	/**
 	 * Extract the headers from a full HTTP response (including headers and content)
 	 *
@@ -437,10 +469,22 @@ class TodoyuString {
 	 */
 	public static function extractHttpHeaders($responseContent) {
 			// Split header and content
-		list($header) = explode("\r\n\r\n", $responseContent);
+		list($headerString) = explode("\r\n\r\n", $responseContent);
 
+		return self::extractHeadersFromString($headerString);
+	}
+
+
+
+	/**
+	 * Extract header pairs from a HTTP header string
+	 *
+	 * @param	String		$headerString
+	 * @return	Array		array
+	 */
+	public static function extractHeadersFromString($headerString) {
 			// Split header pairs
-		$headerPairs= explode("\r\n", $header);
+		$headerPairs= explode("\r\n", $headerString);
 		$headers	= array();
 
 			// Add HTTP staus as status key
@@ -448,11 +492,41 @@ class TodoyuString {
 
 			// Add the rest of the header pairs
 		foreach($headerPairs as $headerPair) {
-			list($key, $value) = explode(':', $headerPair);
+			list($key, $value) = explode(':', $headerPair, 2);
 			$headers[trim($key)] = trim($value);
 		}
 
 		return $headers;
+	}
+
+
+
+	/**
+	 * Takes a clear text message, finds all URLs and substitutes them by HTML hyperlinks
+	 *
+	 * @param	String	$text	Message content
+	 * @return	String
+	 */
+	public static function replaceUrlWithLink($htmlContent) {
+				// Find full links with prefixed protocol
+		$patternFull	= '/([^"])((?:http|https|ftp|ftps):\/\/[-\w@:%+.~#?&;\/=]+)/';
+		$replaceFull	= '\1<a href="\2"  target="_blank">\2</a>';
+
+			// Find links which are not prefixed with a protocol, use http
+		$patternSimple	= '/(?:^|[> ])((?:[\w\.-]+)\.(?:[\w-]{2,})\.(?:[a-zA-Z-]{2,6})[-\w@:%+.~#?&;\/=]*)/';
+		$replaceSimple	= '<a href="http://\1" target="_blank">\1</a>';
+
+			// Find mailto links
+		$patternEmail	= '/((?:[\w-\.]+)@(?:[\w-\.]{2,})\.(?:\w{2,6}))/';
+		$replaceEmail	= '<a href="mailto:\1">\1</a>';
+
+
+			// Replace urls
+		$htmlContent	= preg_replace($patternFull, $replaceFull, $htmlContent);
+		$htmlContent	= preg_replace($patternSimple, $replaceSimple, $htmlContent);
+		$htmlContent	= preg_replace($patternEmail, $replaceEmail, $htmlContent);
+
+		return $htmlContent;
 	}
 
 }

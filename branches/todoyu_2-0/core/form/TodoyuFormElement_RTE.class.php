@@ -53,7 +53,7 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 			'elements'			=> $this->getHtmlID(),
 			'theme'				=> 'simple',
 			'content_css'		=> 'core/assets/css/tinymce.css',
-			'valid_elements'	=> 'strong,em,p,br,u,stroke,ul,li'
+			'valid_elements'	=> 'strong,em,p,br,u,stroke,ol,ul,li,a'
 //			'invalid_elements'	=> 'table,tr,td,th'
 		);
 
@@ -72,9 +72,8 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 			$tmpOpt[] = $name . ' : "' . $value . '"';
 		}
 
-		$jsCode .= implode(",\n", $tmpOpt);
-
-		$jsCode .= "\n});\n";
+		$jsCode .= implode(",\n", $tmpOpt) . "\n});\n";
+		$jsCode .= 'Todoyu.Ui.initRTEfocus(\'' . $options['elements'] . '\');';
 
 		return $jsCode;
 	}
@@ -108,9 +107,8 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 	 * @return	String
 	 */
 	public function getStorageData() {
-		$value	= str_replace("\n", '', $this->getValue());
-
-		$this->setValue($value);
+//		$value	= str_replace("\n", '', $this->getValue());
+//		$this->setValue($value);
 
 		return parent::getStorageData();
 	}

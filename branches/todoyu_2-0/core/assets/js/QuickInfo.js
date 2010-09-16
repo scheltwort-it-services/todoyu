@@ -17,6 +17,11 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
+/**
+ * QuickInfo
+ *
+ * @namespace	Todoyu.QuickInfo
+ */
 Todoyu.QuickInfo = {
 
 	/**
@@ -66,13 +71,21 @@ Todoyu.QuickInfo = {
 	 */
 	delayedHideTime: 0.4,
 
+	/**
+	 * Active element (DOM element)
+	 */
+	active: null,
+
 
 
 	/**
 	 * Init quickinfo
 	 */
 	init: function() {
+			// Insert HTML element into document
 		this.insertQuickInfoElement(this.popupID);
+			// Observe document for clicks to close the quickinfo
+		document.body.observe('click', this.hide.bindAsEventListener(this));
 	},
 
 
@@ -104,13 +117,21 @@ Todoyu.QuickInfo = {
 	 * @param	{Element}	element
 	 */
 	onMouseOver: function(event, name, callback, element) {
+			// Hide active element if another one should be displayed
+		if( this.active !== null && this.active !== element) {
+			this.hide();
+		}
+
+			// Clear delayed timeout for hide
 		clearTimeout(this.delayedHide);
 
 		if( ! this.isVisible() ) {
-			//console.log('onMouseOver');
 			this.show(event, name, callback, element);
 		}
+
+        Todoyu.Hook.exec('core.quickinfo.mouseover', event, name, element);
 	},
+
 
 
 	/**
@@ -126,6 +147,8 @@ Todoyu.QuickInfo = {
 				// Delayed hide
 			this.delayedHide = this.hide.bind(this).delay(this.delayedHideTime);
 		}
+
+        Todoyu.Hook.exec('core.quickinfo.mouseout', event, name, element);
 	},
 
 
@@ -198,6 +221,9 @@ Todoyu.QuickInfo = {
 	show: function(event, name, callback, observedElement) {
 		event.stop();
 
+//		var elementID	=observedElement.id;
+//		var context		= elementID.split('_')[0];
+
 		var elementKey	= callback(observedElement, event);
 
 		var cacheID= name + elementKey;
@@ -211,11 +237,11 @@ Todoyu.QuickInfo = {
 
 		if( this.isCached(cacheID) ) {
 				// Show cached
-			this.display(name, elementKey, event.pointerX(), event.pointerY());
+			this.display(name, elementKey, event.pointerX(), event.pointerY(), observedElement);
 			this.loading = false;
 		} else {
 				// Have it be loaded and shown after
-			this.loadQuickInfo(name, elementKey, callback, event);
+			this.loadQuickInfo(name, elementKey, callback, event, observedElement);
 		}
 	},
 
@@ -228,8 +254,11 @@ Todoyu.QuickInfo = {
 	 * @param	{String}	elementKey
 	 * @param	{Number}	pointerX
 	 * @param	{Number}	pointerY
+	 * @param	{Element}	observedElement
 	 */
-	display: function(name, elementKey, pointerX, pointerY) {
+	display: function(name, elementKey, pointerX, pointerY, observedElement) {
+		this.active	= observedElement;
+
 		this.updatePopup(this.getFromCache(name + elementKey));
 
 		this.showPopUp(pointerX, pointerY);
@@ -255,7 +284,7 @@ Todoyu.QuickInfo = {
 	 * @param	{String}		type
 	 */
 	getCacheTime: function(type) {
-		return (new Date()).getTime() + (this.customCacheTime[type] !== undefined ? parseInt(this.customCacheTime[type]) : this.defaultCacheTime)*1000;
+		return (new Date()).getTime() + (this.customCacheTime[type] !== undefined ? parseInt(this.customCacheTime[type], 10) : this.defaultCacheTime)*1000;
 	},
 
 
@@ -296,6 +325,7 @@ Todoyu.QuickInfo = {
 
 				// hide-flag: comprehend overlapping of mouseOut and running show request
 			this.hidden	= true;
+			this.active	= null;
 		}
 	},
 
@@ -308,8 +338,9 @@ Todoyu.QuickInfo = {
 	 * @param	{String}	elementKey
 	 * @param	{Function}	callback
 	 * @param	{Event}		event
+	 * @param	{Element}	observedElement
 	 */
-	loadQuickInfo: function(name, elementKey, callback, event) {
+	loadQuickInfo: function(name, elementKey, callback, event, observedElement) {
 		var url		= Todoyu.getUrl('core', 'quickinfo');
 		var options	= {
 			'parameters': {
@@ -317,7 +348,7 @@ Todoyu.QuickInfo = {
 				'quickinfo':	name,
 				'element':		elementKey
 			},
-			'onComplete': this.onQuickInfoLoaded.bind(this, name, elementKey, event)
+			'onComplete': this.onQuickInfoLoaded.bind(this, name, elementKey, event, observedElement)
 		};
 
 		Todoyu.send(url, options);
@@ -334,17 +365,17 @@ Todoyu.QuickInfo = {
 	 * @param	{Ajax.Response}		response		Ajax response
 	 * @param	{Ajax.Response}	response
 	 */
-	onQuickInfoLoaded: function(name, elementKey, event, response) {
+	onQuickInfoLoaded: function(name, elementKey, event, observedElement, response) {
 		var cacheKey= name + elementKey;
 		var content	= this.buildQuickInfo(response.responseJSON);
 		var time	= this.getCacheTime(name);
 
 		this.addToCache(cacheKey, content, time);
 
-		this.loading = false;
+		this.loading= false;
 
 		if( ! this.hidden ) {
-			this.display(name, elementKey, event.pointerX(), event.pointerY());
+			this.display(name, elementKey, event.pointerX(), event.pointerY(), observedElement);
 		}
 	},
 
@@ -406,8 +437,8 @@ Todoyu.QuickInfo = {
 	 */
 	addToCache: function(cacheID, content, time) {
 		this.cache[cacheID] = {
-			'time': 	time,
-			'content': 	content
+			time:	time,
+			content:content
 		};
 	},
 

@@ -155,6 +155,34 @@ class TodoyuTime {
 
 
 	/**
+	 * Get timestamp of last of month of given timestamp
+	 *
+	 * @param	Integer		$timestamp
+	 * @return	Integer
+	 */
+	public static function getLastDayOfMonth($timestamp = NOW) {
+		$range  = self::getMonthRange($timestamp);
+
+		return $range['end'];
+	}
+
+
+
+	/**
+	 * Get day-number of last day of month of given timestamp
+	 *
+	 * @param	Integer		$timestamp
+	 * @return	Integer
+	 */
+	public static function getNumberOfLastDayOfMonth($timestamp = NOW) {
+		$timestampLastDay   = self::getLastDayOfMonth($timestamp);
+
+		return date('j', $timestampLastDay);
+	}
+
+
+
+	/**
 	 * Get weekday of a timestamp. Like date('w'), but starts with monday
 	 * With $mondayFirst monday will be 0 and sunday 6
 	 *
@@ -221,8 +249,15 @@ class TodoyuTime {
 	public static function sec2hour($seconds) {
 		$timeParts	= self::getTimeParts($seconds);
 
+			// Round up minute, if more than 30 seconds
 		if( $timeParts['seconds'] >= 30 ) {
 			$timeParts['minutes'] += 1;
+
+				// If the minute round up caused 60 minutes, increment hour
+			if( $timeParts['minutes'] == 60 ) {
+				$timeParts['minutes'] = 0;
+				$timeParts['hours']++;
+			}
 		}
 
 		return sprintf('%02d:%02d', $timeParts['hours'], $timeParts['minutes']);
@@ -280,6 +315,10 @@ class TodoyuTime {
 	 */
 	public static function format($timestamp, $formatName = 'datetime') {
 		$timestamp	= intval($timestamp);
+
+		if( $timestamp === 0 ) {
+			return '-';
+		}
 
 		$format		= self::getFormat($formatName);
 		$string		= strftime($format, $timestamp);
@@ -360,7 +399,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Parse date time string
+	 * Parse date time string (get UNIX timestamp)
 	 *
 	 * @param	String		$dateTimeString
 	 * @return	Integer
@@ -393,8 +432,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Parse time string
-	 * Timeformat is based on the format time or timesec
+	 * Parse time string to UNIX timestamp (timeformat is based on the format time or timesec)
 	 *
 	 * @param	String		$timeString		Time string: 23:59 or 23:59:59 (function autodetects seconds part)
 	 * @return	Integer		Seconds
@@ -414,8 +452,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Parse duration
-	 * Format: 32:50
+	 * Parse duration to seconds (format: 32:50)
 	 *
 	 * @param	String		$timeString
 	 * @return	Integer
@@ -498,7 +535,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Check if two time ranges overlap.
+	 * Check whether two time ranges overlap.
 	 *
 	 * @param	Integer		$dateStart1
 	 * @param	Integer		$dateEnd1
@@ -522,8 +559,8 @@ class TodoyuTime {
 
 
 	/**
-	 * Rounds UP given time in seconds to given rounding minute
-	 * 
+	 * Round-UP given time in seconds to given rounding minute
+	 *
 	 * @param	Integer		$timestamp
 	 * @param	Integer		$roundingMinute
 	 * @return	Integer							rounded time in seconds
@@ -537,7 +574,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Add days to date
+	 * Add given amount of days to given date
 	 *
 	 * @param	Integer		$time
 	 * @param	Integer		$days
