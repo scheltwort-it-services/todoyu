@@ -53,8 +53,7 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 			'elements'			=> $this->getHtmlID(),
 			'theme'				=> 'simple',
 			'content_css'		=> 'core/assets/css/tinymce.css',
-			'valid_elements'	=> 'strong,em,p,br,u,stroke,ol,ul,li,a'
-//			'invalid_elements'	=> 'table,tr,td,th'
+			'valid_elements'	=> 'strong,em,p,br,u,strike,ol,ul,li,a[href],pre'
 		);
 
 			// Load config
@@ -102,20 +101,6 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 
 
 	/**
-	 * Get data to store in the database for this field
-	 *
-	 * @return	String
-	 */
-	public function getStorageData() {
-//		$value	= str_replace("\n", '', $this->getValue());
-//		$this->setValue($value);
-
-		return parent::getStorageData();
-	}
-
-
-
-	/**
 	 * Get field data
 	 *
 	 * @return	Array
@@ -126,6 +111,20 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 		$data['rteJs'] = $this->buildRTEjs();
 
 		return $data;
+	}
+
+
+
+	/**
+	 * Set RTE text. Removed <pre> tags (copy from email programs) and adds <br> tags for the newlines in <pre>
+	 *
+	 * @param	String		$value
+	 * @param	Boolean		$updateForm
+	 */
+	public function setValue($value, $updateForm = true) {
+		$value	= TodoyuString::cleanRTEText($value);
+
+		parent::setValue($value, $updateForm);
 	}
 
 
