@@ -49,11 +49,11 @@
 			<elements>
 
 				<field type="cancelButton" name="cancel">
-					<onclick>Todoyu.Ext.sysmanager.Roles.showList()</onclick>
+					<onclick>Todoyu.Ext.sysmanager.Role.showList()</onclick>
 				</field>
 
 				<field type="saveButton" name="save">
-					<onclick>Todoyu.Ext.sysmanager.Roles.save(this.form)</onclick>
+					<onclick>Todoyu.Ext.sysmanager.Role.save(this.form)</onclick>
 				</field>
 
 			</elements>
