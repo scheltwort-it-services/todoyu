@@ -107,7 +107,7 @@ Todoyu.Helper = {
 
 	/**
 	 * Uppercase the first character of every word in a string
-	 * 
+	 *
 	 * @param	{String}	str
 	 * @return	{String}
 	 */
@@ -121,10 +121,10 @@ Todoyu.Helper = {
 
 	/**
 	 * Wraps buffer to selected number of characters using string break char
-	 * 
+	 *
 	 * Borrowed from phpjs	http://phpjs.org/functions/wordwrap
 	 * version: 909.322
-	 * 
+	 *
 	 * @param	{String}		str
 	 * @param	{Number}		int_width
 	 * @param	{String}		str_break
@@ -138,7 +138,7 @@ Todoyu.Helper = {
 
 		var i, j, l, s, r;
 
-		str += ''; 
+		str += '';
 		if(m < 1) {
 			return str;
 		}
@@ -173,6 +173,81 @@ Todoyu.Helper = {
 			evt.initEvent(event, true, true ); // event type, bubbling, cancelable
 
 			return ! element.dispatchEvent(evt);
+		}
+	},
+
+
+
+	/**
+	 * Check whether client is given browser (e.g. 'chrome', 'safari')
+	 *
+	 * @param	{String}	browserName
+	 */
+	isNavigatorUserAgent: function(browserName) {
+		browserName	= browserName.toLowerCase();
+
+		return navigator.userAgent.toLowerCase().indexOf(browserName) > -1;
+	},
+
+
+
+	/**
+	 * Check whether used client browser is google chrome
+	 *
+	 * @return	{Boolean}
+	 */
+	isChrome: function() {
+		return this.isNavigatorUserAgent('chrome');
+	},
+
+
+
+	/**
+	 * Check whether used client browser is apple safari
+	 *
+	 * @return	{Boolean}
+	 */
+	isSafari: function() {
+		return this.isNavigatorUserAgent('safari');
+	},
+
+
+
+	/**
+	 * Set element scrollTop, circumventing refresh bug in safari + chrome
+	 *
+	 * @param	{Element}	element
+	 * @param	{Number}	position
+	 */
+	setScrollTop: function(element, position) {
+		element.scrollTop = position;
+
+		if( this.isChrome() || this.isSafari() ) {
+			this.onUpdateChromeSafariScrollTop(element.id, 0);
+		}
+	},
+
+
+
+	/**
+	 * Safari + Chrome workaround: defered window refresh to update after modification of scrollTop
+	 *
+	 * @param	{String}	elementID
+	 * @param	{Number}	step
+	 */
+	onUpdateChromeSafariScrollTop: function(elementID, step) {
+		switch(step) {
+			case 0: case 1:
+				$(elementID).style.overflow = ( step == 0 ) ? 'scroll' : '';
+				break;
+			case 2: case 3:
+				window.scrollBy(0,( step == 2 ) ? 1 : -1 );
+				break;
+		}
+
+		step++;
+		if( step < 4 ) {
+			this.onUpdateChromeSafariScrollTop.defer(elementID, step)
 		}
 	}
 
