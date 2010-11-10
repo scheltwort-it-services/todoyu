@@ -1,0 +1,12 @@
+li#headlet-ajaxloader {
+	width:27px;
+	height:26px;
+}
+
+li#headlet-ajaxloader a {
+	border:none;
+}
+
+#headlets #headlet-ajaxloader-button {
+	background:url(../img/ajax-loader.png) no-repeat 7px 4px;
+}
