@@ -48,6 +48,7 @@ todoyu 2.0.6 - released 2010-11-10
 	* Bugfix: #99 projectbilling 1.0 - fatal error when customer creates task
 	* Bugfix: #100 Daytracks History: IE shows details only on blur
 	* Bugfix: #101 Doubleclick doesn't create a new event in IE
+	* Bugfix: #102 Paste tasks in locked project
 
 todoyu 2.0.5 - released 2010-09-28
 	* Bugfix: Opening email receivers in comment failed
