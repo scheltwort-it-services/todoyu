@@ -1,0 +1,65 @@
+#headlet-about-button {
+	background:url(../img/headlet-icons.png) no-repeat 1px -24px;
+}
+
+
+
+#overflow-window-about .logo {
+	height:120px;
+	background:url(../img/logo2.png) no-repeat 40% 0;
+}
+
+#overflow-window-about p {
+	text-align:left;
+	margin-bottom:10px;
+}
+
+#overflow-window-about a {
+	text-decoration:underline;
+}
+
+#overflow-window-about .copyright {
+
+}
+
+#overflow-window-about .community {
+	font-weight:bold;
+}
+
+#overflow-window-about .thanks {
+	font-weight:bold;
+	margin-top:20px;
+}
+
+#overflow-window-about .names {
+	height:150px;
+	padding:5px;
+	border:1px dotted #ccc;
+	background-color:#f3f3f3;
+	position:relative;
+	overflow:hidden;
+}
+
+#overflow-window-about .names ul {
+	padding-top:50px;
+}
+
+#overflow-window-about .names ul li {
+	padding:5px;
+}
+
+#overflow-window-about .names ul li.coder {
+	font-weight:bold;
+	letter-spacing:2px;
+	text-transform:uppercase;
+}
+
+#overflow-window-about #ee-img {
+	position:absolute;
+	left:-19px;
+	top:19px;
+	width:400px;
+	height:200px;
+	background:url(../img/ggeretsae.gif) no-repeat 0 0;
+}
+
