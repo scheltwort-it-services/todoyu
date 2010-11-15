@@ -90,4 +90,14 @@
 		<label index="filename">ファイル名</label>
 		<label index="filesize">ファイルサイズ</label>
 	</labels>
+	<labels lang="it_IT">
+		<label index="download">Scarica</label>
+		<label index="upload">Carica</label>
+		<label index="size.gb">GB</label>
+		<label index="size.mb">MB</label>
+		<label index="size.kb">KB</label>
+		<label index="size.b">B</label>
+		<label index="filename">Nome file</label>
+		<label index="filesize">Dimensione</label>
+	</labels>
 </locallang>

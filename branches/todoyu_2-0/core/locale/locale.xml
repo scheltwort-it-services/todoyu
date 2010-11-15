@@ -138,4 +138,7 @@
 	<labels lang="ja_JP">
 	   <label index="ja_JP">日本語 (日本)</label>
 	</labels>
+	<labels lang="it_IT">
+	    <label index="it_IT">Italiano (Italia)</label>
+	</labels>
 </locallang>
