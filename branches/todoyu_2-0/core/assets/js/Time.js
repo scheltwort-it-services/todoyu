@@ -86,7 +86,7 @@ Todoyu.Time = {
 	 * Get time parts of given (timestamp) time
 	 *
 	 * @param	{Number}		time
-	 * @return	Array
+	 * @return	{Object}
 	 */
 	getTimeParts: function(time) {
 		time = Todoyu.Helper.intval(time);
