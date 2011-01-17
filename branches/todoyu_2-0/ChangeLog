@@ -2,6 +2,7 @@ todoyu Changelog
 
 todoyu 2.0.7 - not yet released (prospectivley 2011-01-19)
 	* Bugfix: English locale of date formats contained some german formats
+	* Bugfix: #136 "My Filters" in portal ignores "OR" conjunction (uses "AND")
 	* Bugfix: #125 Restricted task creation suggests also disallowed projects
 	* Bugfix: Extended numeric form value input assistant to allow for negative values
 	* Bugfix: #118 Fixed sorting of last tracked tasks in headlet
