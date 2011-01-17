@@ -263,7 +263,7 @@
 		<label index="finish.title">Установка завершена</label>
 		<label index="finish.text">Установка успешно завершена</label>
 		<label index="finish.button">Перейти на страницу входа</label>
-        <label index="finish.note">Теперь Вы можете войти в систему. Этот шаг может занять некоторое время, т.к. система будет проводить внутренние работы по оптимизации установки.</label>
+		<label index="finish.note">Теперь Вы можете войти в систему. Этот шаг может занять некоторое время, т.к. система будет проводить внутренние работы по оптимизации установки.</label>
 		<label index="update.title">Обновить todoyu</label>
 		<label index="update.button">Начать обновление</label>
 		<label index="update.info">Обновить базу данных и проверить соответствие базы файлам конфигурации</label>

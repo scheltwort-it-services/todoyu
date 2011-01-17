@@ -129,7 +129,7 @@ Todoyu.QuickInfo = {
 			this.show(event, name, callback, element);
 		}
 
-        Todoyu.Hook.exec('core.quickinfo.mouseover', event, name, element);
+		Todoyu.Hook.exec('core.quickinfo.mouseover', event, name, element);
 	},
 
 
@@ -148,7 +148,7 @@ Todoyu.QuickInfo = {
 			this.delayedHide = this.hide.bind(this).delay(this.delayedHideTime);
 		}
 
-        Todoyu.Hook.exec('core.quickinfo.mouseout', event, name, element);
+		Todoyu.Hook.exec('core.quickinfo.mouseout', event, name, element);
 	},
 
 
