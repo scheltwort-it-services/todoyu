@@ -156,7 +156,7 @@ Todoyu.Popup = {
 	/**
 	 * Enter Description here...
 	 *
-	 * @param	{Object}	event
+	 * @param	{Event}		event
 	 * @param	{String}	idPopup
 	 */
 	onWindowClose: function(event, idPopup) {
@@ -171,7 +171,7 @@ Todoyu.Popup = {
 	/**
 	 * Enter Description here...
 	 *
-	 * @param	{Object}	event
+	 * @param	{Event}		event
 	 * @param	{String}	idPopup
 	 */
 	onMouseUp: function(event, idPopup) {

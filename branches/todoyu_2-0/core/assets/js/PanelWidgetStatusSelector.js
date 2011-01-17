@@ -27,7 +27,7 @@ Todoyu.PanelWidgetStatusSelector = Class.create({
 	/**
 	 * Handle list selection change
 	 *
-	 * @param	{Object}	event
+	 * @param	{Event}		event
 	 */
 	_onChange: function(event) {
 		var runDefault = true;
@@ -46,7 +46,7 @@ Todoyu.PanelWidgetStatusSelector = Class.create({
 	/**
 	 * Default selection change handler: select all if no option selected
 	 *
-	 * @param	{Object}	event
+	 * @param	{Event}		event
 	 */
 	_defaultOnChange: function(event) {
 		if( ! this.isAnyStatusSelected() ) {
@@ -58,7 +58,7 @@ Todoyu.PanelWidgetStatusSelector = Class.create({
 	/**
 	 * OnChange handler
 	 *
-	 * @param	{Object}	event
+	 * @param	{Event}		event
 	 * @return	{Boolean}
 	 */
 	onChange: function(event) {

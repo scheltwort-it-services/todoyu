@@ -350,7 +350,7 @@ Todoyu.Ui = {
 	/**
 	 * Hover effect handler (handles both mouseOver/ Out)
 	 *
-	 * @param	{Object}		event
+	 * @param	{Event}			event
 	 * @param	{Boolean}		over
 	 * @param	{Element}		element
 	 */
@@ -570,7 +570,7 @@ Todoyu.Ui = {
 	/**
 	 * Handler when clicked on the body
 	 *
-	 * @param	{Event}	event
+	 * @param	{Event}		event
 	 */
 	onBodyClick: function(event) {
 		this.bodyClickObservers.each(function(event, func){
