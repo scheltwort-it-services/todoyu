@@ -159,20 +159,20 @@ INSERT INTO `ext_calendar_mm_holiday_holidayset` (`id`, `id_holiday`, `id_holida
 -- Data for Table `ext_comment_comment`
 --
 
-INSERT INTO `ext_comment_comment` (`id`, `date_update`, `date_create`, `deleted`, `id_person_create`, `id_task`, `comment`, `is_public`) VALUES
-(1, 1254233694, 1254233694, 0, 1, 7, '<p>Hallo, schau dir das bitte mal an, wenn moeglich noch Heute</p>', 0),
-(2, 1264692282, 1264692282, 0, 1, 61, '<p>hahah</p>', 0),
-(3, 1264699613, 1264699613, 0, 1, 35, '<p>Hi Bob</p><p>can you start with this task a bit earlier?</p>', 0),
-(4, 1264699947, 1264699947, 0, 17, 60, '<p>Any questions concerning this one?</p>', 0),
-(5, 1264700306, 1264700028, 0, 17, 106, '<p>There seems to be a problem. Can you check the attachment to this task? And please send me a short feedback.</p>', 0),
-(6, 1264700390, 1264700385, 0, 17, 95, '<p>thanks for the good job. seems to be a good decision.</p>', 0),
-(7, 1264777276, 1264777276, 0, 18, 60, '<p>hey friedrich, please inform me when the task whereabouts have changed.</p>', 1),
-(8, 1264778321, 1264778217, 0, 18, 134, '<p>please see the attached image, does this meet the specs?</p>', 0),
-(9, 1264778497, 1264778497, 0, 18, 134, '<p>readme please.</p>', 0),
-(10, 1264778585, 1264778585, 0, 12, 134, '<p>Thanks for the image. It''s ok so</p><p>Are you ready for the next step</p>', 0),
-(11, 1264780345, 1264780345, 0, 1, 60, '<p>When can we start?</p>', 0),
-(12, 1264780389, 1264780389, 0, 12, 116, '<p>There may come up a problem with this task. We should have a meeting before you start it. Please organize a meeting with all involved persons</p>', 0),
-(13, 1264784917, 1264784917, 0, 1, 149, '<p>sssafd</p>', 0);
+INSERT INTO `ext_comment_comment` (`id`, `date_create`, `date_update`, `deleted`, `id_person_create`, `id_task`, `comment`, `is_public`) VALUES
+(1, 1285769694, 1285769694, 0, 1, 7, '<p>Hallo, schau dir das bitte mal an, wenn moeglich noch Heute</p>', 0),
+(2, 1296228282, 1296228282, 0, 1, 61, '<p>hahah</p>', 0),
+(3, 1296235613, 1296235613, 0, 1, 35, '<p>Hi Bob</p><p>can you start with this task a bit earlier?</p>', 0),
+(4, 1296235947, 1296235947, 0, 17, 60, '<p>Any questions concerning this one?</p>', 0),
+(5, 1296236028, 1296236306, 0, 17, 106, '<p>There seems to be a problem. Can you check the attachment to this task? And please send me a short feedback.</p>', 0),
+(6, 1296236385, 1296236390, 0, 17, 95, '<p>thanks for the good job. seems to be a good decision.</p>', 0),
+(7, 1296313276, 1296313276, 0, 18, 60, '<p>hey friedrich, please inform me when the task whereabouts have changed.</p>', 1),
+(8, 1296314217, 1296314321, 0, 18, 134, '<p>please see the attached image, does this meet the specs?</p>', 0),
+(9, 1296314497, 1296314497, 0, 18, 134, '<p>readme please.</p>', 0),
+(10, 1296314585, 1296314585, 0, 12, 134, '<p>Thanks for the image. It''s ok so</p><p>Are you ready for the next step</p>', 0),
+(11, 1296316345, 1296316345, 0, 1, 60, '<p>When can we start?</p>', 0),
+(12, 1296316389, 1296316389, 0, 12, 116, '<p>There may come up a problem with this task. We should have a meeting before you start it. Please organize a meeting with all involved persons</p>', 0),
+(13, 1296320917, 1296320917, 0, 1, 149, '<p>sssafd</p>', 0);
 
 -- --------------------------------------------------------
 
@@ -181,21 +181,21 @@ INSERT INTO `ext_comment_comment` (`id`, `date_update`, `date_create`, `deleted`
 --
 
 INSERT INTO `ext_comment_feedback` (`id`, `date_create`, `date_update`, `id_person_create`, `id_person_feedback`, `id_comment`, `is_seen`) VALUES
-(1, 1254233694, 0, 1, 2, 1, 0),
-(2, 1264699613, 0, 1, 1, 3, 0),
-(3, 1264699947, 0, 17, 14, 4, 0),
-(4, 1264699947, 1264777276, 17, 18, 4, 1),
-(5, 1264699947, 0, 17, 17, 4, 0),
-(6, 1264700306, 0, 17, 1, 5, 0),
-(7, 1264700390, 0, 17, 1, 6, 0),
-(8, 1264777276, 0, 18, 14, 7, 0),
-(9, 1264778217, 0, 18, 14, 8, 0),
-(10, 1264778217, 0, 18, 17, 8, 0),
-(11, 1264778313, 1264778497, 18, 18, 8, 1),
-(12, 1264778321, 0, 18, 14, 8, 0),
-(13, 1264778321, 0, 18, 17, 8, 0),
-(14, 1264778497, 1264778585, 18, 12, 9, 1),
-(15, 1264778585, 0, 12, 18, 10, 0);
+(1, 1285769694, 31536000, 1, 2, 1, 0),
+(2, 1296235613, 31536000, 1, 1, 3, 0),
+(3, 1296235947, 31536000, 17, 14, 4, 0),
+(4, 1296235947, 1296313276, 17, 18, 4, 1),
+(5, 1296235947, 31536000, 17, 17, 4, 0),
+(6, 1296236306, 31536000, 17, 1, 5, 0),
+(7, 1296236390, 31536000, 17, 1, 6, 0),
+(8, 1296313276, 31536000, 18, 14, 7, 0),
+(9, 1296314217, 31536000, 18, 14, 8, 0),
+(10, 1296314217, 31536000, 18, 17, 8, 0),
+(11, 1296314313, 1296314497, 18, 18, 8, 1),
+(12, 1296314321, 31536000, 18, 14, 8, 0),
+(13, 1296314321, 31536000, 18, 17, 8, 0),
+(14, 1296314497, 1296314585, 18, 12, 9, 1),
+(15, 1296314585, 31536000, 12, 18, 10, 0);
 
 -- --------------------------------------------------------
 
