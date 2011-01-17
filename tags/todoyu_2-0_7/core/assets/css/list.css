@@ -1,0 +1,86 @@
+table.list {
+	width:650px;
+	margin-top:5px;
+}
+
+table.list tr.header {
+	height:28px;
+	background:url('../img/bg-headerline.png') no-repeat 0 0;
+	text-align:left;
+}
+
+table.list .header th {
+	border-bottom:1px dotted #aaa;
+}
+
+table.list td,
+table.list th {
+	vertical-align:middle;
+}
+
+table.list .header th.last {
+	background:#fff url(../img/bg-headerline.png) no-repeat 100% 0;
+}
+
+table.list th,
+table.list td {
+	padding:5px;
+}
+
+table.list td {
+	border-bottom:1px dotted #aaa;
+}
+
+table.list td div.icon {
+	height:18px;
+	margin-top:-2px;
+	margin-bottom:-2px;
+	cursor:pointer;
+}
+
+
+
+/* ------------
+	Hover
+   ------------ */
+table.list tr:hover,
+table.list tr:hover .odd,
+table.list tr:hover .even,
+ul.withMouseHover li.odd:hover,
+ul.withMouseHover li.even:hover {
+	background-color:#f2f2d2 !important;
+}
+
+
+
+/* -----------------------------
+	Odd and even alternation
+   ----------------------------- */
+table.list tr.odd,
+table.listsimple tr.odd,
+li.odd {
+	background-color:#f3f3f3;
+}
+
+table.list tr.even,
+table.listsimple tr.even,
+li.even {
+	background-color:#fff;
+}
+
+
+
+#extendlisting {
+	width:650px;
+}
+
+#extendlisting a {
+	display:block;
+	font-weight:bold;
+	padding:9px 0 9px 20px;
+	background:url(../img/icons.png) no-repeat 5px -289px;
+}
+
+#extendlisting a:hover {
+	background-color:#f2f2d2;
+}
