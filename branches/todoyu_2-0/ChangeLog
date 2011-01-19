@@ -19,18 +19,18 @@ todoyu 2.0.7 - released 2011-01-19
 	* Bugfix: UI - Improved element hovers in calendar (fixed: finger cursor above non-linked elements)
 	* Bugfix: Fixed HTML encoding inside calendar tooltips (/dqwoo plugin "truncate")
 	* Bugfix: Portal birthdays list misses one year when calculating upcoming ages in next year
-	* Bugfix: Project autocompleter - suggestion does not contain customer maname isf no shortnam eis stored
+	* Bugfix: Project autocompleter - suggestion does not contain customer name if no shortname is stored
 	* Feature: Task creation inside projects with status "done" and "cleared" is prohibited now
-	* Feature: Improved events listing in protal: items sorting, layout
+	* Feature: Improved events listing in portal: items sorting, layout
 	* Feature: Added various in-code comments (DOC)
-	* Feature: Contact rights: removed display of non-public persons from task details in view of non-internal users
+	* Feature: Contact rights: Restricted listed persons in task details to by visibility company/person group rights
 	* Feature: Comment rights: Feedbacks- and email receiver- options are filtered for allowed persons now
 	* Feature: Added array helper method: TodoyuArray::flattenToSubKeys
 	* Feature: #128 Added project rights settings for adding containers in own/all projects
 	* Feature: #128 Added project rights settings for using clipboard options
 	* Feature: #126 Separate rights settings for edit, delete task/containers
 	* Feature: #124 Tasks/containers can be created/cloned/pasted in projects with status "done" and "cleared"
-	* Feature: Live-validating input assistent for numeric/ monetary form fields
+	* Feature: Live-validating input assistent for numeric/monetary form fields
 	* Feature: #105 Added dependency check to ext installation of sysmanager
 	* Feature: Added italian todoyu translation
 	* Feature: UI - Adapted timetracking headlet progressbar colors to todoyu CI
