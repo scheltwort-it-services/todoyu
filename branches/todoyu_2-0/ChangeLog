@@ -23,6 +23,7 @@ todoyu 2.0.7 - released 2011-01-19
 	* Bugfix: Fixed HTML encoding inside calendar tooltips (/dqwoo plugin "truncate")
 	* Bugfix: Portal birthdays list misses one year when calculating upcoming ages in next year
 	* Bugfix: Project autocompleter - suggestion does not contain customer name if no shortname is stored
+	* Feature: Added swiss holidays for 2011 to installer demo data (zurich and berne)
 	* Feature: Improved comments rights presets of demo data for "project manager" and "staff" role
 	* Feature: (Demo data) added public visibilty for all demo project managers of all demo projects
 	* Feature: Improved rights presets of project extension (projects and tasks visibility and editing) for "project manager" and "staff" role	
