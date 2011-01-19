@@ -1,9 +1,12 @@
 todoyu Changelog
 
 todoyu 2.0.7 - released 2011-01-19
+	* Update Note:	When updating to 2.0.7 - Setup new rights: "Contact > See all internal persons", "Contact > See All Persons" (If none set: see only public persons in own projects)
+	* Update Note:	When updating to 2.0.7 - Setup new right: "Contact > See All Companies" (If not set: see only own and internal company)
+	* Update Note:	When updating to 2.0.7 - You must set project persons "public", for customers to be able to see/send feedback to them.
 	* Bugfix: English locale of date formats contained some german formats
 	* Bugfix: #136 "My Filters" in portal ignores "OR" conjunction (uses "AND")
-	* Bugfix: #125 Restricted task creation suggests also disallowed projects
+	* Bugfix: #125 Restricted task creation suggested also disallowed projects
 	* Bugfix: Extended numeric form value input assistant to allow for negative values
 	* Bugfix: #118 Fixed sorting of last tracked tasks in headlet
 	* Bugfix: #113 Deleted contactinfo is visible in quickinfo
@@ -21,13 +24,13 @@ todoyu 2.0.7 - released 2011-01-19
 	* Bugfix: Portal birthdays list misses one year when calculating upcoming ages in next year
 	* Bugfix: Project autocompleter - suggestion does not contain customer name if no shortname is stored
 	* Feature: Improved comments rights presets of demo data for "project manager" and "staff" role
+	* Feature: (Demo data) added public visibilty for all demo project managers of all demo projects
 	* Feature: Improved rights presets of project extension (projects and tasks visibility and editing) for "project manager" and "staff" role	
 	* Feature: Task creation inside projects with status "done" and "cleared" is prohibited now
 	* Feature: Improved events listing in portal: items sorting, layout
 	* Feature: Added various in-code comments (DOC)
 	* Feature: Contact rights: Restricted listed persons in task details to by visibility company/person group rights
 	* Feature: Comment rights: Feedbacks- and email receiver- options are filtered for allowed persons now
-	* Feature: Added array helper method: TodoyuArray::flattenToSubKeys
 	* Feature: #128 Added project rights settings for adding containers in own/all projects
 	* Feature: #128 Added project rights settings for using clipboard options
 	* Feature: #126 Separate rights settings for edit, delete task/containers
@@ -36,8 +39,9 @@ todoyu 2.0.7 - released 2011-01-19
 	* Feature: #105 Added dependency check to ext installation of sysmanager
 	* Feature: Added italian todoyu translation
 	* Feature: UI - Adapted timetracking headlet progressbar colors to todoyu CI
-	* Feature: Person quickinfo now treats (displays) sole stored phone number now as primary phone number
-	* Changed: (Demo data rights presets) customer can now use search area and create his own filters for use in portal
+	* Feature: Person quickinfo now displays sole stored phone number as if it was marked as primary phone number
+	* Feature: Added array helper method: TodoyuArray::flattenToSubKeys
+	* Changed: (Demo data rights presets) Customer can now use search area and create his own filters for use in portal
 	* Changed: Default duration of quicktasks is now 3 days (not 7)
 
 
