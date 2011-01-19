@@ -20,6 +20,8 @@ todoyu 2.0.7 - released 2011-01-19
 	* Bugfix: Fixed HTML encoding inside calendar tooltips (/dqwoo plugin "truncate")
 	* Bugfix: Portal birthdays list misses one year when calculating upcoming ages in next year
 	* Bugfix: Project autocompleter - suggestion does not contain customer name if no shortname is stored
+	* Feature: Improved comments rights presets of demo data for "project manager" and "staff" role
+	* Feature: Improved rights presets of project extension (projects and tasks visibility and editing) for "project manager" and "staff" role	
 	* Feature: Task creation inside projects with status "done" and "cleared" is prohibited now
 	* Feature: Improved events listing in portal: items sorting, layout
 	* Feature: Added various in-code comments (DOC)
@@ -35,6 +37,7 @@ todoyu 2.0.7 - released 2011-01-19
 	* Feature: Added italian todoyu translation
 	* Feature: UI - Adapted timetracking headlet progressbar colors to todoyu CI
 	* Feature: Person quickinfo now treats (displays) sole stored phone number now as primary phone number
+	* Changed: (Demo data rights presets) customer can now use search area and create his own filters for use in portal
 	* Changed: Default duration of quicktasks is now 3 days (not 7)
 
 
