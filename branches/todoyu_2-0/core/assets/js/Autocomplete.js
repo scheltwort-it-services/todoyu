@@ -153,7 +153,7 @@ Todoyu.Autocomplete = {
 
 		}
 
-		if( updateValueField ) {
+		if( updateValueField && $(baseID) ) {
 			$(baseID).setValue(selectedValue);
 		}
 	},

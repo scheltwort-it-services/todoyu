@@ -120,7 +120,6 @@ Todoyu.Popup = {
 		}
 
 		requestOptions.onComplete.wrap(function(idPopup, callOriginal, response){
-			this.onContentLoaded.bind(this, idPopup);
 			callOriginal(response);
 		}.bind(this, idPopup));
 
@@ -129,53 +128,15 @@ Todoyu.Popup = {
 			// Save last opened popup
 		this.last = this.getPopup(idPopup);
 
+			// Close all RTEs inside popup when closing it
+		var closeObserver = {
+			onDestroy: function(eventName, win) {
+				Todoyu.Ui.closeRTE(win.content);
+			}
+		}
+		Windows.addObserver(closeObserver);
+
 		return this.getPopup(idPopup);
-	},
-
-
-
-	/**
-	 * Evoked after window content has been rendered.
-	 * Installing observers:
-	 * 1. upon clicking:	(delayed) popup window updates its seize to fit its content
-	 * 2. upon closing:	the click observer (1) is stopped
-	 *
-	 * @param	{String}			idPopup
-	 * @param	{Ajax.Response}		response
-	 */
-	onContentLoaded: function(idPopup, response) {
-//		this.getPopup(idPopup).updateHeight();
-//
-//		this.getContentElement(idPopup).observe('mouseup', this.onMouseUp.bindAsEventListener(this, idPopup));
-//
-//		this.getPopup(idPopup).setCloseCallback(this.onWindowClose.bindAsEventListener(this, idPopup));
-	},
-
-
-
-	/**
-	 * Enter Description here...
-	 *
-	 * @param	{Event}		event
-	 * @param	{String}	idPopup
-	 */
-	onWindowClose: function(event, idPopup) {
-//		this.getContentElement(idPopup).stopObserving('mouseup');
-//		this.clearTimeout();
-//
-//		return true;
-	},
-
-
-
-	/**
-	 * Enter Description here...
-	 *
-	 * @param	{Event}		event
-	 * @param	{String}	idPopup
-	 */
-	onMouseUp: function(event, idPopup) {
-//		this.timeoutID = this.updateHeight.bind(this).delay(0.3, idPopup, true);
 	},
 
 
@@ -199,22 +160,6 @@ Todoyu.Popup = {
 	 */
 	updateHeight: function(idPopup, clearTimeout) {
 		this.getPopup(idPopup).updateHeight();
-//
-//		if( clearTimeout ) {
-//			this.clearTimeout();
-//		}
-	},
-
-
-
-	/**
-	 * Clear timeout (if set)
-	 */
-	clearTimeout: function() {
-//		if( this.timeoutID !== null ) {
-//			window.clearTimeout(this.timeoutID);
-//			this.timeoutID = null;
-//		}
 	},
 
 
