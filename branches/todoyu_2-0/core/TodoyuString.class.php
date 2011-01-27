@@ -146,16 +146,18 @@ class TodoyuString {
 	 * @param	String		$html		HTML snippet
 	 * @return	String		Text version
 	 */
-	public static function html2text($html) {
+	public static function html2text($html, $br2Newline = false, $decodeChars = false) {
+		$text	= htmlspecialchars_decode($html);
+
+		$text	= $br2Newline ? self::br2nl($text) : $text;
+		$text	= strip_tags($text);
+
+		if( $decodeChars === true ) {
+			$charSet= TodoyuString::isUTF8($text) ? 'UTF-8' : 'ISO-8859-1';
+			$text	= html_entity_decode($text, ENT_COMPAT, $charSet);
+		}
+
 		return strip_tags($html);
-		/*
-		require_once( PATH_LIB . '/php/html2text/class.html2text.php' );
-
-		$html2text = new html2text($html);
-		$html2text->set_base_url(TODOYU_URL);
-
-		return $html2text->get_text();
-		*/
 	}
 
 
