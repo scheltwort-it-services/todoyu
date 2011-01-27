@@ -163,6 +163,19 @@ class TodoyuString {
 
 
 	/**
+	 * Replaces html-tag <br /> with newlines
+	 *
+	 * @static
+	 * @param	String	$string
+	 * @return	String
+	 */
+	public static function br2nl($string) {
+		return str_ireplace(array('<br />', '<br>'), chr(10), $string);
+	}
+
+
+
+	/**
 	 * Get a substring around a keyword
 	 *
 	 * @param	String		$string			The whole text
