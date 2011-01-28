@@ -141,4 +141,7 @@
 	<labels lang="it_IT">
 		<label index="it_IT">Italiano (Italia)</label>
 	</labels>
+	<labels lang="es_CO">
+		<label index="es_CO">Español (Colombia)</label>
+	</labels>
 </locallang>

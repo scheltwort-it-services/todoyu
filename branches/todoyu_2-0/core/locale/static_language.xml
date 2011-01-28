@@ -210,4 +210,7 @@
 	<labels lang="it_IT">
 		<label index="it">Italiano</label>
 	</labels>
+	<labels lang="es_CO">
+		<label index="es">Español</label>
+	</labels>
 </locallang>

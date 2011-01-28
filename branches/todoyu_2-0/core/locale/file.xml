@@ -100,4 +100,14 @@
 		<label index="filename">Nome file</label>
 		<label index="filesize">Dimensione</label>
 	</labels>
+	<labels lang="es_CO">
+		<label index="download">Descargar</label>
+		<label index="upload">Subir</label>
+		<label index="size.gb">GB</label>
+		<label index="size.mb">MB</label>
+		<label index="size.kb">KB</label>
+		<label index="size.b">B</label>
+		<label index="filename">Nombre archivo</label>
+		<label index="filesize">Peso archivo</label>
+	</labels>
 </locallang>

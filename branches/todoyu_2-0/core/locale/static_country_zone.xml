@@ -1027,4 +1027,5 @@
 		<label index="IRL.DUB">Dublino</label>
 		<label index="BRA.SP">San Paolo</label>
 	</labels>
+	<labels lang="es_CO"></labels>
 </locallang>

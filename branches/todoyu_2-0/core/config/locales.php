@@ -29,6 +29,26 @@
  * Windows: locales are listed in the Regional Options section of the Control Panel. For using complex script and right-to-left languages or East Asian languages (e.g. japanese) install them in the "Languages" section of "Regional and Language Options" of the Control Panel.
  */
 
+	// Default locale for fallback
+Todoyu::$CONFIG['LOCALE']['default']	= 'en_GB';
+
+	// Available locales on the system
+Todoyu::$CONFIG['LOCALE']['available']	= array(
+	'en_GB',
+	'de_DE',
+	'pt_BR',
+	'ru_RU',
+	'fr_FR',
+	'nl_NL',
+	'cs_CZ',
+	'sr_RS',
+	'ja_JP',
+	'it_IT',
+	'es_CO'
+	 /*,'hr_HR','sr_ME'*/
+);
+
+	// System locales for server system
 Todoyu::$CONFIG['LOCALE']['SYSTEMLOCALES'] = array(
 	'en_GB' => array('en_GB.utf8', 'en_GB', 'en', 'English_GB'), // English (United Kingdom)
 	//'en_US'	=> array('en_US.utf8', 'en_US', 'en', 'English_US', 'English_United States.1252'),
@@ -44,8 +64,8 @@ Todoyu::$CONFIG['LOCALE']['SYSTEMLOCALES'] = array(
 	'sr_ME' => array('sr_ME.utf8', 'sr_ME', 'sr'), // Serbian (Montenegro)
 	'sr_RS' => array('sr_RS.utf8', 'sr_RS', 'sr'), // Serbian (Serbia)
 	'ja_JP' => array('ja_JP', 'ja', 'ja_JP.eucjp', 'ja_JP.ujis', 'japanese', 'japanese.euc'), // Japanese
-	'it_IT' => array('it_IT.utf8', 'it_IT', 'it') // Italian
+	'it_IT' => array('it_IT.utf8', 'it_IT', 'it'), // Italian
+	'es_CO' => array('es_CO.utf8', 'es_CO', 'es') // Spanish (Columbia)
 );
-Todoyu::$CONFIG['LOCALE']['default']	= 'en_GB';
-Todoyu::$CONFIG['LOCALE']['available']	= array('en_GB','de_DE','pt_BR','ru_RU','fr_FR','nl_NL','cs_CZ','sr_RS','ja_JP', 'it_IT' /*,'hr_HR','sr_ME'*/);
+
 ?>
