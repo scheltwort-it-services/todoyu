@@ -58,6 +58,7 @@ abstract class TodoyuTemplateDocumentAbstract {
 	}
 
 
+
 	/**
 	 * Build the document with the template and the data
 	 *

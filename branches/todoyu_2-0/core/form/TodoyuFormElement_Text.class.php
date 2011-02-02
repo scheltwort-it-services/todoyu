@@ -78,6 +78,7 @@ class TodoyuFormElement_Text extends TodoyuFormElement {
 	}
 
 
+
 	/**
 	 * Validate if field is required
 	 * Text = not empty if spaces are removed
