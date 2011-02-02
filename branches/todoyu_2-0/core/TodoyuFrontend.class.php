@@ -158,9 +158,9 @@ class TodoyuFrontend {
 
 				// Add entry
 			if( $allowed ) {
-				$entryKey	= 'projectbilling' . ucfirst($itemKey);
-				$label		= Label('projectbilling.subMenuEntry.' . $itemKey);
-				$href		= '?ext=projectbilling&tab=' . $itemKey;
+				$entryKey	= $extKey . ucfirst($itemKey);
+				$label		= Label($extKey . '.subMenuEntry.' . $itemKey);
+				$href		= '?ext=' . '&tab=' . $itemKey;
 				$position	= intval($itemConfig['position']);
 
 				self::addSubmenuEntry($parentKey, $entryKey, $labelPrefix . ' > ' . $label, $href, $position);
@@ -204,7 +204,7 @@ class TodoyuFrontend {
 
 
 	/**
-	 * Get submenu tabs
+	 * Get sub menu tabs
 	 *
 	 * @param	String		$parentKey
 	 * @return	Array
@@ -259,6 +259,12 @@ class TodoyuFrontend {
 	}
 
 
+
+	/**
+	 * @todo	comment
+	 * @param	String	$ext
+	 * @param	String	$controller
+	 */
 	public static function setDefaultView($ext, $controller) {
 		Todoyu::$CONFIG['FE']['DEFAULT'] = array(
 			'ext'		=> $ext,
