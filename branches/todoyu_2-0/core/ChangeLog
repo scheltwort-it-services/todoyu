@@ -1,0 +1,4 @@
+todoyu Changelog
+
+todoyu 2.0.8 - not released yet
+	* Bugfix: file downloads fail with internet explorer and https connection

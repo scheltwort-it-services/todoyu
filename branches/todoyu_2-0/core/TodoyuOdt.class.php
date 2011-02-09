@@ -230,10 +230,13 @@ class TodoyuOdt {
 	 * Downloads the current ODT file
 	 */
 	public function download() {
-		header('Content-Type: application/vnd.oasis.opendocument.text');
-		header('Content-Disposition: attachment; filename=' . $this->newFileName);
-		header('Pragma: no-cache');
-		header('Expires: 0');
+		TodoyuHeader::sendHeader('Content-Description', 'File Transfer');
+		TodoyuHeader::sendHeader('Content-Type', 'application/vnd.oasis.opendocument.text');
+		TodoyuHeader::sendHeader('Content-disposition', 'attachment; filename="' . addslashes($this->newFilename) . '"');
+		TodoyuHeader::sendHeader('Content-Transfer-Encoding', 'binary');
+		TodoyuHeader::sendHeader('Cache-Control', 'must-revalidate');	// Attention: no-cache will not work with https + internet explorer!
+		TodoyuHeader::sendHeader('Pragma', 'public');
+		TodoyuHeader::sendHeader('Expires', date('r', NOW + 600));
 
 		echo $this->getContent();
 
