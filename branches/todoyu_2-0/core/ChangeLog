@@ -1,4 +1,5 @@
 todoyu Changelog
 
 todoyu 2.0.8 - not released yet
+	* Feature: Text form fields are trimmed before saving
 	* Bugfix: file downloads fail with internet explorer and https connection
