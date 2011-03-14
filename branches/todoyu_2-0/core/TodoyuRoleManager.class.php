@@ -35,7 +35,7 @@ class TodoyuRoleManager {
 	/**
 	 * Get a usergroup object
 	 *
-	 * @param	Integer		$idUsergroup
+	 * @param	Integer		$idRole
 	 * @return	TodoyuRole
 	 */
 	public static function getRole($idRole) {
@@ -49,7 +49,7 @@ class TodoyuRoleManager {
 	/**
 	 * Get informations about the roles defined in $groupIDs
 	 *
-	 * @param	Array		$groupIDs		IDs of the groups to the get information from
+	 * @param	Array		$roleIDs		IDs of the groups to the get information from
 	 * @return	Array
 	 */
 	public static function getRoles(array $roleIDs) {
@@ -104,9 +104,9 @@ class TodoyuRoleManager {
 
 
 	/**
-	 * Update a usergrop
+	 * Update a usergroup
 	 *
-	 * @param	Integer		$idUsergroup
+	 * @param	Integer		$idRole
 	 * @param	Array		$data
 	 * @return	Boolean
 	 */
@@ -121,7 +121,7 @@ class TodoyuRoleManager {
 	/**
 	 * Assign multiple persons to an event
 	 *
-	 * @param	Integer		$idEvent
+	 * @param	Integer		$idRole
 	 * @param	Array		$personIDs
 	 */
 	public static function assignPersonsToRole($idRole, array $personIDs) {
@@ -174,7 +174,7 @@ class TodoyuRoleManager {
 	/**
 	 * Save role (add or update)
 	 *
-	 * @param	Array	$storageData
+	 * @param	Array	$data
 	 */
 	public static function saveRole(array $data) {
 		$xmlPath= 'core/config/form/role.xml';
@@ -231,8 +231,8 @@ class TodoyuRoleManager {
 	/**
 	 * Remove an user from a role
 	 *
-	 * @param	Integer		$idGroup
-	 * @param	Integer		$idUser
+	 * @param	Integer		$idRole
+	 * @param	Integer		$idPerson
 	 */
 	public static function removePerson($idRole, $idPerson) {
 		$idRole		= intval($idRole);
@@ -351,7 +351,7 @@ class TodoyuRoleManager {
 	/**
 	 * Get number of users in the group
 	 *
-	 * @param	Integer		$idUsergroup
+	 * @param	Integer		$idRole
 	 * @return	Integer
 	 */
 	public static function getNumPersons($idRole) {
@@ -376,7 +376,8 @@ class TodoyuRoleManager {
 		$table	= '	ext_contact_person p,
 					ext_contact_mm_person_role mm';
 		$where	= '		mm.id_role = ' . $idRole .
-				  ' AND	mm.id_person = p.id';
+				  ' AND	mm.id_person = p.id' .
+				  ' AND	p.deleted = 0';
 
 		return Todoyu::db()->getArray($fields, $table, $where);
 	}
