@@ -1,6 +1,7 @@
 todoyu Changelog
 
 core 2.0.8 - not released yet
+	* Bugfix: Added forgotten button label to "add person" button of role form
 	* Bugfix: Deleted persons were shown in persons list of role 
 	* Feature: Added dwoo plugin: addslashes, escaped installer-written strings inside config files
 	* Feature: Text form fields are trimmed before saving
