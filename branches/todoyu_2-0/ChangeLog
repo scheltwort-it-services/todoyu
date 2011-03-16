@@ -1,7 +1,22 @@
 todoyu Changelog
 
 todoyu 2.0.8 - released 2011-03-16
-	* Feature: Added installation readme file into root
+	* Added: Added TodoyuString::br2nl()
+	* Added: TodoyuTime::getDaysInTimespan()
+	* Added: Dates in demo data are now updated to a current date when importing
+  	* Change: Improved TodoyuString::html2text() for better results
+	* Change: <select> form element has now an extraAttribute field
+	* Locale: Added some of the missing czech core labels
+	* Locale: Added spanish (es_CO) locales for core
+	* Bugfix: #165 Changed links for new todoyu.com website
+	* Bugfix: #164 Added button label for "add person" in role form
+ 	* Bugfix: #154 Add slashes to string in generated config files
+ 	* Bugfix: #146 Added extra headers in file download request to support IE file downloads
+	* Bugfix: Allow span with style tags in RTE to allow underlined text formatting
+	* Bugfix: Switched cropText and htmlencode plugins to prevent cropping encoded text which contains encoded entities
+	* Bugfix: Added close observer to popup to remove RTE instances in popups
+	* Bugfix: Todoyu.Ui.closeRTE() can handle null as parameter
+
 
 todoyu 2.0.7 - released 2011-01-19
 	* Update Note:	When updating to 2.0.7 - Setup new rights: "Contact > See all internal persons", "Contact > See All Persons" (If none set: see only public persons in own projects)
@@ -29,7 +44,7 @@ todoyu 2.0.7 - released 2011-01-19
 	* Feature: Added swiss holidays for 2011 to installer demo data (zurich and berne)
 	* Feature: Improved comments rights presets of demo data for "project manager" and "staff" role
 	* Feature: (Demo data) added public visibilty for all demo project managers of all demo projects
-	* Feature: Improved rights presets of project extension (projects and tasks visibility and editing) for "project manager" and "staff" role	
+	* Feature: Improved rights presets of project extension (projects and tasks visibility and editing) for "project manager" and "staff" role
 	* Feature: Task creation inside projects with status "done" and "cleared" is prohibited now
 	* Feature: Improved events listing in portal: items sorting, layout
 	* Feature: Added various in-code comments (DOC)
