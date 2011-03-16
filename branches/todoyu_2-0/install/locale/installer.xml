@@ -652,4 +652,10 @@
 		<label index="finishupdate.text">L'aggiornamento dell'installazione di todoyu è stata completata correttamente</label>
 		<label index="slogan.line2">Speriamo che ti piaccia.</label>
 	</labels>
+	<labels lang="sr_RS">
+		<label index="locale.selectthislocale">Инсталирајте todoyu на српском</label>
+	</labels>
+	<labels lang="es_CO">
+		<label index="locale.selectthislocale">Instale todoyu en español</label>
+	</labels>
 </locallang>
