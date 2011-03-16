@@ -299,7 +299,7 @@ INSERT INTO `ext_project_mm_project_person` (`id`, `id_project`, `id_person`, `i
 --
 
 INSERT INTO `ext_project_project` (`id`, `date_create`, `date_update`, `id_person_create`, `deleted`, `date_start`, `date_end`, `date_deadline`, `title`, `description`, `status`, `id_company`) VALUES
-(1, 1278518959, 1278518959, 1, 0, 1278453600, 1296255600, 1296255600, 'My First Project', '<p>This is the first todoyu project.</p>', 3, 4),
+(1, 1278518959, 1278518959, 1, 0, 1278453600, 1296255600, 1296255600, 'My First Project', '<p>This is the first todoyu project.</p>', 3, 1),
 (4, 1296204890, 1296315125, 1, 0, 1296169200, 1298761200, 1299020400, 'Relaunch Website', '<p>Whole process of relaunching the website</p>', 1, 17),
 (5, 1296211342, 1296315633, 1, 0, 1296169200, 1298761200, 1298761200, 'Relaunch Website', '<p>Relaunch Website</p>', 5, 11),
 (6, 1296211382, 1296217654, 1, 0, 1296169200, 1298761200, 1298761200, 'Relaunch Website', '<p>Relaunch Website</p>', 1, 13),
