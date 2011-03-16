@@ -1,5 +1,8 @@
 todoyu Changelog
 
+todoyu 2.0.8 - released 2011-03-16
+	* Feature: Added installation readme file into root
+
 todoyu 2.0.7 - released 2011-01-19
 	* Update Note:	When updating to 2.0.7 - Setup new rights: "Contact > See all internal persons", "Contact > See All Persons" (If none set: see only public persons in own projects)
 	* Update Note:	When updating to 2.0.7 - Setup new right: "Contact > See All Companies" (If not set: see only own and internal company)
