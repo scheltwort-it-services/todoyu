@@ -1,7 +1,0 @@
-<li id="{$name}-tab-{$tab.id}" class="item bcg05 tabkey-{$tab.id|default:"0"} {$tab.id} {$tab.class} {if $tab.id == $active}active{/if}">
-	<p id="{$name}-tab-{$tab.id}-label" class="label">
-		<span class="lt"><!-- --></span>
-		<span class="icon"><!-- icon --></span>
-		<span class="labeltext">{htmlencode(cropText($tab.label,24,false))}</span>
-	</p>
-</li>
