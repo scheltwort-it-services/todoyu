@@ -43,8 +43,8 @@ ul#navi-main-list li a span.lt {
 	background-image:url('../img/rounded-box01.png');
 }
 
-ul#navi-main-list li:hover a,
-ul#navi-main-list li a.active {
+ul#navi-main-list > li:hover a,
+ul#navi-main-list > li a.active {
 	background-image:none;
 }
 
