@@ -1,0 +1,241 @@
+a.icon,
+span.icon,
+div.icon {
+	display:block;
+	float:left;
+	clear:none;
+	width:18px;
+	height:18px;
+}
+
+div.iconLarge,
+span.iconLarge {
+	display:block;
+	float:left;
+	clear:none;
+	width:32px;
+	height:32px;
+}
+
+.link {
+	cursor:pointer;
+}
+
+.contentMessage {
+	clear:both;
+	padding:10px;
+	width:640px;
+	background-color:#E3EACE;
+	margin:5px 0;
+}
+
+.contentMessage div.icon,
+.contentMessage div.text {
+	float:left;
+	clear:none;
+}
+
+.contentMessage .icon {
+	background:url(../img/icons.png) 2px -628px no-repeat;
+	margin-right:15px;
+}
+
+.contentMessage .text {
+	font-weight:bold;
+	padding-top:2px;
+	width:600px;
+}
+
+.contentMessage .text ul li {
+	margin-bottom:7px;
+}
+
+/* -----------------
+	Listings
+   -----------------*/
+
+ul.ulList {}
+ul.ulList li.listItem {
+	overflow:hidden;
+	list-style: none;
+	line-height:18px;
+}
+* html ul.ulList li.listItem {
+	overflow:visible;
+	height:1%;
+}
+ul.ulList li.listItem span {
+	display:block;
+	float:left;
+}
+ul.ulList li.listItemHeader {}
+ul.ulList li.listItemHeader span {
+	font-weight:bold;
+}
+
+ul.ulListDotted li.listItem {
+	border-bottom:1px dotted #aaaaaa;
+}
+/* -----------------------------
+	Editable / linked items
+   ----------------------------- */
+li.listItem a.editableItem {
+	display:block;
+}
+
+/* -----------------
+	Box
+   -----------------*/
+.infoBoxOuter {
+	padding:7px;
+	background-color:#eee;
+}
+.infoBoxOuter.edit form {
+	margin:-7px;
+}
+
+div.infoBox {
+	margin-bottom:5px;
+	border:1px solid #e1e1e1;
+}
+
+div.infoBox h4 {
+	margin:0;
+	font-weight: bold;
+}
+
+div.infoBox div.content {
+	padding: 5px 12px;
+	background: white;
+}
+/* -----------------
+	Heading
+   -----------------*/
+
+h1 {
+	position:relative;
+	overflow:hidden;
+}
+
+.headerLine span,
+.button,
+.title {
+	text-shadow: 1px 1px #f3f3f3;
+}
+
+h1.headerLine.hasIcon {
+	padding-left:2px;
+}
+h1.headerLine.hasIcon span.title {
+	padding-left:27px;
+}
+
+.headerLine {
+	position:relative;
+	margin-top:5px;
+	width:100%;
+	height:28px;
+	background:url('../img/bg-headerline.png') no-repeat 0 0;
+	text-align:left;
+}
+
+.headerLine span {
+	float:left;
+	margin:0 0 0 5px;
+	line-height:28px;
+}
+
+.headerLine span.first {
+	padding:0 0 0 20px;
+}
+
+.headerLine span.rgt {
+	position:absolute;
+	right:0;
+	top:0;
+	display:block;
+	margin:0;
+	padding:0;
+	background:url('../img/bg-headerline.png') white no-repeat 100% 0;
+	width:10px;
+	height:28px;
+}
+
+.headerLine label {
+	text-transform:uppercase;
+	font-size:10px;
+	letter-spacing:0.3px;
+}
+
+.headerLine th.last,
+.headerLine td.last {
+	background:#fff url('../img/bg-headerline.png') no-repeat 100% 0;
+}
+
+.headerLine th, .headerOptLine th {
+	font-size:10px;
+	font-weight:normal;
+	text-transform:uppercase;
+	white-space:nowrap;
+}
+
+.headerLine input {
+	margin-right:10px;
+}
+
+.headerOptLine {
+	position:relative;
+	margin-top:5px;
+	width:100%;
+	height:28px;
+	background:url('../img/bg-headerline.png') no-repeat 0 -46px;
+	text-align:left;
+}
+
+.headerOptLine span.rgt {
+	position:absolute;
+	right:0;
+	display:block;
+	margin:0;
+	padding:0;
+	background:#fff url('../img/bg-headerline.png') no-repeat 100% -46px;
+	width:10px;
+	height:28px;
+}
+
+.headerOptLine th.last,
+.headerOptLine td.last {
+	background:#fff url('../img/bg-headerline.png') no-repeat 100% -46px;
+}
+
+.headerLine button span {
+	line-height:20px;
+}
+
+div.dialog_content h1.headerLine {
+	display:none;
+}
+
+	/* h3 */
+.headLabel span {
+	display:block;
+	float:left;
+	overflow:hidden;
+}
+
+span.infoIcon {
+	background:url('../img/icons.png') no-repeat 0 -629px !important;
+}
+
+span.checkboxCheckedIcon {
+	background:url('../img/icons.png') no-repeat 0 -870px !important;
+}
+
+span.checkboxOpenIcon {
+	background:url('../img/icons.png') no-repeat 0 -900px !important;
+}
+
+.calendaricon {
+	background:url('../img/icons.png') no-repeat 0 -690px;
+	cursor:pointer;
+}
