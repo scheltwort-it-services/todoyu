@@ -127,6 +127,19 @@ class TodoyuString {
 
 
 	/**
+	 * Wrap content with a HTML tag
+	 *
+	 * @param	String		$tag
+	 * @param	String		$content
+	 * @return	String
+	 */
+	public static function wrapWithTag($tag, $content) {
+		return self::wrap($content, '<' . $tag . '>|</' . $tag . '>');
+	}
+
+
+
+	/**
 	 * Split a camel case formatted string into its words
 	 *
 	 * @param	String		$string
@@ -527,7 +540,8 @@ class TodoyuString {
 		$headers	= array();
 
 			// Add HTTP status as status key
-		$headers['status'] = array_shift($headerPairs);
+		$headers['status']		= array_shift($headerPairs);
+		$headers['statusCode']	= self::extractHttpStatusCode($headers['status']);
 
 			// Add the rest of the header pairs
 		foreach($headerPairs as $headerPair) {
@@ -536,6 +550,20 @@ class TodoyuString {
 		}
 
 		return $headers;
+	}
+
+
+
+	/**
+	 * Extract status code from http status header
+	 *
+	 * @param	String		$httpStatusHeader
+	 * @return	Integer
+	 */
+	public static function extractHttpStatusCode($httpStatusHeader) {
+		$parts	= explode(' ', $httpStatusHeader);
+
+		return intval($parts[1]);
 	}
 
 

@@ -165,14 +165,14 @@ class TodoyuFileManager {
 	 * @return	Boolean
 	 */
 	public static function deleteFolder($pathFolder) {
+		$pathFolder	= self::pathAbsolute($pathFolder);
+
 			// Prevent deleting whole todoyu if an empty variable is given
-		if( empty($pathFolder) || $pathFolder === PATH ) {
+		if( $pathFolder === PATH ) {
 			return false;
 		}
 
 		$success	= true;
-
-		$pathFolder	= self::pathAbsolute($pathFolder);
 
 		if( is_dir($pathFolder) ) {
 			self::deleteFolderContents($pathFolder, true);
@@ -375,12 +375,9 @@ class TodoyuFileManager {
 	 */
 	public static function saveFileContent($pathFile, $content) {
 		$pathFile	= self::pathAbsolute($pathFile);
+		self::makeDirDeep(dirname($pathFile));
 
-		if( is_file($pathFile) && is_writable($pathFile) ) {
-			file_put_contents($pathFile, $content);
-		} else {
-			Todoyu::log('Can\'t open file: ' . $pathFile, TodoyuLogger::LEVEL_ERROR);
-		}
+		file_put_contents($pathFile, $content);
 	}
 
 
@@ -628,11 +625,11 @@ class TodoyuFileManager {
 	 */
 	public static function downloadFile($url, array $options = array()) {
 		if( function_exists('curl_init') ) {
-			$content		= self::downloadFile_CURL($url, $options);
+			$content	= self::downloadFile_CURL($url, $options);
 		} elseif( function_exists('fsockopen') ) {
-			$content		= self::downloadFile_SOCKET($url, $options);
+			$content	= self::downloadFile_SOCKET($url, $options);
 		} else {
-			$content		= 'NOT IMPLEMENTED YET';
+			$content	= @file_get_contents($url);
 		}
 
 		return $content;
@@ -701,10 +698,10 @@ class TodoyuFileManager {
 		$path		= trim($parsedURL['path']);
 		$query		= trim($parsedURL['query']);
 
-		if( $parsedURL['scheme'] === 'http' ) {
-			$scheme	= 'tcp://';
-		} elseif( $parsedURL['scheme'] === 'https' ) {
+		if( $parsedURL['scheme'] === 'https' ) {
 			$scheme	= 'ssl://';
+		} else {
+			$scheme	= 'tcp://';
 		}
 
 		if( $port === 0 ) {
@@ -755,11 +752,22 @@ class TodoyuFileManager {
 
 		fclose($fp);
 
+			// Get response headers
+		$httpHeaders	= TodoyuString::extractHttpHeaders($content);
+
+			// If a redirect header was sent, download redirection URL
+		if( $httpHeaders['statusCode'] >= 300 && $httpHeaders['statusCode'] < 400 ) {
+			if( array_key_exists('Location', $httpHeaders) ) {
+					// Download from redirection URL
+				return self::downloadFile_SOCKET($httpHeaders['Location'], $options);
+			}
+		}
+
 		if( $options['fullResponse'] ) {
 			// Do nothing
 		} else {
 			if($options['onlyHeaders']) {
-				$content		= TodoyuString::extractHttpHeaders($content);
+				$content		= $httpHeaders;
 			} else {
 				$requestParts	= explode("\r\n\r\n", $content, 2);
 				$content		= $requestParts[1];
@@ -797,6 +805,56 @@ class TodoyuFileManager {
 		} else {
 			Todoyu::log('saveLocalCopy of ' . $url . ' failed', TodoyuLogger::LEVEL_ERROR);
 			return false;
+		}
+	}
+
+
+
+	/**
+	 * Copy a folder recursive to another folder
+	 * If move is set, all files are moved instead of copied
+	 *
+	 * @param	String		$sourceFolder
+	 * @param	String		$destFolder
+	 * @param	Boolean		$move				Move instead copy
+	 */
+	public static function copyRecursive($sourceFolder, $destFolder, $move = false, $hiddenFiles = false) {
+		$sourceFolder	= self::pathAbsolute($sourceFolder);
+		$destFolder		= self::pathAbsolute($destFolder);
+		$removeFolders	= array();
+
+		self::makeDirDeep($destFolder);
+
+		$folderElements	= self::getFolderContents($sourceFolder, $hiddenFiles);
+
+		foreach($folderElements as $element) {
+			$pathElement	= self::pathAbsolute($sourceFolder . '/' . $element);
+			$pathDestElement= self::pathAbsolute($destFolder . '/' . $element);
+
+			if( is_dir($pathElement) ) {
+					// Folder
+				if( ! is_dir($pathDestElement) ) {
+					self::makeDirDeep($pathDestElement);
+				}
+				self::copyRecursive($pathElement, $pathDestElement, $move);
+				if( $move ) {
+					$removeFolders[] = $pathElement;
+				}
+			} else {
+					// File
+				if( is_file($pathDestElement) ) {
+					self::deleteFile($pathDestElement);
+				}
+				if( $move ) {
+					rename($pathElement, $pathDestElement);
+				} else {
+					copy($pathElement, $pathDestElement);
+				}
+			}
+		}
+
+		foreach($removeFolders as $folder) {
+			rmdir($folder);
 		}
 	}
 

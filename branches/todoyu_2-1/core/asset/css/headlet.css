@@ -38,8 +38,8 @@
 	#headlets li.active a,
 	#headlets li:hover a {
 		border-color:#b9bbad;
-		background-color:white;
 		z-index:203;
+		background-color:white;
 	}
 
 #headlets li ul {
@@ -64,7 +64,7 @@
 	width:auto;
 	height:auto;
 	margin:0;
-	padding:5px 30px 2px 30px;
+	padding:5px 30px 3px 30px;
 	border:none;
 	font-size:11px;
 	white-space:nowrap;

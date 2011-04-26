@@ -19,24 +19,42 @@
 *****************************************************************************/
 
 /**
- * Add jQuery to page
+ * Manage create wizard configs
  *
  * @package		Todoyu
  * @subpackage	Core
- * @deprecated
- * @todo		Remove as soon as prototype adapter for highcharts works
  */
-class TodoyuJQuery {
+class TodoyuCreateWizardManager {
 
 	/**
-	 * Add jQuery assets to page and
+	 * Wizard configs
+	 *
+	 * @var	Array
 	 */
-	public static function addJQuery() {
-			// Add jQuery source file
-		TodoyuPage::addJavascript('lib/js/jquery/jquery.min.js', 10, false, false, false);
+	private static $wizards = array();
 
-			// Prevent prototype conflicts
-		TodoyuPage::addAdditionalHeaderData('<script type="text/javascript">Todoyu.jQueryNoConflict();</script>');
+
+	/**
+	 * Add wizard config
+	 *
+	 * @param	String		$name		Name of the wizard
+	 * @param	Array		$config
+	 */
+	public static function addWizard($name, array $config) {
+		$config['name']	= $name;
+
+		self::$wizards[$name] = $config;
+	}
+
+
+	/**
+	 * Get wizard config
+	 *
+	 * @param	String		$name
+	 * @return	Array
+	 */
+	public static function getWizard($name) {
+		return TodoyuArray::assure(self::$wizards[$name]);
 	}
 
 }

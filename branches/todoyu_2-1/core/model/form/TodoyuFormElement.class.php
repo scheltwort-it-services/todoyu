@@ -202,7 +202,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 		$this->config['required']		= $this->hasAttribute('required');
 		$this->config['hasErrorClass']	= $this->hasAttribute('hasError') ? 'fieldHasError':'';
 		$this->config['hasIconClass']	= $this->hasAttribute('hasIcon') ? 'hasIcon icon' . ucfirst($this->name):'';
-		$this->config['wizard']			= $this->getWizardConfiguration();
+		$this->config['wizard']			= $this->hasAttribute('wizard') ? $this->getWizardConfiguration() : false;
 		$this->config['valueTemplate']	= $this->getValueForTemplate();
 
 		return $this->config;
@@ -725,30 +725,48 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @return	Array
 	 */
 	public function getWizardConfiguration() {
-		if( $this->hasAttribute('wizard') ) {
-			$wizardConf = array(
-				'hasWizard'		=> true,
-				'wizardConf'	=> $this->getAttribute('wizard')
-			);
+		$xmlConfig		= $this->getAttribute('wizard');
+		$name			= $xmlConfig['@attributes']['name'];
+		$wizardConfig	= TodoyuCreateWizardManager::getWizard($name);
 
-			$wizardConf['wizardConf']['idRecord']	= intval($this->getForm()->getRecordID());
+		$wizardConfig['record']	= intval($this->getForm()->getRecordID());
 
-			if( $wizardConf['wizardConf']['displayCondition'] ) {
-				$wizardConf['hasWizard'] = TodoyuFunction::callUserFunctionArray($wizardConf['wizardConf']['displayCondition'], $wizardConf);
-			}
+		if( $wizardConfig['title'] ) {
+			$wizardConfig['title'] = Label($wizardConfig['title']);
+		}
 
-			if( $wizardConf['wizardConf']['restrict'] && $wizardConf['hasWizard'] ) {
-				$wizardConf['hasWizard'] = false;
+		if( $wizardConfig['displayCondition'] ) {
+			$showWizard	= TodoyuFunction::callUserFunctionArray($wizardConfig['displayCondition'], $this, $wizardConfig);
 
-				foreach($wizardConf['wizardConf']['restrict'] as $allowed) {
-					if(allowed($allowed['@attributes']['ext'], $allowed['@attributes']['right'])) {
-						$wizardConf['hasWizard'] = true;
-					}
-				}
+			if( $showWizard === false ) {
+				return false;
 			}
 		}
 
-		return $wizardConf;
+		if( is_array($wizardConfig['restrict']) ) {
+			$allowed	= false;
+
+			foreach($wizardConfig['restrict'] as $restriction) {
+				if( allowed($restriction[0], $restriction[1]) ) {
+					$allowed = true;
+					break;
+				}
+			}
+
+			if( ! $allowed ) {
+				return false;
+			}
+		}
+
+		$jsParams	= $wizardConfig;
+
+		unset($jsParams['restrict']);
+		unset($jsParams['displayCondition']);
+		unset($jsParams['htmlClass']);
+
+		$wizardConfig['jsParams']	= $jsParams;
+
+		return $wizardConfig;
 	}
 
 

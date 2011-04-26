@@ -22,16 +22,34 @@
  */
 Todoyu.Timerange = Class.create({
 
+	/**
+	 * Name if the time range
+	 */
 	name: '',
 
+	/**
+	 * Slider element
+	 */
 	element: null,
 
+	/**
+	 * The two handles
+	 */
 	handles: [],
 
+	/**
+	 * The scriptaculous slider object
+	 */
 	slider: null,
 
+	/**
+	 * The two selected dates
+	 */
 	selectedDates: [],
 
+	/**
+	 * All selectable dates
+	 */
 	selectableDates: [],
 
 	/**
@@ -55,18 +73,18 @@ Todoyu.Timerange = Class.create({
 	 * Constructor
 	 *
 	 * @method	initialize
-	 * @param	{String}			baseID
+	 * @param	{String}			name
 	 * @param	{Array|Function}	validDates
 	 * @param	{Array}				selectedDates
 	 * @param	{Object}			sliderOptions
 	 * @param	{Object}			timerangeOptions
 	 */
-	initialize: function(baseID, validDates, selectedDates, sliderOptions, timerangeOptions) {
-		this.name			= baseID;
+	initialize: function(name, validDates, selectedDates, sliderOptions, timerangeOptions) {
+		this.name			= name;
 		this.selectedDates	= selectedDates;
 		this.options		= $H(this.options).update(timerangeOptions||{}).toObject();
 
-		this.element	= $(baseID + '-slider');
+		this.element	= $(name + '-slider');
 		this.handles	= [
 			$(this.name + '-handle-start'),
 			$(this.name + '-handle-end')
@@ -96,7 +114,7 @@ Todoyu.Timerange = Class.create({
 
 			// Get indexes of selected values
 		if( this.selectedDates ) {
-			options.sliderValue	= [this.getIndex(this.selectedDates[0]), this.getIndex(this.selectedDates[1])];
+			options.sliderValue	= [this.getDateIndex(new Date(this.selectedDates[0])), this.getDateIndex(new Date(this.selectedDates[1]))];
 		} else {
 			options.sliderValue = [0, this.selectableDates.length-1];
 		}
@@ -109,6 +127,152 @@ Todoyu.Timerange = Class.create({
 
 			// Observe element for keyboard support
 		this.observeElements();
+
+		this.initCalendars();
+		this.initRangeSelector();
+	},
+
+
+
+	/**
+	 * Initialize popup calendars
+	 */
+	initCalendars: function() {
+		var dateFormat	= Todoyu.R['dateFormat'];
+
+		Calendar.setup({
+			inputField : this.name + '-start',
+			range : [1990,2020],
+			ifFormat : dateFormat,
+			align : "br",
+			button : this.name + '-start-calicon',
+			firstDay : 1,
+			onClose: this.onCalendarClosed.bind(this, 'start')
+		});
+
+		Calendar.setup({
+			inputField : this.name + '-end',
+			range : [1990,2020],
+			ifFormat : dateFormat,
+			align : "br",
+			button : this.name + '-end-calicon',
+			firstDay : 1,
+			onClose: this.onCalendarClosed.bind(this, 'end')
+		});
+
+		Todoyu.JsCalFormat[this.name + '-start']	= dateFormat;
+		Todoyu.JsCalFormat[this.name + '-end']		= dateFormat;
+	},
+
+
+
+	/**
+	 * Handler when date was selected and calendar would close
+	 *
+	 * @param	{Number}	key
+	 * @param	{Calendar}	calendar
+	 */
+	onCalendarClosed: function(key, calendar) {
+		calendar.hide();
+
+		this.setSliderDate(key, calendar.date);
+	},
+
+
+
+	/**
+	 * Initialize range selector
+	 */
+	initRangeSelector: function() {
+		var ranges	= $(this.name).down('.dates .ranges');
+		var button	= ranges.down('span');
+		var list	= ranges.down('ul');
+
+		list.hide();
+
+		button.on('mouseover', function(event){
+			list.show();
+		});
+		button.on('click', 'div', function(event){
+			list.toggle();
+		});
+		list.on('mouseleave', 'ul', function(event){
+			list.hide();
+		});
+		list.on('click', 'li', function(event, element) {
+			this.setRange(element.className);
+			list.hide();
+		}.bind(this));
+	},
+
+
+
+	/**
+	 * Set range for selected preset
+	 *
+	 * @param	{String}	rangeKey
+	 */
+	setRange: function(rangeKey) {
+		var startDate, endDate;
+		var today	= new Date();
+		today.setHours(0, 0, 0, 0);
+
+		switch(rangeKey) {
+			case 'monthToDate':
+				endDate		= today;
+				startDate	= new Date(endDate);
+				startDate.setDate(1);
+				break;
+
+			case 'yearToDate':
+				endDate		= today;
+				startDate	= new Date(endDate);
+				startDate.setMonth(0, 1);
+				break;
+
+			case 'quarterToDate':
+				endDate		= today;
+				startDate	= new Date(endDate);
+				var month	= Math.floor(startDate.getMonth()/3)*3;
+				startDate.setMonth(month, 1);
+				break;
+
+			case 'previousMonth':
+				endDate		= today;
+				endDate.setDate(0);
+				startDate	= new Date(endDate);
+				startDate.setDate(1);
+				break;
+
+			case 'previousQuarter':
+				var curQuarterMonth= Math.floor(today.getMonth()/3)*3;
+				endDate		= new Date(today);
+				endDate.setMonth(curQuarterMonth, 0);
+				startDate	= new Date(endDate);
+				startDate.setMonth(startDate.getMonth()-2, 1);
+				break;
+
+			case 'fullTimeRange':
+				startDate	= this.getFirstDate();
+				endDate		= this.getLastDate();
+				break;
+
+			default:
+				return false;
+		}
+
+		this.setMaxRangeDates();
+
+			// Limit dates to available ranges
+		if( this.getFirstDate() > startDate ) {
+			startDate = this.getFirstDate();
+		}
+		if( this.getLastDate() < endDate ) {
+			endDate	= this.getLastDate();
+		}
+
+		this.setSliderDate('start', startDate);
+		this.setSliderDate('end', endDate);
 	},
 
 
@@ -172,7 +336,7 @@ Todoyu.Timerange = Class.create({
 		var value		= $F(event.element());
 
 		var date		= Date.parseDate($F(event.element()), this.options.dateFormat);
-		var dateIndex	= this.getIndex(date.getTime());
+		var dateIndex	= this.getDateIndex(date);
 
 		this.slider.setValue(dateIndex, handleIndex);
 	},
@@ -266,7 +430,7 @@ Todoyu.Timerange = Class.create({
 		var currentDate	= this.getDate(index);
 		var shiftedDate	= this.shiftMonth(currentDate, next);
 
-		return this.getIndex(shiftedDate.getTime());
+		return this.getDateIndex(shiftedDate);
 	},
 
 
@@ -361,20 +525,20 @@ Todoyu.Timerange = Class.create({
 
 
 	/**
-	 * Get index if the
+	 * Get slider index of the date
 	 *
-	 * @method	getIndex
-	 * @param	{String}	time
+	 * @method	getDateIndex
+	 * @param	{Date}		date
 	 */
-	getIndex: function(time) {
+	getDateIndex: function(date) {
 		var i 		= 0;
 		var dates 	= this.getDates();
 		var length	= dates.length;
-		var d		= new Date(time);
-		d.setHours(0,0,0,0);
+		date.setHours(0,0,0,0);
+		var time	= date.getTime();
 
 		for(i=0; i<length; i++) {
-			if( dates[i].getTime() == d.getTime() ) {
+			if( dates[i].getTime() === time ) {
 				return i;
 			}
 		}
@@ -405,6 +569,16 @@ Todoyu.Timerange = Class.create({
 	 */
 	getDate: function(index) {
 		return this.selectableDates[index];
+	},
+
+
+	getFirstDate: function() {
+		return this.getDate(0);
+	},
+
+
+	getLastDate: function() {
+		return this.getDate(this.selectableDates.length-1);
 	},
 
 
@@ -499,6 +673,40 @@ Todoyu.Timerange = Class.create({
 	 */
 	setFieldDate: function(key, date) {
 		$(this.name + '-' + key).value = this.formatDate(date);
+	},
+
+
+
+	/**
+	 * Set date for the slider
+	 *
+	 * @param	{String}	key
+	 * @param	{Date}		date
+	 */
+	setSliderDate: function(key, date) {
+		var dateIndex	= this.getDateIndex(date);
+		var handleIndex	= this.getHandleIndex(key);
+
+		this.slider.setValue(dateIndex, handleIndex);
+	},
+
+
+
+	/**
+	 * Set timerange date for key
+	 *
+	 * @param	{String}	key
+	 * @param	{Date}		date
+	 */
+	setDate: function(key, date) {
+//		this.setFieldDate(key, date);
+		this.setSliderDate(key, date);
+	},
+
+
+	setMaxRangeDates: function() {
+		this.setSliderDate('start', this.getFirstDate());
+		this.setSliderDate('end', this.getLastDate());
 	}
 
 });

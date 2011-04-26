@@ -284,33 +284,24 @@ Todoyu.Form = {
 
 
 	/**
-	 * Expand all foreign records in a form
+	 * Open popup for create wizard
 	 *
-	 * @method	openWizard
-	 * @param	{Number}		idRecord
-	 * @param	{Number}		idField
-	 * @param	{String}		extension
-	 * @param	{String}		controller
-	 * @param	{String}		action
-	 * @param	{Number}		height
-	 * @param	{Number}		width
-	 * @param	{String}		title
-	 * @return	{String}
+	 * @param	{String}	fieldName
+	 * @param	{Object}	config
 	 */
-	openWizard: function(idRecord, idField, extension, controller, action, height, width, title) {
-		var url		= Todoyu.getUrl(extension,	controller);
+	openCreateWizard: function(fieldName, config) {
+		var url		= Todoyu.getUrl(config.ext,	config.controller);
 		var options	= {
 			parameters: {
-				action:	action,
-				'idRecord':	idRecord,
-				'idField':	idField
+				action:	config.action,
+				record:	config.record,
+				field:	fieldName
 			}
 		};
-		var idPopup	= 'popup-' + idField;
+		var idPopup	= 'popup-' + fieldName;
 
-		title	= ( title ) ? title : 'Form Wizard';
-		width	= ( width > 0 ) ? width : 480;
-		height	= ( height > 0 ) ? height : 300;
+		var title	= config.title ? config.title : 'Form Wizard';
+		var width	= config.width ? config.width : 662;
 
 		return Todoyu.Popups.open(idPopup, title, width, url, options);
 	},
@@ -363,8 +354,8 @@ Todoyu.Form = {
 
 		if( ! Todoyu.exists(idIFrame) ) {
 			var iFrame	= new Element('iframe', {
-				'name':		'upload-iframe-' + key,
-				'id':		'upload-iframe-' + key,
+				name:		'upload-iframe-' + key,
+				id:			'upload-iframe-' + key,
 				'class':	'uploadIframe'
 			});
 
@@ -399,6 +390,22 @@ Todoyu.Form = {
 	openIFrame: function(key, url) {
 		this.addIFrame(key);
 		this.getIFrame(key).contentWindow.location.href = url;
+	},
+
+
+
+	/**
+	 * Submit a form to an iFrame
+	 *
+	 * @param	{Element|String}	form
+	 * @param	{String}			iFrameName
+	 */
+	submitToIFrame: function(form, iFrameName) {
+		var iFrame	= this.addIFrame(iFrameName);
+
+		$(form).writeAttribute('target', iFrame.name);
+
+		$(form).submit();
 	},
 
 

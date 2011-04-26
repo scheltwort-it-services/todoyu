@@ -18,6 +18,9 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
+	// Include mailer library
+require_once( PATH_LIB . '/php/phpmailer/class.phpmailer-lite.php' );
+
 /**
  * Manage mail DB logs
  *
@@ -30,6 +33,78 @@ class TodoyuMailManager {
 	 * @var	String		Default table for database requests
 	 */
 	const TABLE = 'system_log_email';
+
+
+
+	/**
+	 * Send email using phpMailerLite
+	 *
+	 * @param	String	$subject
+	 * @param	String	$fromAddress
+	 * @param	String	$fromName
+	 * @param	String	$toAddress
+	 * @param	String	$toName
+	 * @param	String	$htmlBody
+	 * @param	String	$textBody
+	 * @param	String	$baseURL		URL to base HTML paths (e.g. images) on
+	 * @param	Boolean	$noReplyTo
+	 * @return	Boolean
+	 */
+	public static function sendMail($subject, $fromAddress, $fromName, $toAddress, $toName, $htmlBody, $textBody, $baseURL, $noReplyTo = false) {
+		$mailer	= self::getPHPMailerLite(true);
+
+			// Set subject
+		$mailer->Subject	= $subject;
+
+			// Set "from" and "to" email addresses and names
+		$mailer->SetFrom($fromAddress, $fromName);
+		$mailer->AddAddress($toAddress, $toName);
+
+			// Add message body as HTML and plain text
+		$mailer->MsgHTML($htmlBody, $baseURL);
+		$mailer->AltBody	= $textBody;
+
+			// Set "replyTo"
+		if( ! $noReplyTo ) {
+			$mailer->AddReplyTo(Todoyu::person()->getEmail(), Todoyu::person()->getFullName());
+		}
+
+		try {
+			$sendStatus	= $mailer->Send();
+		} catch(phpmailerException $e) {
+			Todoyu::log($e->getMessage(), TodoyuLogger::LEVEL_ERROR);
+		} catch(Exception $e) {
+			Todoyu::log($e->getMessage(), TodoyuLogger::LEVEL_ERROR);
+		}
+
+		return $sendStatus;
+	}
+
+
+
+	/**
+	 * Get PHPMailerLite object
+	 *
+	 * @param	Boolean		$exceptions
+	 * @param	String		$mailer
+	 * @param	String		$charSet
+	 * @return	PHPMailerLite
+	 */
+	private static function getPHPMailerLite($exceptions = false, $mailer = 'mail', $charSet = 'uft-8') {
+		$phpMailerLite	= new PHPMailerLite($exceptions);
+
+			// Config
+		$phpMailerLite->Mailer	= $mailer;
+		$phpMailerLite->CharSet	= $charSet;
+
+//			// Change mail program
+//		if( PHP_OS !== 'Linux' ) {
+//				// Windows Server: use 'mail' instead of 'sendmail'
+//			$mail->Mailer	= 'mail';
+//		}
+
+		return $phpMailerLite;
+	}
 
 
 

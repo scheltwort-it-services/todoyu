@@ -41,6 +41,15 @@ class TodoyuCli {
 		'SERVER_PROTOCOL'
 	);
 
+	
+
+	/**
+	 * Change current work directory to main directory to prevent path problems
+	 */
+	public static function init() {
+		chdir(PATH);
+	}
+
 
 
 	/**
@@ -69,6 +78,30 @@ class TodoyuCli {
 			die("Executing this script in the browser is not allowed! Cronjob or command line are required\n");
 		}
 	}
+
+
+
+	/**
+	 * Set CLI mode constant
+	 *
+	 */
+	public static function setCliMode() {
+		if( ! defined('TODOYU_CLI') ) {
+			define('TODOYU_CLI', true);
+		}
+	}
+
+
+
+	/**
+	 * Check whether mode is CLI
+	 *
+	 * @return	Boolean
+	 */
+	public static function isCliMode() {
+		return TODOYU_CLI === true;
+	}
+
 }
 
 ?>
