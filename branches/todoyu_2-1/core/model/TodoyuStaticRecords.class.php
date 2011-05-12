@@ -142,7 +142,7 @@ class TodoyuStaticRecords {
 	public static function getLabel($type, $key) {
 		$labelKey	= self::$localeConfig[$type]['locale'] . '.' . $key;
 
-		return Label($labelKey);
+		return Todoyu::Label($labelKey);
 	}
 
 
@@ -194,6 +194,22 @@ class TodoyuStaticRecords {
 		$idTimezone	= intval($idTimezone);
 
 		return self::getRecord('timezone', $idTimezone);
+	}
+
+
+
+	/**
+	 * Get ID of a timezone
+	 *
+	 * @param	String		$timezone
+	 * @return	Integer
+	 */
+	public static function getTimezoneID($timezone) {
+		$field	= 'id';
+		$table	= 'static_timezone';
+		$where	= 'timezone = ' . Todoyu::db()->quote($timezone, true);
+
+		return intval(Todoyu::db()->getFieldValue($field, $table, $where));
 	}
 
 
@@ -253,7 +269,7 @@ class TodoyuStaticRecords {
 		$record	= self::getCountry($idCountry);
 		$alpha3	= $record['iso_alpha3'];
 
-		return Label('core.static_country.' . $alpha3);
+		return Todoyu::Label('core.static_country.' . $alpha3);
 	}
 
 

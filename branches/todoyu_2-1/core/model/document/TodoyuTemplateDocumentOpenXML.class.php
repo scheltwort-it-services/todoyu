@@ -206,7 +206,7 @@ abstract class TodoyuTemplateDocumentOpenXML extends TodoyuTemplateDocumentAbstr
 		if( is_file($this->getXmlPath()) ) {
 			$this->xmlContent = file_get_contents($this->getXmlPath());
 		} else {
-			Todoyu::log('Can\'t load XML file with content from template. File not found: "' . $this->getXmlPath() . '"!', TodoyuLogger::LEVEL_ERROR);
+			TodoyuLogger::logError('Can\'t load XML file with content from template. File not found: "' . $this->getXmlPath() . '"!');
 		}
 	}
 
@@ -220,7 +220,7 @@ abstract class TodoyuTemplateDocumentOpenXML extends TodoyuTemplateDocumentAbstr
 //		echo $this->xmlContent;
 //		exit();
 
-		$this->xmlParsed = render(new Dwoo_Template_String($this->xmlContent), $this->data);
+		$this->xmlParsed = Todoyu::render(new Dwoo_Template_String($this->xmlContent), $this->data);
 	}
 
 
@@ -275,7 +275,7 @@ abstract class TodoyuTemplateDocumentOpenXML extends TodoyuTemplateDocumentAbstr
 	 * Save the file to the server
 	 *
 	 * @param	String		$pathFile
-	 * @return	Bool
+	 * @return	Boolean
 	 */
 	public function saveFile($pathFile) {
 		$pathFile	= TodoyuFileManager::pathAbsolute($pathFile);

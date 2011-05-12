@@ -68,7 +68,7 @@ class TodoyuLogger {
 	 *
 	 * @var	Integer
 	 */
-	private $level	= 0;
+	private $minimumLevel	= 0;
 
 	/**
 	 * Unique key for current request. So we can group the log messages by request
@@ -82,12 +82,14 @@ class TodoyuLogger {
 	 *
 	 * @var	Array
 	 */
-	private $fileIgnorePattern = array(
+	private $filesSkip = array(
 		'TodoyuLogger.class.php',
 		'TodoyuErrorHandler.class.php',
 		'TodoyuDebug.class.php',
 		'Todoyu.class.php'
 	);
+
+	private $filesIgnore = array();
 
 
 
@@ -95,11 +97,11 @@ class TodoyuLogger {
 	 * Get the logger instance. Singleton
 	 *
 	 * @param	Integer		$level		Log level limit
-	 * @return	Log
+	 * @return	TodoyuLogger
 	 */
-	public static function getInstance($level = 0) {
+	public static function getInstance() {
 		if( is_null(self::$instance) ) {
-			self::$instance = new self($level);
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -112,49 +114,24 @@ class TodoyuLogger {
 	 *
 	 * @param	Integer		$level
 	 */
-	private function __construct($level = 0) {
-		$this->setLevel($level);
-
-		$this->requestKey = substr(md5(microtime(true) . session_id()), 0, 10);
+	private function __construct() {
+		$this->minimumLevel 		= $this->getLogLevel();
+		$this->requestKey	= substr(md5(microtime(true) . session_id()), 0, 10);
 	}
 
 
 
 	/**
-	 * Add a logger class. Class is just provided as string and will be
-	 * instantiated on the first use of the log
+	 * Get log level
 	 *
-	 * @param	String		$className
-	 * @param	Array		$config
+	 * @return	Integer
 	 */
-	public function addLogger($className, array $config = array()) {
-		$this->loggerNames[] = array(
-			'class'	=> $className,
-			'config'=> $config
-		);
-	}
-
-
-
-	/**
-	 * Change to log level
-	 *
-	 * @param	Integer		$level
-	 */
-	public function setLevel($level) {
-		$this->level = intval($level);
-	}
-
-
-
-	/**
-	 * Add a pattern which will be ignored while looking for the error
-	 * position in the backtrace
-	 *
-	 * @param	String		$pattern
-	 */
-	public function addFileIgnorePattern($pattern) {
-		$this->fileIgnorePattern[] = $pattern;
+	private function getLogLevel() {
+		if( isset(Todoyu::$CONFIG['SYSTEM']['logLevel']) ) {
+			return intval(Todoyu::$CONFIG['SYSTEM']['logLevel']);
+		} else {
+			return self::LEVEL_DEBUG;
+		}
 	}
 
 
@@ -182,34 +159,149 @@ class TodoyuLogger {
 	 * Log a message. The message will be processed by all loggers
 	 *
 	 * @param	String		$message		Log message
-	 * @param	Integer		$level			Log level of current message
+	 * @param	Integer		$eventLevel			Log level of current message
 	 * @param	Mixed		$data			An additional data container (for debugging)
+	 * @return	Boolean		Logged event
 	 */
-	public function log($message, $level = 0, $data = null) {
+	private function log($message, $eventLevel = 0, $data = null) {
 		$backtrace	= debug_backtrace(false);
-		$info		= $backtrace[0];
-		$level		= intval($level);
+		$info		= false;
+		$eventLevel	= intval($eventLevel);
 
-		if( $level >= $this->level ) {
-				// Find file in backtrace which is not on ignore list
-			foreach($backtrace as $btElement) {
-				if( ! in_array(basename($btElement['file']), $this->fileIgnorePattern) ) {
-					$info = $btElement;
-					break;
-				}
-			}
+			// Check if minimum requirement for logging is set
+		if( $eventLevel < $this->minimumLevel ) {
+			return false;
+		}
 
-			$info['fileshort'] 	= TodoyuFileManager::pathWeb($info['file']);
-
-			$loggers	= $this->getLoggerInstances();
-
-			foreach($loggers as $logger) {
-				/**
-				 * @var	TodoyuLoggerIf	$logger
-				 */
-				$logger->log($message, $level, $data, $info, $this->requestKey);
+			// Find file in backtrace which is not on ignore list
+		foreach($backtrace as $btElement) {
+			if( ! in_array(basename($btElement['file']), $this->filesSkip) ) {
+				$info = $btElement;
+				break;
 			}
 		}
+
+			// If no file found which is not skipped, cancel
+		if( $info === false ) {
+			return false;
+		}
+
+			// If found file is an ignore file, cancel
+		if( in_array(basename($info['file']), $this->filesIgnore) ) {
+			return false;
+		}
+
+		$info['fileshort'] 	= TodoyuFileManager::pathWeb($info['file']);
+
+		$loggers	= $this->getLoggerInstances();
+
+		foreach($loggers as $logger) {
+			/**
+			 * @var	TodoyuLoggerIf	$logger
+			 */
+			$logger->log($message, $eventLevel, $data, $info, $this->requestKey);
+		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * Add file name which will be ignored while looking for the error
+	 * position in the backtrace
+	 *
+	 * @param	String		$filename
+	 */
+	public static function addSkipFile($filename) {
+		self::getInstance()->filesSkip[] = $filename;
+	}
+
+
+
+	/**
+	 * Add file name where error will not be logged
+	 *
+	 * @param	String		$filename
+	 */
+	public static function addIgnoreFile($filename) {
+		self::getInstance()->filesIgnore[] = $filename;
+	}
+
+
+
+	/**
+	 * Add a logger class. Class is just provided as string and will be
+	 * instantiated on the first use of the log
+	 *
+	 * @param	String		$className
+	 * @param	Array		$config
+	 */
+	public static function addLogger($className, array $config = array()) {
+		self::getInstance()->loggerNames[] = array(
+			'class'	=> $className,
+			'config'=> $config
+		);
+	}
+
+
+
+	/**
+	 * Log debug message
+	 *
+	 * @param	String		$message
+	 * @param	Mixed		$data
+	 */
+	public static function logDebug($message, $data = null) {
+		self::getInstance()->log($message, self::LEVEL_DEBUG, $data);
+	}
+
+
+
+	/**
+	 * Log notice message
+	 *
+	 * @param	String		$message
+	 * @param	Mixed		$data
+	 */
+	public static function logNotice($message, $data = null) {
+		self::getInstance()->log($message, self::LEVEL_NOTICE, $data);
+	}
+
+
+
+	/**
+	 * Log error message
+	 *
+	 * @param	String		$message
+	 * @param	Mixed		$data
+	 */
+	public static function logError($message, $data = null) {
+		self::getInstance()->log($message, self::LEVEL_ERROR, $data);
+	}
+
+
+
+	/**
+	 * Log security message
+	 *
+	 * @param	String		$message
+	 * @param	Mixed		$data
+	 */
+	public static function logSecurity($message, $data = null) {
+		self::getInstance()->log($message, self::LEVEL_SECURITY, $data);
+	}
+
+
+
+	/**
+	 * Log fatal message
+	 *
+	 * @param	String		$message
+	 * @param	Mixed		$data
+	 */
+	public static function logFatal($message, $data = null) {
+		self::getInstance()->log($message, self::LEVEL_FATAL, $data);
 	}
 
 }

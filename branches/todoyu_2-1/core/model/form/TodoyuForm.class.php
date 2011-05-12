@@ -1055,7 +1055,7 @@ class TodoyuForm implements ArrayAccess {
 				'value'		=> htmlspecialchars($config['value'], ENT_QUOTES, 'UTF-8')
 			);
 
-			$content .= render($template, $data);
+			$content .= Todoyu::render($template, $data);
 		}
 
 		return $content;
@@ -1117,14 +1117,13 @@ class TodoyuForm implements ArrayAccess {
 
 	/**
 	 * Remove all fieldsets which contain no elements
-	 *
 	 */
 	private function removeEmptyFieldsetsBeforeRendering() {
 		$allFieldsetNames		= $this->getFieldsetNames();
 		$activeFieldsetNames	= array();
 
-		foreach($this->getFieldnames() as $fieldname) {
-			$activeFieldsetNames[] = $this->getField($fieldname)->getParentFieldsetNames();
+		foreach($this->getFieldnames() as $fieldName) {
+			$activeFieldsetNames[] = $this->getField($fieldName)->getParentFieldsetNames();
 		}
 
 		$activeFieldsetNames	= TodoyuArray::flatten($activeFieldsetNames);
@@ -1162,7 +1161,7 @@ class TodoyuForm implements ArrayAccess {
 		$tmpl	= Todoyu::$CONFIG['FORM']['templates']['form'];
 		$data	= $this->getData();
 
-		return render($tmpl, $data);
+		return Todoyu::render($tmpl, $data);
 	}
 
 

@@ -188,7 +188,7 @@ class TodoyuArray {
 	 *
 	 * @param	Array	$array
 	 * @param	Array	$reformConfig
-	 * @param	Bool	$copyAllData
+	 * @param	Boolean	$copyAllData
 	 * @param	String	$indexFieldName
 	 * @return	Array
 	 */
@@ -314,8 +314,8 @@ class TodoyuArray {
 			$match = true;
 
 				// Check if all filters success. Stop if one fails
-			foreach($filterArray as $fieldname => $allowedValues) {
-				if( ! in_array($itemArray[$fieldname], $allowedValues) ) {
+			foreach($filterArray as $fieldName => $allowedValues) {
+				if( ! in_array($itemArray[$fieldName], $allowedValues) ) {
 					$match = false;
 					break;
 				}
@@ -525,7 +525,7 @@ class TodoyuArray {
 				$array[$index] = $wrapBefore . $item . $wrapAfter;
 			} else {
 				unset($array[$index]);
-				Todoyu::log('Item was not quoted because was not string or number: ' . serialize($array[$index]), TodoyuLogger::LEVEL_NOTICE, $item);
+				TodoyuLogger::logNotice('Item was not quoted because was not string or number: ' . serialize($array[$index]), $item);
 			}
 		}
 
@@ -708,7 +708,7 @@ class TodoyuArray {
 		$values	= array();
 		$clean	= array();
 
-			// iterate all ass. sub arrays
+			// Iterate all associative sub arrays
 		foreach($array as $index => $item) {
 			$value	= $item[$fieldName];
 

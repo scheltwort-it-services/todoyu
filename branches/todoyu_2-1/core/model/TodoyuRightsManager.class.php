@@ -229,7 +229,7 @@ class TodoyuRightsManager {
 
 //			debug_print_backtrace();
 
-			Todoyu::log('Right not found: ' . $extKey . '::' . $right . ' **' . $path . ':' . $position['line'] . '**', TodoyuLogger::LEVEL_SECURITY);
+			TodoyuLogger::logSecurity('Right not found: ' . $extKey . '::' . $right . ' **' . $path . ':' . $position['line'] . '**');
 		}
 	}
 
@@ -443,10 +443,10 @@ class TodoyuRightsManager {
 
 			ob_end_clean();
 
-			$output = render($tmpl, $data);
+			$output = Todoyu::render($tmpl, $data);
 		}
 
-		Todoyu::log('Access denied (' . $extKey . '/' . $right . ')', TodoyuLogger::LEVEL_SECURITY);
+		TodoyuLogger::logSecurity('Access denied (' . $extKey . '/' . $right . ')');
 
 		die($output);
 	}

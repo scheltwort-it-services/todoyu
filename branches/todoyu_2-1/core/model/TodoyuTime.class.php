@@ -336,7 +336,7 @@ class TodoyuTime {
 	 * @param	Integer		$seconds
 	 * @return	String
 	 */
-	public static function autoformatDuration($seconds) {
+	public static function formatDuration($seconds) {
 		if( $seconds >= TodoyuTime::SECONDS_WEEK ) {
 				// Weeks
 			$value	= $seconds / TodoyuTime::SECONDS_WEEK;
@@ -358,13 +358,13 @@ class TodoyuTime {
 			$value	= $seconds;
 			$unit	= 'time.second';
 		}
-		
+
 		if( $value != 1 ) {
 				// Plural?
 			$unit .= 's';
 		}
 
-		return $value . ' ' . label('core.date.' . $unit);
+		return $value . ' ' . Todoyu::Label('core.date.' . $unit);
 	}
 
 
@@ -372,14 +372,28 @@ class TodoyuTime {
 	/**
 	 * Format an SQL datetime string with one of todoyu's default date formats
 	 *
-	 * @param	String	$datetime
+	 * @param	String	$sqlDate
+	 * @param	String	$format
 	 * @return	String
 	 */
-	public static function formatSqlDate($datetime) {
-		$format		= '%Y-%m-%d';
-		$timestamp	= self::parseDateTime($datetime, $format);
+	public static function formatSqlDate($sqlDate, $format = 'date') {
+		$timestamp		= self::parseSqlDate($sqlDate);
 
-		return self::format($timestamp, 'date');
+		return self::format($timestamp, $format);
+	}
+
+
+
+	/**
+	 * Parse sql date to timestamp
+	 *
+	 * @param	String		$sqlDate
+	 * @return	Integer
+	 */
+	public static function parseSqlDate($sqlDate) {
+		$pattern	= '%Y-%m-%d';
+
+		return self::parseDateTime($sqlDate, $pattern);
 	}
 
 
@@ -394,7 +408,7 @@ class TodoyuTime {
 	public static function getFormat($formatName) {
 		$localeKey	= 'core.dateformat.' . $formatName;
 
-		return Label($localeKey);
+		return Todoyu::Label($localeKey);
 	}
 
 
@@ -408,7 +422,7 @@ class TodoyuTime {
 	public static function parseDateString($dateString) {
 		$time = self::parseDateTime($dateString);
 
-			// if parseDateTime did not work, try parseDate
+			// If parseDateTime did not work, try parseDate
 		if( $time === 0 ) {
 			$time = self::parseDate($dateString);
 		}
@@ -601,8 +615,8 @@ class TodoyuTime {
 		$start2	= intval($start2);
 		$end2	= intval($end2);
 
-		$span1	= self::getDayTimestampsInRange($dateStart1, $dateEnd1);	// view
-		$span2	= self::getDayTimestampsInRange($start2, $end2);	// event
+		$span1	= self::getDayTimestampsInRange($dateStart1, $dateEnd1);	// View
+		$span2	= self::getDayTimestampsInRange($start2, $end2);			// Event
 
 		return array_intersect($span2, $span1);
 	}
@@ -624,7 +638,7 @@ class TodoyuTime {
 			$year	= date('Y', $timestamp);
 			$month	= date('n', $timestamp);
 
-				// get timestamp of previous month
+				// Get timestamp of previous month
 			$timestamp	= mktime(0, 0, 0, ($month + $monthDelta), 1, $year);
 		}
 

@@ -81,13 +81,11 @@ set_error_handler(array('TodoyuErrorHandler', 'handleError'));
 
 	// Load global functions
 require_once( PATH_CORE . '/inc/version.php' );
-require_once( PATH_CORE . '/inc/functions.php' );
 require_once( PATH_CORE . '/lib/php/dwoo/plugins.php' );
 require_once( PATH_CORE . '/lib/php/dwoo/Dwoo_Plugin_restrict.php' );
 require_once( PATH_CORE . '/lib/php/dwoo/Dwoo_Plugin_restrictIfNone.php' );
 require_once( PATH_CORE . '/lib/php/dwoo/Dwoo_Plugin_restrictOrOwn.php' );
 require_once( PATH_CORE . '/lib/php/dwoo/Dwoo_Plugin_restrictInternal.php' );
-require_once( PATH_CORE . '/lib/php/dwoo/Dwoo_Plugin_listing.php' );
 
 	// Include strptime function if not defined on windows
 if( ! function_exists('strptime') ) {
@@ -102,7 +100,6 @@ require_once( PATH_CONFIG . '/locales.php');
 require_once( PATH_CONFIG . '/fe.php');
 require_once( PATH_CONFIG . '/assets.php');
 require_once( PATH_CONFIG . '/cache.php');
-require_once( PATH_CONFIG . '/log.php');
 require_once( PATH_CONFIG . '/colors.php');
 
 
@@ -112,5 +109,6 @@ require_once( PATH_LOCALCONF . '/config.php');
 require_once( PATH_LOCALCONF . '/system.php');
 require_once( PATH_LOCALCONF . '/extensions.php');
 require_once( PATH_LOCALCONF . '/extconf.php');
+require_once( PATH_LOCALCONF . '/settings.php');
 
 ?>

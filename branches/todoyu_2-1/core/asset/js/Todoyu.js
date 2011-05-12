@@ -248,15 +248,15 @@ var Todoyu = {
 	 * Get current area
 	 *
 	 * @method	getArea
-	 * @return	{String}
+	 * @return	{String|Boolean}
 	 */
 	getArea: function() {
-		var area;
+		var area = false;
 
 		if( document.body ) {
 			area	= document.body.id.split('-').last();
 		} else {
-			area	= document.location.href.split('?ext=')[1].split('&')[0];
+			area	= document.location.href.toQueryParams().ext;
 		}
 
 		return area;
@@ -489,10 +489,7 @@ var Todoyu = {
 				break;
 
 				case Prototype.Browser.WebKit :
-					if (e.metaKey && (
-						e.charCode === 43 ||
-						e.charCode === 45
-						)) {
+					if( e.metaKey && (e.charCode === 43 || e.charCode === 45) ) {
 						callback();
 					}
 				break;

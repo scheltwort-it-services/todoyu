@@ -177,7 +177,6 @@ class TodoyuString {
 	 * Converts an HTML snippet into plain text.
 	 * 	- decodes html-entities & special chars
 	 *
-	 * @static
 	 * @param	String		$string
 	 * @param	Boolean		$closingPTagsToDoubleNewLine
 	 * @return	String
@@ -195,7 +194,6 @@ class TodoyuString {
 	/**
 	 * Replaces html-tag <br /> with newlines
 	 *
-	 * @static
 	 * @param	String	$string
 	 * @return	String
 	 */
@@ -335,7 +333,6 @@ class TodoyuString {
 
 
 	/**
-	 * @static
 	 * @return String
 	 */
 	public static function generateGoodPassword() {
@@ -343,12 +340,12 @@ class TodoyuString {
 		$validator	= new TodoyuPasswordValidator();
 
 		do {
-			$password = self::generatePassword(	$config['minLength'],
+			$password = self::generatePassword( $config['minLength'],
 												$config['hasUpperCase'],
 												$config['hasNumbers'],
 												$config['hasSpecialChars']);
 
-		} while ($validator->validate($password) === false);
+		} while( $validator->validate($password) === false );
 
 		return $password;
 	}
@@ -370,10 +367,10 @@ class TodoyuString {
 		if( is_null($labels) ) {
 			if( $noLabel === false ) {
 				$labels = array(
-					'gb'	=> Label('core.file.size.gb'),
-					'mb'	=> Label('core.file.size.mb'),
-					'kb'	=> Label('core.file.size.kb'),
-					'b'		=> Label('core.file.size.b')
+					'gb'	=> Todoyu::Label('core.file.size.gb'),
+					'mb'	=> Todoyu::Label('core.file.size.mb'),
+					'kb'	=> Todoyu::Label('core.file.size.kb'),
+					'b'		=> Todoyu::Label('core.file.size.b')
 				);
 			} else {
 				$labels	= array();
@@ -722,7 +719,7 @@ class TodoyuString {
 		$allowed	= true;
 
 			// Check extension's general right setting
-		if( TodoyuRightsManager::checkIfRightExists($extKey, 'general:use') && ! allowed($extKey, 'general:use') ) {
+		if( TodoyuRightsManager::checkIfRightExists($extKey, 'general:use') && ! Todoyu::allowed($extKey, 'general:use') ) {
 			$allowed	= false;
 		}
 
@@ -870,6 +867,55 @@ class TodoyuString {
 		} else {
 			return '';
 		}
+	}
+
+
+
+	/**
+	 * Get duration as string
+	 * Includes start and end date with hours
+	 *
+	 *
+	 * @param	Array	$data
+	 * @return	String
+	 */
+	public static function getRangeString($dateStart, $dateEnd, $withDuration = true) {
+		$dateStart	= intval($dateStart);
+		$dateEnd	= intval($dateEnd);
+		$duration	= $dateEnd-$dateStart;
+		$hours		= intval($duration/3600);
+		$hoursMax	= 23;
+
+			// Make day keys to detect multi day duration
+		$dateKeyStart	= date('dmY', $dateStart);
+		$dateKeyEnd		= date('dmY', $dateEnd);
+		$isMultiDay		= $dateKeyStart !== $dateKeyEnd;
+
+			// Set general data
+		$data	= array(
+			'dateStart'	=> $dateStart,
+			'dateEnd'	=> $dateEnd,
+			'multi'		=> $isMultiDay
+		);
+
+		if( $withDuration ) {
+			$data['withDuration']	= $withDuration;
+			$data['asDays']			= $hours >= $hoursMax;
+			$data['hours']			= $hours;
+			$data['duration']		= $duration;
+
+						// Duration is over multiple days?
+			if( $isMultiDay ) {
+				$dayTimestamps	= TodoyuTime::getDayTimestampsInRange($dateStart, $dateEnd);
+
+				$data['days']	= sizeof($dayTimestamps);
+			}
+		}
+
+		$tmpl	= 'core/view/duration.tmpl';
+		$string	= Todoyu::render($tmpl, $data);
+
+		return str_replace(array("\n", "\t", "\r"), '', trim($string));
 	}
 
 }

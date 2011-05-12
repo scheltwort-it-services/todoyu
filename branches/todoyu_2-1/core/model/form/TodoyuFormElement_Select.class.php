@@ -41,6 +41,11 @@ class TodoyuFormElement_Select extends TodoyuFormElement {
 		if( ! $this->isLazyInit() ) {
 			$this->initSource();
 		}
+
+			// Fix noPleaseSelect setting
+		if( array_key_exists('noPleaseSelect', $this->config) ) {
+			$this->config['noPleaseSelect'] = true;
+		}
 	}
 
 
@@ -169,7 +174,7 @@ class TodoyuFormElement_Select extends TodoyuFormElement {
 	protected function initSourceList(array $source) {
 		if( is_array($source['option']) ) {
 			foreach($source['option'] as $option) {
-				$this->addOption($option['value'], Label($option['label']), $option['disabled']);
+				$this->addOption($option['value'], Todoyu::Label($option['label']), $option['disabled']);
 			}
 		}
 	}
@@ -196,7 +201,7 @@ class TodoyuFormElement_Select extends TodoyuFormElement {
 
 				// funcRef is built like class::function::param, param is e.g the field ID
 			case 3:
-				Todoyu::log('Non standard 3 parts select source function: ' . $source['function'], TodoyuLogger::LEVEL_NOTICE);
+				TodoyuLogger::logNotice('Non standard 3 parts select source function: ' . $source['function']);
 				$funcParam	= $funcRef[2];
 				array_pop($funcRef);
 				$options	= call_user_func($funcRef, $this, $funcParam);

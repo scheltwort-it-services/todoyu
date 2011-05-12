@@ -34,13 +34,6 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 			'localize'	=> false,
 			'compress'	=> true
 		),
-//		array(
-//			'file'		=> 'lib/js/scriptaculous/scriptaculous.js',
-//			'position'	=> 2,
-//			'merge'		=> true,
-//			'localize'	=> false,
-//			'compress'	=> true
-//		),
 		array(
 			'file'		=> 'lib/js/scriptaculous/builder.js',
 			'position'	=> 3,
@@ -286,6 +279,10 @@ Todoyu::$CONFIG['FE']['PAGE']['assets'] = array(
 		array(
 			'file'		=> 'core/asset/js/Headlet.js',
 			'position'	=> 90
+		),
+		array(
+			'file'		=> 'core/asset/js/HeadletButton.js',
+			'position'	=> 91
 		),
 		array(
 			'file'		=> 'core/asset/js/HeadletQuickCreate.js',

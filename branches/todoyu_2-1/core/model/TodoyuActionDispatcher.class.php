@@ -141,7 +141,7 @@ class TodoyuActionDispatcher {
 	private static function errorControllerNotFound($ext, $controller) {
 		ob_clean();
 
-		Todoyu::log('Request controller not found ' . $ext . '/' . $controller, TodoyuLogger::LEVEL_FATAL);
+		TodoyuLogger::logFatal('Request controller not found ' . $ext . '/' . $controller);
 
 		TodoyuHeader::sendTypeText();
 
@@ -192,7 +192,7 @@ class TodoyuActionDispatcher {
 	 *
 	 * @param	String		$ext
 	 * @param	String		$controller
-	 * @return	Bool
+	 * @return	Boolean
 	 */
 	public static function isController($ext, $controller) {
 		$controllerClassName = self::getControllerClassName($ext, $controller);

@@ -59,13 +59,6 @@ class Todoyu {
 	private static $template;
 
 	/**
-	 * Log object instance
-	 *
-	 * @var	TodoyuLogger
-	 */
-	private static $logger;
-
-	/**
 	 * Currently logged in person
 	 *
 	 * @var	TodoyuContactPerson
@@ -79,6 +72,13 @@ class Todoyu {
 	 * @var	String
 	 */
 	private static $timezone;
+
+	/**
+	 * Backup of current environment
+	 *
+	 * @var	Array
+	 */
+	private static $environmentBackup;
 
 
 
@@ -172,7 +172,7 @@ class Todoyu {
 				self::$template = new Dwoo($config['compile'], $config['cache']);
 			} catch(Dwoo_Exception $e) {
 				$msg	= 'Can\'t initialize tempalate engine: ' . $e->getMessage();
-				Todoyu::log($msg, TodoyuLogger::LEVEL_FATAL);
+				TodoyuLogger::logFatal($msg);
 				die($msg);
 			}
 		}
@@ -191,34 +191,6 @@ class Todoyu {
 		$directory	= TodoyuFileManager::pathAbsolute($directory);
 
 		self::$template->getLoader()->addDirectory($directory);
-	}
-
-
-
-	/**
-	 * Save log message (can be stored in multiple systems)
-	 *
-	 * @param	String		$message		Log message
-	 * @param	Integer		$level			Log level (use constants!)
-	 * @param	Mixed		$data			Additional data to save with the log message
-	 */
-	public static function log($message, $level = 0, $data = null) {
-		self::logger()->log($message, $level, $data);
-	}
-
-
-
-	/**
-	 * Get logger instance
-	 *
-	 * @return		TodoyuLogger
-	 */
-	public static function logger() {
-		if( is_null(self::$logger) ) {
-			self::$logger = TodoyuLogger::getInstance(self::$CONFIG['LOG_LEVEL']);
-		}
-
-		return self::$logger;
 	}
 
 
@@ -261,7 +233,7 @@ class Todoyu {
 			$browserLocale 	= TodoyuBrowserInfo::getBrowserLocale();
 
 			if( TodoyuAuth::isLoggedIn() && self::db()->isConnected() ) {
-				$personLocale	= self::person()->getLocale();
+				$personLocale	= self::person()->getLocale(false);
 				if( $personLocale !== false ) {
 					self::$locale = $personLocale;
 				}
@@ -303,7 +275,7 @@ class Todoyu {
 
 			// Log if operation fails
 		if( $status === false ) {
-			self::log('Can\'t set locale "' . $locale . '"', TodoyuLogger::LEVEL_ERROR);
+			TodoyuLogger::logError('Can\'t set locale "' . $locale . '"');
 		}
 	}
 
@@ -364,6 +336,225 @@ class Todoyu {
 				include_once($includePath . DIR_SEP . $classFile);
 				break;
 			}
+		}
+	}
+
+
+
+	/**
+	 * Shortcut for TodoyuLabelManager::getLabel()
+	 * Get the label in the current language
+	 *
+	 * @param	String		$labelKey	e.g 'project.status.planning'
+	 * @param	String		$locale
+	 * @return	String
+	 */
+	public static function Label($labelKey, $locale = null) {
+		return TodoyuLabelManager::getLabel($labelKey, $locale);
+	}
+
+
+
+	/**
+	 * Get person ID. If parameter is not set or 0, get the current person ID
+	 *
+	 * @param	Integer		$idPerson
+	 * @return	Integer
+	 */
+	public static function personid($idPerson = 0) {
+		$idPerson = intval($idPerson);
+
+		return $idPerson === 0 ? TodoyuAuth::getPersonID() : $idPerson;
+	}
+
+
+
+	/**
+	 * Render data with a template
+	 * Shortcut for Todoyu Todoyu::tmpl()->get(...);
+	 *
+	 * @param	String			$template		Path to template file (or a template object)
+	 * @param	Array			$data			Data for template rendering
+	 * @param	Dwoo_ICompiler 	$compiler		Custom compiler
+	 * @param	Boolean			$output			Output directly with echo
+	 * @return	String			Rendered template
+	 */
+	public static function render($template, $data = array(), $compiler = null, $output = false) {
+		try {
+			$content = self::tmpl()->get($template, $data, $compiler, $output);
+		} catch(Dwoo_Exception $e) {
+			TodoyuHeader::sendTypeText();
+
+			$trace	= $e->getTrace();
+
+			echo "Dwoo Template Error: ({$e->getCode()})\n";
+			echo "=================================================\n\n";
+			echo "Error:		{$e->getMessage()}\n";
+			echo "File:		{$trace[1]['file']} : {$trace[1]['line']}\n";
+			echo "Template:	{$trace[1]['args'][0]}\n";
+
+			exit();
+		}
+
+		return $content;
+	}
+
+
+
+	/**
+	 * Check whether a right is set (=allowed)
+	 *
+	 * @param	String		$extKey		Extension key
+	 * @param	String		$right		Right name
+	 * @return	Boolean
+	 */
+	public static function allowed($extKey, $right) {
+		return TodoyuRightsManager::isAllowed($extKey, $right);
+	}
+
+
+
+	/**
+	 * Check if ALL given rights of an extension are allowed
+	 *
+	 * @param	String		$extKey			Extension key
+	 * @param	String		$rightsList		Comma separated names of rights
+	 * @return	Boolean
+	 */
+	public static function allowedAll($extKey, $rightsList) {
+		$rights	= explode(',', $rightsList);
+
+		foreach($rights as $right) {
+			if( ! self::allowed($extKey, $right) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * Check if ANY of the given rights of an extension is allowed
+	 *
+	 * @param	String		$extKey			Extension key
+	 * @param	String		$rightsList		Comma separated names of rights
+	 * @return	Boolean
+	 */
+	public static function allowedAny($extKey, $rightsList) {
+		$rights	= explode(',', $rightsList);
+
+		foreach($rights as $right) {
+			if( self::allowed($extKey, $right) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	/**
+	 * Restrict current request to persons who have the right
+	 * Stop script if right is not set
+	 *
+	 * @param	String		$extKey
+	 * @param	String		$right
+	 */
+	public static function restrict($extKey, $right) {
+		TodoyuRightsManager::restrict($extKey, $right);
+	}
+
+
+
+	/**
+	 * Restrict access to internal persons
+	 */
+	public static function restrictInternal() {
+		TodoyuRightsManager::restrictInternal();
+	}
+
+
+
+	/**
+	 * Restrict access to admin
+	 *
+	 */
+	public static function restrictAdmin() {
+		TodoyuRightsManager::restrictAdmin();
+	}
+
+
+
+	/**
+	 * Restrict (deny) access if none if the rights is allowed
+	 * If one right is allowed, do nothing
+	 *
+	 * @param	String		$extKey			Extension key
+	 * @param	String		$rightsList		Comma separated names of rights
+	 */
+	public static function restrictIfNone($extKey, $rightsList) {
+		$rights		= explode(',', $rightsList);
+		$denyRight	= '';
+
+		foreach($rights as $right) {
+			if( self::allowed($extKey, $right) ) {
+				return;
+			} else {
+				$denyRight = $right;
+			}
+		}
+
+		self::deny($extKey, $denyRight);
+	}
+
+
+
+	/**
+	 * Deny access because of a missing right
+	 *
+	 * @param	String		$extKey
+	 * @param	String		$right
+	 */
+	public static function deny($extKey, $right) {
+		TodoyuRightsManager::deny($extKey, $right);
+	}
+
+
+
+	/**
+	 * Set environment for a person
+	 * - Timezone
+	 * - Locale
+	 *
+	 * @param	Integer		$idPerson
+	 */
+	public static function setEnvironmentForPerson($idPerson) {
+		self::$environmentBackup = array(
+			'locale'	=> self::getLocale(),
+			'timezone'	=> self::getTimezone()
+		);
+
+		$person	= TodoyuContactPersonManager::getPerson($idPerson);
+
+		TodoyuLabelManager::setLocale($person->getLocale());
+		Todoyu::setTimezone($person->getTimezone());
+	}
+
+
+
+	/**
+	 * Reset environment to a previous backup
+	 *
+	 */
+	public static function resetEnvironment() {
+		if( is_array(self::$environmentBackup) ) {
+			TodoyuLabelManager::setLocale(self::$environmentBackup['locale']);
+			Todoyu::setTimezone(self::$environmentBackup['timezone']);
+
+			self::$environmentBackup = null;
 		}
 	}
 

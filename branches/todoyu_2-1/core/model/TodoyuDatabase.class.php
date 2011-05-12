@@ -282,20 +282,20 @@ class TodoyuDatabase {
 
 
 	/**
-	 * Quote a fieldname. Optionaly, the tablename is prefixed
+	 * Quote a field name. Optionally, the table name is prefixed
 	 *
-	 * @param	String		$fieldname
-	 * @param	String		$tablename
-	 * @return	String		Fieldname in backticks
+	 * @param	String		$fieldName
+	 * @param	String		$tableName
+	 * @return	String		Field name in backticks
 	 */
-	public function quoteFieldname($fieldname, $tablename = null) {
-		$fieldname	= '`' . $fieldname . '`';
+	public function quoteFieldname($fieldName, $tableName = null) {
+		$fieldName	= '`' . $fieldName . '`';
 
-		if( ! is_null($tablename) ) {
-			$fieldname = '`' . $tablename . '`.' . $fieldname;
+		if( ! is_null($tableName) ) {
+			$fieldName = '`' . $tableName . '`.' . $fieldName;
 		}
 
-		return $fieldname;
+		return $fieldName;
 	}
 
 
@@ -593,13 +593,13 @@ class TodoyuDatabase {
 	 * Build a FIND_IN_SET SQL statement so search in a comma separated field
 	 *
 	 * @param	String		$itemToFind
-	 * @param	String		$fieldname
+	 * @param	String		$fieldName
 	 * @return	String
 	 */
-	public function buildFindInSetQuery($itemToFind, $fieldname) {
+	public function buildFindInSetQuery($itemToFind, $fieldName) {
 		$itemToFind = $this->escape($itemToFind);
 
-		return "FIND_IN_SET('$itemToFind', $fieldname) != 0";
+		return "FIND_IN_SET('$itemToFind', $fieldName) != 0";
 	}
 
 
@@ -637,20 +637,20 @@ class TodoyuDatabase {
 
 
 	/**
-	 * Switch a boolean value in database (0 or 1) to the oposite value
+	 * Switch a boolean value in database (0 or 1) to the opposite value
 	 * 0 => 1, 1 => 0
 	 *
-	 * @param	String		$table			Tablename
-	 * @param	Integer		$idRecord		ID of the record
-	 * @param	String		$fieldname		Fieldname to toggle
+	 * @param	String		$table
+	 * @param	Integer		$idRecord
+	 * @param	String		$fieldName		Field to be toggled
 	 * @return	Integer
 	 */
-	public function doBooleanInvert($table, $idRecord, $fieldname) {
+	public function doBooleanInvert($table, $idRecord, $fieldName) {
 		$where	= 'id = ' . intval($idRecord);
-		$toggle	= $this->buildBooleanInvert($table, $fieldname);
-		$update	= array($fieldname => $toggle);
+		$toggle	= $this->buildBooleanInvert($table, $fieldName);
+		$update	= array($fieldName => $toggle);
 
-		return $this->doUpdate($table, $where, $update, array($fieldname)) === 1;
+		return $this->doUpdate($table, $where, $update, array($fieldName)) === 1;
 	}
 
 
@@ -659,11 +659,11 @@ class TodoyuDatabase {
 	 * Build a boolean invert SQL command
 	 *
 	 * @param	String		$table
-	 * @param	String		$fieldname
+	 * @param	String		$fieldName
 	 * @return	String
 	 */
-	public function buildBooleanInvert($table, $fieldname) {
-		return $this->quoteFieldname($fieldname, $table) . ' XOR 1';
+	public function buildBooleanInvert($table, $fieldName) {
+		return $this->quoteFieldname($fieldName, $table) . ' XOR 1';
 	}
 
 
@@ -783,7 +783,7 @@ class TodoyuDatabase {
 
 			// Inform about disabled history
 		if( ! $this->config['queryHistory'] ) {
-			Todoyu::log('Tried to get last query, but history is disabled. Change in db config', TodoyuLogger::LEVEL_NOTICE);
+			TodoyuLogger::logNotice('Tried to get last query, but history is disabled. Change in db config');
 		}
 
 		return $this->queryHistory[$index-1];
@@ -811,7 +811,7 @@ class TodoyuDatabase {
 	 * @return	Array		Or false if row doesn't exist
 	 */
 	public function getRowByID($table, $idRow) {
-			// build cache id
+			// Build cache ID
 		$cacheKey	= TodoyuRecordManager::makeRecordQueryKey($table, $idRow);
 
 			// Check if row is already cached
@@ -887,7 +887,7 @@ class TodoyuDatabase {
 	 * @return	Array		Or false
 	 */
 	public function getRecordByQuery($fields, $table, $where = '', $groupBy = '', $order = '') {
-		$rows	= $this->getArray($fields, $table, $where, $groupBy, $order, '1');
+		$rows	= $this->getArray($fields, $table, $where, $groupBy, $order, 1);
 
 		return sizeof($rows) === 1 ? $rows[0] : false;
 	}
@@ -1331,8 +1331,8 @@ class TodoyuDatabase {
 	private function printConnectionError($error, $errorNo) {
 		ob_end_clean();
 
-//		$title	= 'Cannot connect to the server "' . htmlentities($this->config['server'], ENT_QUOTES, 'UTF-8') . '"';
-//		$message= $error . '<br/><br />Check server or change in config/db.php';
+		$title	= 'Cannot connect to the server "' . htmlentities($this->config['server'], ENT_QUOTES, 'UTF-8') . '"';
+		$message= $error . '<br/><br />Check server or change in config/db.php';
 
 		include('core/view/error.html');
 	}
@@ -1348,8 +1348,8 @@ class TodoyuDatabase {
 	private function printSelectDbError($error, $errorNo) {
 		ob_end_clean();
 
-//		$title	= 'Failed selecting database';
-//		$message= 'Cannot select database "' . htmlentities($this->config['database'], ENT_QUOTES, 'UTF-8') . '" on server ' . htmlentities($this->config['server'], ENT_QUOTES, 'UTF-8') . '<br />Check server or change in config/db.php<br />' . $error;
+		$title	= 'Failed selecting database';
+		$message= 'Cannot select database "' . htmlentities($this->config['database'], ENT_QUOTES, 'UTF-8') . '" on server ' . htmlentities($this->config['server'], ENT_QUOTES, 'UTF-8') . '<br />Check server or change in config/db.php<br />' . $error;
 
 		include('core/view/error.html');
 	}

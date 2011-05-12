@@ -49,7 +49,7 @@ class TodoyuRecordManager {
 
 			return $object;
 		} else {
-			Todoyu::log('Record class not found: ' . $className, TodoyuLogger::LEVEL_ERROR);
+			TodoyuLogger::logError('Record class not found: ' . $className);
 			return false;
 		}
 	}
@@ -185,7 +185,7 @@ class TodoyuRecordManager {
 
 		$data['date_create']		= NOW;
 		$data['date_update']		= NOW;
-		$data['id_person_create']	= personid();
+		$data['id_person_create']	= Todoyu::personid();
 
 		return Todoyu::db()->addRecord($table, $data, $noQuoteFields);
 	}

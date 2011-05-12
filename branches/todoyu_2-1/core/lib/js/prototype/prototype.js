@@ -16,6 +16,19 @@ Element.addMethods({
 		return element.removeClassName(className).addClassName(replacement);
 	},
 
+
+
+	/**
+	 * Get class names of an element
+	 *
+	 * @param	{Element}	element
+	 */
+	getClassNames: function(element) {
+		return $w(element.className);
+	},
+
+
+
 	/**
 	 * Scroll to an element but consider the fixed header
 	 *
@@ -57,15 +70,29 @@ Ajax.Response.addMethods({
 
 	/**
 	 * Check whether todoyu error was sent
+	 *
+	 * @return	{Boolean}
 	 */
 	hasTodoyuError: function() {
 		return this.getTodoyuHeader('error') == 1;
 	},
 
 
+	/**
+	 * Get todoyu error message
+	 *
+	 * @return	{String}
+	 */
+	getTodoyuErrorMessage: function() {
+		return this.getTodoyuHeader('errorMessage');
+	},
+
+
 
 	/**
 	 * Check whether no access header was sent
+	 *
+	 * @return	{Boolean}
 	 */
 	hasNoAccess: function() {
 		return this.getTodoyuHeader('noAccess') == 1;
@@ -75,6 +102,8 @@ Ajax.Response.addMethods({
 
 	/**
 	 * Check whether notLoggedIn header was sent
+	 *
+	 * @return	{Boolean}
 	 */
 	isNotLoggedIn: function() {
 		return this.getTodoyuHeader('notLoggedIn') == 1;
@@ -84,6 +113,8 @@ Ajax.Response.addMethods({
 
 	/**
 	 * Check whether a php error header was sent
+	 *
+	 * @return	{Boolean}
 	 */
 	hasPhpError: function() {
 		return this.getPhpError() !== null;
@@ -93,6 +124,8 @@ Ajax.Response.addMethods({
 
 	/**
 	 * Get the php error header
+	 *
+	 * @return	{String}
 	 */
 	getPhpError: function() {
 		return this.getTodoyuHeader('Php-Error');
@@ -102,6 +135,8 @@ Ajax.Response.addMethods({
 
 	/**
 	 * Get number of AC result items
+	 *
+	 * @return	{Number}
 	 */
 	getNumAcElements: function() {
 		return Todoyu.Helper.intval(this.getTodoyuHeader('acElements'));
@@ -111,6 +146,8 @@ Ajax.Response.addMethods({
 
 	/**
 	 * Check whether the result is an empty autocompleter result
+	 *
+	 * @return	{Boolean}
 	 */
 	isEmptyAcResult: function() {
 		return this.getNumAcElements() === 0;

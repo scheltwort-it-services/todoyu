@@ -149,7 +149,7 @@ class TodoyuCoreAboutActionController extends TodoyuActionController {
 				'tinyMCE'	=> array(
 					'title'		=> 'TinyMCE - JavaScript WYSIWYG Editor',
 					'url'		=> 'http://tinymce.moxiecode.com/',
-					'copyright'	=> '2003-2010 Moxiecode Systems AB.',
+					'copyright'	=> '2003-2011 Moxiecode Systems AB.',
 					'license'	=> 'GNU LGPL',
 					'licenseUrl'=> 'http://tinymce.moxiecode.com/license.php'
 				),
@@ -159,7 +159,7 @@ class TodoyuCoreAboutActionController extends TodoyuActionController {
 
 		$tmpl	= 'core/view/about-window.tmpl';
 
-		return render($tmpl, $data);
+		return Todoyu::render($tmpl, $data);
 	}
 
 }

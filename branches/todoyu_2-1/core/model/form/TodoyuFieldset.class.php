@@ -407,10 +407,10 @@ class TodoyuFieldset implements ArrayAccess {
 
 		foreach($this->elements as $element) {
 			if( $element instanceof TodoyuFormElement ) {
-					// element is form element
+					// Element is form element
 				$fieldNames[] = $element->getName();
 			} elseif( $element instanceof TodoyuFieldset ) {
-					// element is sub fieldset
+					// Element is sub fieldset
 				$fieldNames = array_merge($fieldNames, $element->getFieldNames());
 			}
 		}
@@ -445,7 +445,7 @@ class TodoyuFieldset implements ArrayAccess {
 
 		$data['content'] =  $this->renderElements();;
 
-		return render($template, $data);
+		return Todoyu::render($template, $data);
 	}
 
 

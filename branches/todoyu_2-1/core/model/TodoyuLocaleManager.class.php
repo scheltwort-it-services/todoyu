@@ -97,7 +97,7 @@ class TodoyuLocaleManager {
 		if( sizeof($localeNames) > 0 ) {
 			return setlocale(LC_ALL, $localeNames);
 		} else {
-			Todoyu::log('Failed to set system locale. No localnames available for ' . $locale, TodoyuLogger::LEVEL_ERROR);
+			TodoyuLogger::logError('Failed to set system locale. No localnames available for ' . $locale);
 			return false;
 		}
 	}
@@ -138,7 +138,7 @@ class TodoyuLocaleManager {
 		foreach($locales as $locale) {
 			$options[] = array(
 				'value'	=> $locale,
-				'label'	=> Label('core.locale.' . $locale)
+				'label'	=> Todoyu::Label('core.locale.' . $locale)
 			);
 		}
 
@@ -160,7 +160,7 @@ class TodoyuLocaleManager {
 		if( ! is_null($locale) ) {
 			setcookie('locale', $locale, NOW + TodoyuTime::SECONDS_WEEK * 100, PATH_WEB);
 		} else {
-			Todoyu::log('Tried to set locale cookie. But not logged in and no parameter set!', TodoyuLogger::LEVEL_ERROR);
+			TodoyuLogger::logError('Tried to set locale cookie. But not logged in and no parameter set!');
 		}
 	}
 

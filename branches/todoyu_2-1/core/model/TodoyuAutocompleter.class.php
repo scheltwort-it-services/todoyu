@@ -90,14 +90,14 @@ class TodoyuAutocompleter {
 
 			// Check for restrictions
 		if( isset($autocompleter['restrict']) ) {
-			restrict($autocompleter['restrict'][0], $autocompleter['restrict'][1]);
+			Todoyu::restrict($autocompleter['restrict'][0], $autocompleter['restrict'][1]);
 		}
 
 			// Call data source function for results
 		if( TodoyuFunction::isFunctionReference($autocompleter['function']) ) {
 			$result	= TodoyuFunction::callUserFunction($autocompleter['function'], $input, $formData, $name);
 		} else {
-			Todoyu::log('Invalid autocomplete function for name "' . $name . '": ' . $autocompleter['function'], TodoyuLogger::LEVEL_ERROR);
+			TodoyuLogger::logError('Invalid autocomplete function for name "' . $name . '": ' . $autocompleter['function']);
 		}
 
 		return TodoyuArray::assure($result);
