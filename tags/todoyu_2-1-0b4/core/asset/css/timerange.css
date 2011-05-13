@@ -1,0 +1,148 @@
+.timerange {
+	padding-top:2px;
+}
+.timerange .bar {
+	position:relative;
+	padding:10px 0;
+}
+
+.timerange .bar .slider {
+	position:relative;
+	width:472px;
+	background:url(../img/timerange-track-middle.png) repeat-x;
+}
+
+.timerange .bar .track {
+	height:3px;
+	display:inline-block;
+	cursor:pointer;
+}
+
+.timerange .bar .trackStart {
+	width:4px;
+	background:url(../img/timerange-track-start.png) no-repeat;
+}
+
+.timerange .bar .trackEnd {
+	width:4px;
+	background:url(../img/timerange-track-end.png) no-repeat;
+}
+
+
+.timerange .bar .slider .handle {
+	position:absolute;
+	width:20px;
+	height:20px;
+	cursor:move;
+	cursor:ew-resize;
+	background:url(../img/timerange-handle.png) center center no-repeat;
+	margin-top:-17px;
+	z-index:10;
+}
+.timerange .bar .slider .handleStart {
+	margin-left:-4px;
+}
+.timerange .bar .slider .handleEnd {
+	margin-left:-5px;
+}
+
+.timerange .bar .span {
+	position:relative;
+	margin-left:5px;
+	height:3px;
+	z-index:9;
+	background-color:#000;
+	/*opacity:0.5;*/
+	cursor:default;
+
+}
+
+.timerange .limits {
+	font-size:10px;
+	display:block;
+}
+
+.timerange .limits > div {
+	clear:none;
+	width:60px;
+	height:16px;
+}
+
+.timerange .limits .limit.min {
+	float:left;
+	text-align:left;
+}
+.timerange .limits .limit.max {
+	float:right;
+	text-align:right;
+}
+
+.timerange .dates {
+	margin:3px 0;
+	position:relative;
+}
+
+.timerange .dates .start,
+.timerange .dates .ranges {
+	float:left;
+	clear:none;
+}
+
+.timerange .dates .start {
+	width:100px;
+}
+
+.timerange .dates .end {
+	width:81px;
+	clear:none;
+	float:right;
+}
+
+.timerange .dates input {
+	width:60px;
+}
+
+.timerange .dates .ranges {
+	position:absolute;
+	z-index:0;
+	width:150px;
+	left:50%;
+	right:50%;
+	margin-left:-75px;
+	cursor:pointer;
+	text-align:center;
+}
+.timerange .dates .ranges:hover span.chooseRange {
+	font-weight:bold;
+}
+.timerange .dates .ranges:hover {
+	margin:-10px -10px -10px -85px;
+	padding:10px;
+	-webkit-box-shadow:2px 2px 7px #999;
+	-moz-box-shadow:2px 2px 7px #999;
+	box-shadow:2px 2px 7px #999;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	background-color:#fff;
+}
+.timerange .dates .ranges ul {
+	display:none;
+	z-index:9999; /* always in front */
+	padding:10px 0 0 0;
+	color:#666;
+}
+.timerange .dates .ranges:hover ul {
+	display:block;
+}
+
+.timerange .dates .ranges ul li {
+	padding:2px;
+	cursor:pointer;
+	border-bottom:1px solid #ddd;
+}
+
+.timerange .dates .ranges ul li:hover {
+	background-color:#f3f3f3;
+}
+
