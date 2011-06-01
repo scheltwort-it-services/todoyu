@@ -132,6 +132,29 @@ function Dwoo_Plugin_inArray(Dwoo $dwoo, $value, $array) {
 
 
 /**
+ * Helper function to unset array values, needed for non-referenceable parameters
+ *
+ * @package		Todoyu
+ * @subpackage	Template
+ *
+ * @param	Dwoo 		$dwoo
+ * @param	Array		$array
+ * @param	Mixed		$deletionValue
+ * @return	Boolean
+ */
+function Dwoo_Plugin_unsetArrayValue(Dwoo $dwoo, $array, $deletionValue) {
+	foreach($array as $itemKey => $itemValue) {
+		if( $itemValue == $deletionValue ) {
+			unset($array[$itemKey]);
+		}
+	}
+
+	return $array;
+}
+
+
+
+/**
  * Encode string for HTML output
  *
  * @package		Todoyu
@@ -139,10 +162,11 @@ function Dwoo_Plugin_inArray(Dwoo $dwoo, $value, $array) {
  *
  * @param	Dwoo_Compiler 	$compiler
  * @param	String			$string
+ * @param	Boolean			$doubleEncode
  * @return	String
  */
-function Dwoo_Plugin_htmlencode_compile(Dwoo_Compiler $compiler, $string) {
-	return 'htmlentities(' . $string . ', ENT_QUOTES, \'UTF-8\', false)';
+function Dwoo_Plugin_htmlencode_compile(Dwoo_Compiler $compiler, $string, $doubleEncode = false) {
+	return 'htmlentities(' . $string . ', ENT_QUOTES, \'UTF-8\', ' . $doubleEncode . ')';
 }
 
 
@@ -198,6 +222,7 @@ function Dwoo_Plugin_filesize_compile(Dwoo_Compiler $compiler, $fileSize) {
  * @param	Dwoo 		$dwoo
  * @param	String		$string
  * @param	Integer		$maxLen
+ * @return	String
  */
 function Dwoo_Plugin_cropText_compile(Dwoo_Compiler $compiler, $string, $maxLen, $dontSplitWords = true) {
 	return 'TodoyuString::crop(' . $string . ', ' . $maxLen . ', \'...\', ' . $dontSplitWords . ')';
@@ -213,6 +238,7 @@ function Dwoo_Plugin_cropText_compile(Dwoo_Compiler $compiler, $string, $maxLen,
  *
  * @param	Dwoo 		$dwoo
  * @param	String		$value
+ * @return	String
  */
 function Dwoo_Plugin_twoDigits_compile(Dwoo_Compiler $compiler, $value) {
 	return 'sprintf(\'%02d\', ' . $value . ')';

@@ -33,4 +33,5 @@ Todoyu::$CONFIG['DB'] = array(
 	'persistent'	=> true,
 	'queryHistory'	=> true
 );
+
 ?>

@@ -121,7 +121,7 @@ class TodoyuTokenManager {
 		$hash	= md5($salt);
 
 			// Ensure the hash not being used yet
-		if(! self::isUnusedHash($hash) ) {
+		if( ! self::isUnusedHash($hash) ) {
 			$hash	= self::generateHash($extID, $idTokenType, $idPersonOwner, $storeInSession);
 		}
 
@@ -193,6 +193,7 @@ class TodoyuTokenManager {
 	 * @param	Integer		$extID
 	 * @param	Integer		$idTokenType
 	 * @param	Integer		$idPersonOwner
+	 * @return	String
 	 */
 	public static function getHashFromSession($extID, $idTokenType, $idPersonOwner = 0) {
 		$idTokenType	= intval($idTokenType);
@@ -238,7 +239,7 @@ class TodoyuTokenManager {
 	 * Save token to DB (new or update)
 	 *
 	 * @param	Array	$data
-	 * @param	Integer			ID of token record
+	 * @return	Integer			ID of token record
 	 */
 	public static function saveToken(array $data) {
 		$idToken	= intval($data['id']);
@@ -324,6 +325,56 @@ class TodoyuTokenManager {
 		$hash	= self::geTokenHashValueFromRequest();
 
 		return ( ! empty($hash) );
+	}
+
+
+
+	/**
+	 * Get todoyu sharing URL for accessing public token of given specs
+	 *
+	 * @param	Integer		$extID
+	 * @param	Integer		$idTokenType
+	 * @param	Boolean		$download
+	 * @return	String
+	 */
+	public static function getPublicTokenURL($extID, $idTokenType, $download = false) {
+		$extID			= intval($extID);
+		$idTokenType	= intval($idTokenType);
+
+		$token	= TodoyuTokenManager::getTokenByOwner($extID, $idTokenType);
+
+		if( $token !== false ) {
+			$urlParams = array(
+				'token'	=> $token->getHash()
+			);
+			if( $download ) {
+				$urlParams['download']	= 1;
+			}
+
+			return TodoyuString::buildUrl($urlParams, '', true);
+		}
+
+		return false;
+	}
+
+
+
+	/**
+	 * Check whether a token of the given specs is stored already
+	 *
+	 * @param	Integer		$extID
+	 * @param	Integer		$idTokenType
+	 * @param	Integer		$idPersonOwner
+	 * @return	String|Boolean
+	 */
+	public static function isTokenStored($extID, $idTokenType, $idPersonOwner = 0) {
+		$extID			= intval($extID);
+		$idTokenType	= intval($idTokenType);
+		$idPersonOwner	= Todoyu::personid($idPersonOwner);
+
+		$token	= TodoyuTokenManager::getTokenByOwner($extID, $idTokenType, $idPersonOwner);
+
+		return $token ? true : false;
 	}
 
 }

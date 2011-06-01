@@ -164,10 +164,6 @@ class TodoyuFormElement_DatabaseRelation extends TodoyuFormElement {
 			// Evoke assigned validators
 		if( $this->getForm()->isSubformValidationActive() ) {
 			$recordForm->isValid();
-//			if( ! $form->isValid() ) {
-//				$this->setErrorMessage( Label('form.field.hasError') );
-//				$this->setErrorTrue();
-//			}
 		}
 
 			// Render
@@ -223,9 +219,8 @@ class TodoyuFormElement_DatabaseRelation extends TodoyuFormElement {
 
 
 	/**
-	 * Load foreign record from baserecord
+	 * Load foreign record from base record
 	 *
-	 * @param	Array	$data
 	 * @return	Array
 	 */
 	protected function getRecords() {

@@ -49,29 +49,55 @@ class TodoyuTime {
 
 
 	/**
-	 * Get timestamp of start of day
+	 * Get timestamp of start (00:00:00) of day
 	 *
-	 * @param	Integer		$timestamp
+	 * @param	Integer|Boolean		$timestamp
 	 * @return	Integer
 	 */
 	public static function getStartOfDay($timestamp = false) {
 		$timestamp = $timestamp === false ? NOW : intval($timestamp);
 
-		return mktime(0, 0, 0, date('n', $timestamp), date('j', $timestamp), date('Y', $timestamp));
+		$month	= date('n', $timestamp);
+		$day	= date('j', $timestamp);
+		$year	= date('Y', $timestamp);
+
+		return mktime(0, 0, 0, $month, $day, $year);
 	}
 
 
 
 	/**
-	 * Make timestamp for end of day
+	 * Make timestamp for end (23:59:59) of day
 	 *
-	 * @param	Integer		$timestamp
+	 * @param	Integer|Boolean		$timestamp
 	 * @return	Integer
 	 */
 	public static function getEndOfDay($timestamp = false) {
 		$timestamp = $timestamp === false ? NOW : intval($timestamp);
 
-		return mktime(23, 59, 59, date('n', $timestamp), date('j', $timestamp), date('Y', $timestamp));
+		$month	= date('n', $timestamp);
+		$day	= date('j', $timestamp);
+		$year	= date('Y', $timestamp);
+
+		return mktime(23, 59, 59, $month, $day, $year);
+	}
+
+
+
+	/**
+	 * Make timestamp for given date's time (at 1.1.1970)
+	 *
+	 * @param	Integer|Boolean		$timestamp
+	 * @return	Integer
+	 */
+	public static function getTimeOfDay($timestamp = false) {
+		$timestamp = $timestamp === false ? NOW : intval($timestamp);
+
+		$hour	= date('G', $timestamp);
+		$minute	= date('i', $timestamp) + 0;
+		$second	= date('s', $timestamp) + 0;
+
+		return $hour * self::SECONDS_HOUR + $minute * self::SECONDS_MIN + $second;
 	}
 
 
@@ -79,8 +105,8 @@ class TodoyuTime {
 	/**
 	 * Get timestamps for the first and the last second of a day
 	 *
-	 * @param	Integer		$timestamp
-	 * @return	Array		[start,end]
+	 * @param	Integer|Boolean		$timestamp
+	 * @return	Array				[start,end]
 	 */
 	public static function getDayRange($timestamp = false) {
 		return array(
@@ -95,6 +121,7 @@ class TodoyuTime {
 	 * Get timestamps of start and of week that contains the given timestamp
 	 *
 	 * @param	Integer	$timestamp
+	 * @return	Array
 	 */
 	public static function getWeekRange($timestamp) {
 		$timestamp	= intval($timestamp);
@@ -154,10 +181,10 @@ class TodoyuTime {
 
 
 	/**
-	 * Get timestamp of first day of month
-	 * 00:00:00
+	 * Get timestamp of first day (at 00:00:00) of month
 	 *
 	 * @param	Integer	$timestamp
+	 * @return	Integer
 	 */
 	public static function getMonthStart($timestamp) {
 		$timestamp	= intval($timestamp);
@@ -293,6 +320,11 @@ class TodoyuTime {
 		} else {
 			if( $round && $timeParts['seconds'] >= 30 ) {
 				$timeParts['minutes'] += 1;
+
+				if( $timeParts['minutes'] == 60 ) {
+					$timeParts['hours'] += 1;
+					$timeParts['minutes'] = 0;
+				}
 			}
 			$formatted	= sprintf('%02d:%02d', $timeParts['hours'], $timeParts['minutes']);
 		}
@@ -334,10 +366,11 @@ class TodoyuTime {
 	 * Get given duration formatted in most suiting format
 	 *
 	 * @param	Integer		$seconds
+	 * @param	Boolean		$largerUnitsThanDays	Don't format in larger unit than days?
 	 * @return	String
 	 */
-	public static function formatDuration($seconds) {
-		if( $seconds >= TodoyuTime::SECONDS_WEEK ) {
+	public static function formatDuration($seconds, $largerUnitsThanDays = false) {
+		if( $largerUnitsThanDays && $seconds >= TodoyuTime::SECONDS_WEEK ) {
 				// Weeks
 			$value	= $seconds / TodoyuTime::SECONDS_WEEK;
 			$unit	= 'week';
@@ -359,12 +392,44 @@ class TodoyuTime {
 			$unit	= 'time.second';
 		}
 
+		if( is_float($value) ) {
+			$value	= round($value, 2);
+		}
+
 		if( $value != 1 ) {
 				// Plural?
 			$unit .= 's';
 		}
 
 		return $value . ' ' . Todoyu::Label('core.date.' . $unit);
+	}
+
+
+
+	/**
+	 * Have given timespan formatted in most suiting format
+	 *
+	 * @param	Integer		$dateStart
+	 * @param	Integer		$dateEnd
+	 * @param	Boolean		$withDuration
+	 * @return	String
+	 */
+	public static function formatTimespan($dateStart, $dateEnd, $withDuration = false) {
+			// Start and end at same day
+		if( self::getStartOfDay($dateStart) === self::getStartOfDay($dateEnd) ) {
+			$formatted	= self::format($dateStart, 'DshortD2MshortY2') . ', ' . self::format($dateStart, 'time') . ' - ' . self::format($dateEnd, 'time');
+		} else {
+				// Different days
+			$formatted	= self::format($dateStart, 'DshortD2MshortY2') . ' - ' . self::format($dateEnd, 'DshortD2MshortY2');
+		}
+
+			// Add duration
+		if( $withDuration ) {
+			$duration	= $dateEnd - $dateStart;
+			$formatted .= ' (' .self::formatDuration($duration) . ')';
+		}
+
+		return $formatted;
 	}
 
 

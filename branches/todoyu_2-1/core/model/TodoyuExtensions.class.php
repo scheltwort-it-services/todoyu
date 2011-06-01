@@ -47,7 +47,7 @@ class TodoyuExtensions {
 		$extFolders		= TodoyuFileManager::getFoldersInFolder(PATH_EXT);
 		$extInstalled	= TodoyuExtensions::getInstalledExtKeys();
 
-		return array_diff($extFolders, $extInstalled);
+		return array_values(array_diff($extFolders, $extInstalled));
 	}
 
 
@@ -108,7 +108,7 @@ class TodoyuExtensions {
 	 * Check if file path is in the path of the extension
 	 *
 	 * @param	String		$extKey
-	 * @param	String		$filePath
+	 * @param	String		$path
 	 * @return	Boolean
 	 */
 	public static function isPathInExtDir($extKey, $path) {
@@ -128,6 +128,7 @@ class TodoyuExtensions {
 	 * This is the path an extension would have. Doesn't mean the path exists or extension is installed
 	 *
 	 * @param	String		$extKey
+	 * @param	String		$appendPath
 	 * @return	String		Absolute path to extension
 	 */
 	public static function getExtPath($extKey, $appendPath = '') {
@@ -149,6 +150,24 @@ class TodoyuExtensions {
 			return Todoyu::$CONFIG['EXT'][$extKey]['info'];
 		} else {
 			return false;
+		}
+	}
+
+
+
+	/**
+	 * Get extension version
+	 *
+	 * @param	String		$extKey
+	 * @return	String|Boolean
+	 */
+	public static function getExtVersion($extKey) {
+		$info	= self::getExtInfo($extKey);
+
+		if( $info === false ) {
+			return false;
+		} else {
+			return $info['version'];
 		}
 	}
 
@@ -423,7 +442,7 @@ class TodoyuExtensions {
 	public static function getDependencies($extKey) {
 		$extInfo	= self::getExtInfo($extKey);
 
-		return $extInfo['constraints']['depends'];
+		return TodoyuArray::assure($extInfo['constraints']['depends']);
 	}
 
 
@@ -476,9 +495,9 @@ class TodoyuExtensions {
 	 * @return	Boolean
 	 */
 	public static function isSystemExtension($extKey) {
-		self::loadConfig($extKey, 'extinfo');
+		$extInfo	= self::getExtInfo($extKey);
 
-		return Todoyu::$CONFIG['EXT'][$extKey]['info']['constraints']['system'] === true;
+		return $extInfo['constraints']['system'] === true;
 	}
 
 
@@ -504,16 +523,16 @@ class TodoyuExtensions {
 	public static function getConflicts($extKeyToCheck) {
 		self::loadAllExtinfo();
 
-		$conflicts	= array();
-		$extKeys	= self::getInstalledExtKeys();
+		$ownExtInfo		= self::getExtInfo($extKeyToCheck);
+		$conflicts		= TodoyuArray::assure($ownExtInfo['constraints']['conflicts']);
+		$extKeys		= self::getInstalledExtKeys();
 
 		foreach($extKeys as $extKey) {
-			$conflictInfo	= Todoyu::$CONFIG['EXT'][$extKey]['info']['constraints']['conflict'];
+			$extInfo		= self::getExtInfo($extKey);
+			$extConflicts	= TodoyuArray::assure($extInfo['constraints']['conflicts']);
 
-			if( is_array($conflictInfo) ) {
-				if( array_key_exists($extKeyToCheck, $conflictInfo) ) {
-					$conflicts[] = $extKey;
-				}
+			if( in_array($extKeyToCheck, $extConflicts) ) {
+				$conflicts[] = $extKey;
 			}
 		}
 

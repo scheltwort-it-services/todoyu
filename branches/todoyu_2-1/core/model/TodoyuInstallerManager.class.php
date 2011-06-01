@@ -343,6 +343,8 @@ class TodoyuInstallerManager {
 	 * Execute SQL files to update the database to the current version
 	 *
 	 * @param	Array		$data
+	 * @return	Array
+	 * @todo	Check: return value needed?
 	 */
 	public static function processUpdateToCurrentVersion(array $data) {
 		$result	= array();
@@ -563,6 +565,7 @@ class TodoyuInstallerManager {
 	/**
 	 * Check writable status of important files
 	 *
+	 * @param	Array	$elements
 	 * @return	Array
 	 */
 	public static function checkWritableStatus(array $elements) {
@@ -776,7 +779,7 @@ class TodoyuInstallerManager {
 				if( ! strstr($content, $newString) ) {
 					$content = str_replace($currentString, $newString, $content);
 
-					file_put_contents($file, $content);
+					TodoyuFileManager::saveFileContent($file, $content);
 
 					include($file);
 				}
@@ -900,9 +903,9 @@ class TodoyuInstallerManager {
 	 * Save current todoyu version as DB version in the LAST_VERSION file
 	 */
 	public static function saveCurrentVersion() {
-		$pathFile	= TodoyuFileManager::pathAbsolute('install/config/LAST_VERSION');
+		$pathFile	= 'install/config/LAST_VERSION';
 
-		file_put_contents($pathFile, TODOYU_VERSION);
+		TodoyuFileManager::saveFileContent($pathFile, TODOYU_VERSION);
 	}
 
 
@@ -910,6 +913,8 @@ class TodoyuInstallerManager {
 	/**
 	 * Move task assets to a new and better structure (from tasks/TASKID/* to PROJECTID/TASKID/*)
 	 * Used with todoyu update to v2.0.1
+	 *
+	 * @return	Boolean|Void
 	 */
 	public static function changeFilesAssetStructure() {
 		if( ! TodoyuInstaller::isUpdate() ) {

@@ -46,11 +46,10 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 
 
 	/**
-	 * Initialize object.
-	 * Only load data from database, when $idRecord is not zero
+	 * Initialize object. Only load data from database, when $idRecord is not zero
 	 *
-	 * @param	Integer		$idRecordOrData		Record ID
-	 * @param	String		$table				Table name
+	 * @param	Integer		$idRecord
+	 * @param	String		$table
 	 */
 	public function __construct($idRecord, $table) {
 		$idRecord	= intval($idRecord);
@@ -136,6 +135,19 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 	 */
 	public function get($key) {
 		return $this->data[$key];
+	}
+
+
+
+	/**
+	 * Set a value
+	 * Sets the value only in the object, this in not persistent
+	 *
+	 * @param	String		$key
+	 * @param	Mixed		$value
+	 */
+	public function set($key, $value) {
+		$this->data[$key] = $value;
 	}
 
 

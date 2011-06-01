@@ -50,7 +50,7 @@ class TodoyuLabelManager {
 	 * Set locale. All request for labels without a locale will use this locale.
 	 * Default locale is en_GB (british english)
 	 *
-	 * @param	String		$language
+	 * @param	String		$locale
 	 */
 	public static function setLocale($locale) {
 		self::$locale = $locale;
@@ -121,7 +121,7 @@ class TodoyuLabelManager {
 	/**
 	 * Get label or an empty string if not found
 	 *
-	 * @param	String		$labelKey
+	 * @param	String		$fullKey
 	 * @param	String		$locale
 	 * @return	String
 	 */
@@ -166,6 +166,8 @@ class TodoyuLabelManager {
 	 * Get a label from internal cache. If the label is not available, load it
 	 *
 	 * @param	String		$fileKey		Filekey
+	 * @param	String		$extKey
+	 * @param	String		$fileKey		Filekey
 	 * @param	String		$labelKey		Index of the label in the file
 	 * @param	String		$locale			Locale to load the label
 	 * @return	String		The label with the key $index for $language
@@ -185,17 +187,34 @@ class TodoyuLabelManager {
 	/**
 	 * Get path of the file which is registered for a file key
 	 *
+	 * @param	String		$extKey
 	 * @param	String		$fileKey
+	 * @param	String		$locale
 	 * @return	String		Abs. path to file
 	 */
 	private static function getFilePath($extKey, $fileKey, $locale) {
+		$localePath	= self::getLocalePath($extKey, $locale);
+
+		return $localePath . DIR_SEP . $fileKey . '.xml';
+	}
+
+
+
+	/**
+	 * Get path where locales are stored
+	 *
+	 * @param	String		$extKey
+	 * @param	String		$locale
+	 * @return	String
+	 */
+	public static function getLocalePath($extKey, $locale) {
 		if( array_key_exists($extKey, self::$customPaths) ) {
 			$basePath	= TodoyuFileManager::pathAbsolute(self::$customPaths[$extKey]);
 		} else {
 			$basePath	= TodoyuExtensions::getExtPath($extKey);
 		}
 
-		return $basePath . DIR_SEP . 'locale' . DIR_SEP . $locale . DIR_SEP . $fileKey . '.xml';
+		return $basePath . DIR_SEP . 'locale' . DIR_SEP . $locale;
 	}
 
 
@@ -233,6 +252,7 @@ class TodoyuLabelManager {
 	/**
 	 * Get labels for an identifier for a locale
 	 *
+	 * @param	String		$extKey
 	 * @param	String		$fileKey
 	 * @param	String		$locale
 	 * @return	Array
@@ -251,12 +271,10 @@ class TodoyuLabelManager {
 		$labels	= array();
 
 		foreach($locales as $fallbackLocale) {
-			$pathFile	= self::getFilePath($extKey, $fileKey, $fallbackLocale);
+			$fileLabels	= self::getXmlFileLabels($extKey, $fileKey, $fallbackLocale);
 
-			if( is_file($pathFile) ) {
-				$localeLabels	= self::readXmlFile($pathFile);
-
-				$labels	= array_merge($labels, $localeLabels);
+			if( sizeof($fileLabels) > 0 ) {
+				$labels	= array_merge($labels, $fileLabels);
 			}
 		}
 
@@ -271,8 +289,29 @@ class TodoyuLabelManager {
 
 
 	/**
+	 * Read labels from an XML file
+	 *
+	 * @param	String		$extKey
+	 * @param	String		$fileKey
+	 * @param	String		$locale
+	 * @return	Array
+	 */
+	public static function getXmlFileLabels($extKey, $fileKey, $locale) {
+		$labels		= array();
+		$pathFile	= self::getFilePath($extKey, $fileKey, $locale);
+
+		if( is_file($pathFile) ) {
+			$labels	= self::readXmlFile($pathFile);
+		}
+
+		return $labels;
+	}
+
+
+
+	/**
 	 * Read a locallang XML file using a XML parser.
-	 * Transforms the parser result in an usful array
+	 * Transforms the parser result in an useful array
 	 * Structure [de][INDEX] = Label
 	 *
 	 * @param	String		$absPathToLocallangFile		Absolute path to locallang file
@@ -340,9 +379,7 @@ class TodoyuLabelManager {
 	private static function writeCachedLabelFile($pathFile, array $labels) {
 		$cacheData	= serialize($labels);
 
-		TodoyuFileManager::makeDirDeep(dirname($pathFile));
-
-		return file_put_contents($pathFile, $cacheData) !== false;
+		return TodoyuFileManager::saveFileContent($pathFile, $cacheData) !== false;
 	}
 
 
@@ -369,7 +406,9 @@ class TodoyuLabelManager {
 	/**
 	 * Make cache file name. Based on the path to the XML file and its modification time
 	 *
-	 * @param	String		$absPathToLocallangFile
+	 * @param	String		$extKey
+	 * @param	String		$fileKey
+	 * @param	String		$locale
 	 * @return	String
 	 */
 	private static function getCacheFileName($extKey, $fileKey, $locale) {

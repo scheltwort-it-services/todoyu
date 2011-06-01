@@ -69,6 +69,7 @@ class TodoyuFileManager {
 	 * Get web path of a file
 	 *
 	 * @param	String		$absolutePath
+	 * @param	Boolean		$prependDomain
 	 * @return 	String
 	 */
 	public static function pathWeb($absolutePath, $prependDomain = false) {
@@ -86,8 +87,9 @@ class TodoyuFileManager {
 	/**
 	 * Delete all files inside given folder
 	 *
-	 * @param	String		$pathToFolder
-	 * @param	Boolean		Deletion of all files was successful
+	 * @param	String		$folderPath
+	 * @param	Boolean		$deleteHidden	Deletion of all files was successful
+	 * @return	Boolean		Success?
 	 */
 	public static function deleteFolderContents($folderPath, $deleteHidden = false) {
 		$folderPath = self::pathAbsolute($folderPath);
@@ -96,8 +98,8 @@ class TodoyuFileManager {
 		$success	= true;
 
 			// Delete folders with contents
-		foreach($folders as $foldername) {
-			$pathFolder	= $folderPath . DIR_SEP . $foldername;
+		foreach($folders as $folderName) {
+			$pathFolder	= $folderPath . DIR_SEP . $folderName;
 
 			if( is_dir($pathFolder) ) {
 				$successContents = self::deleteFolderContents($pathFolder, $deleteHidden);
@@ -195,12 +197,13 @@ class TodoyuFileManager {
 	 * Replace all not allowed characters of a filename by "_" or another character
 	 *
 	 * @param	String		$dirtyFilename		Filename (not path!)
+	 * @param	String		$replacement
 	 * @return	String
 	 */
-	public static function makeCleanFilename($dirtyFilename, $replaceBy = '_') {
+	public static function makeCleanFilename($dirtyFilename, $replacement = '_') {
 		$pattern	= '|[^A-Za-z0-9\.\-_\[\]()]|';
 
-		return preg_replace($pattern, $replaceBy, $dirtyFilename);
+		return preg_replace($pattern, $replacement, $dirtyFilename);
 	}
 
 
@@ -279,6 +282,7 @@ class TodoyuFileManager {
 	 * @param	String		$templateFile	Path to the template file
 	 * @param	Array		$data			Template data
 	 * @param	Boolean		$wrapAsPhp		Wrap content with PHP start and end tags
+	 * @return	Integer|Boolean				Number of bytes written to file / false
 	 */
 	public static function saveTemplatedFile($savePath, $templateFile, array $data = array(), $wrapAsPhp = true) {
 		$savePath		= self::pathAbsolute($savePath);
@@ -292,7 +296,7 @@ class TodoyuFileManager {
 			$content= TodoyuString::wrap($content, '<?php|?>');
 		}
 
-		return file_put_contents($savePath, $content) !== false;
+		return TodoyuFileManager::saveFileContent($savePath, $content) !== false;
 	}
 
 
@@ -303,6 +307,7 @@ class TodoyuFileManager {
 	 * @param	String			$path
 	 * @param	String			$sourceFile
 	 * @param	String			$uploadFileName
+	 * @param	Boolean			$prependTimestamp
 	 * @return	String|Boolean	New file path or FALSE
 	 */
 	public static function addFileToStorage($path, $sourceFile, $uploadFileName, $prependTimestamp = true) {
@@ -372,12 +377,13 @@ class TodoyuFileManager {
 	 *
 	 * @param	String		$pathFile
 	 * @param	String		$content
+	 * @return	Integer|Boolean			Number of bytes written / false
 	 */
 	public static function saveFileContent($pathFile, $content) {
 		$pathFile	= self::pathAbsolute($pathFile);
 		self::makeDirDeep(dirname($pathFile));
 
-		file_put_contents($pathFile, $content);
+		return file_put_contents($pathFile, $content);
 	}
 
 
@@ -549,18 +555,19 @@ class TodoyuFileManager {
 	 *
 	 * @param	String		$pathFolder
 	 * @param	Boolean		$showHidden
-	 * @param	String		$filters			strings needed to be contained in files looking for
+	 * @param	Array		$filters			strings needed to be contained in files looking for
 	 * @return	Array
 	 */
 	public static function getFilesInFolder($pathFolder, $showHidden = false, $filters = array()) {
 		$pathFolder	= self::pathAbsolute($pathFolder);
 		$elements	= self::getFolderContents($pathFolder, $showHidden);
 		$files		= array();
+		$hasFilters	= sizeof($filters) > 0;
 
 		foreach($elements as $element) {
 			if( is_file($pathFolder . DIR_SEP . $element) ) {
 					// No filters defined: add file to results array
-				if( sizeof($filters) === 0) {
+				if( ! $hasFilters ) {
 					$files[] = $element;
 				} else {
 						// Check string filters
@@ -797,9 +804,7 @@ class TodoyuFileManager {
 				$targetPath	= self::pathAbsolute($targetPath);
 			}
 
-			self::makeDirDeep(dirname($targetPath));
-
-			file_put_contents($targetPath, $content);
+			self::saveFileContent($targetPath, $content);
 
 			return $targetPath;
 		} else {
@@ -815,21 +820,22 @@ class TodoyuFileManager {
 	 * If move is set, all files are moved instead of copied
 	 *
 	 * @param	String		$sourceFolder
-	 * @param	String		$destFolder
-	 * @param	Boolean		$move				Move instead copy
+	 * @param	String		$destinationFolder
+	 * @param	Boolean		$move					Move instead copy
+	 * @param	Boolean		$hiddenFiles
 	 */
-	public static function copyRecursive($sourceFolder, $destFolder, $move = false, $hiddenFiles = false) {
+	public static function copyRecursive($sourceFolder, $destinationFolder, $move = false, $hiddenFiles = false) {
 		$sourceFolder	= self::pathAbsolute($sourceFolder);
-		$destFolder		= self::pathAbsolute($destFolder);
+		$destinationFolder		= self::pathAbsolute($destinationFolder);
 		$removeFolders	= array();
 
-		self::makeDirDeep($destFolder);
+		self::makeDirDeep($destinationFolder);
 
 		$folderElements	= self::getFolderContents($sourceFolder, $hiddenFiles);
 
 		foreach($folderElements as $element) {
 			$pathElement	= self::pathAbsolute($sourceFolder . '/' . $element);
-			$pathDestElement= self::pathAbsolute($destFolder . '/' . $element);
+			$pathDestElement= self::pathAbsolute($destinationFolder . '/' . $element);
 
 			if( is_dir($pathElement) ) {
 					// Folder
@@ -856,6 +862,54 @@ class TodoyuFileManager {
 		foreach($removeFolders as $folder) {
 			rmdir($folder);
 		}
+	}
+
+
+
+	/**
+	 * Get list of version files from a directory. Limit by min and max version and extension
+	 *
+	 * @param	String			$pathToFolder
+	 * @param	String|Boolean	$extension
+	 * @param	String			$minVersion			Min version will NOT be included
+	 * @param	String			$maxVersion			Max version will be included
+	 * @return	Array
+	 */
+	public static function getVersionFiles($pathToFolder, $extension = false, $minVersion = '0.0.0', $maxVersion = '999.999.999') {
+		$pathToFolder	= TodoyuFileManager::pathAbsolute($pathToFolder);
+		$files			= TodoyuFileManager::getFilesInFolder($pathToFolder);
+		$updateFiles	= array();
+		$version2File	= array();
+
+			// Map version numbers to real file names (without extension)
+		foreach($files as $filename) {
+			$version2File[pathinfo($filename, PATHINFO_FILENAME)] = $filename;
+		}
+
+			// Get list of versions
+		$versions		= array_keys($version2File);
+
+			// Sort the versions
+		usort($versions, 'version_compare');
+
+			// Check all files if they are necessary for the update
+		foreach($versions as $version) {
+			$filename	= $version2File[$version];
+			$info		= pathinfo($filename);
+
+				// Only use file with the requested extension
+			if( $extension !== false && $info['extension'] !== $extension ) {
+				continue;
+			}
+
+				// Get all version which are in the required version range
+			if( version_compare($version, $minVersion) === 1 && version_compare($version, $maxVersion) !== 1 ) {
+					// Add version file to list
+				$updateFiles[] = $version2File[$version];
+			}
+		}
+
+		return $updateFiles;
 	}
 
 }

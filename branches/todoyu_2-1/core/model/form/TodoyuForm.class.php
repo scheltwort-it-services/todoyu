@@ -136,6 +136,7 @@ class TodoyuForm implements ArrayAccess {
 	 *
 	 * @param	String		$xmlFile		Path to XML form definition
 	 * @param	Array		$preParseValues	Optional markers to be initially replaced inside the XML before parsing
+	 * @param	Integer		$idRecord
 	 */
 	public function __construct($xmlFile, $preParseValues = array(), $idRecord = 0) {
 		$this->xmlFile	= TodoyuFileManager::pathAbsolute($xmlFile);
@@ -203,10 +204,10 @@ class TodoyuForm implements ArrayAccess {
 	/**
 	 * Set form data with default values for form fields
 	 *
-	 * @param	Array		$formdata
+	 * @param	Array		$formData
 	 */
-	public function setFormData(array $formdata = array()) {
-		$this->formdata = $formdata;
+	public function setFormData(array $formData = array()) {
+		$this->formdata = $formData;
 
 		$this->updateFieldValues();
 	}
@@ -399,7 +400,7 @@ class TodoyuForm implements ArrayAccess {
 	 *
 	 * @param	String			$name
 	 * @param	TodoyuFieldset	$fieldset
-	 * @param	String			$fieldset	'after:fieldsetname' / 'before:fieldsetname'
+	 * @param	Integer			$position
 	 * @return	TodoyuFieldset
 	 */
 	public function addFieldset($name, TodoyuFieldset $fieldset = null, $position = null) {
@@ -433,6 +434,7 @@ class TodoyuForm implements ArrayAccess {
 	 * Inject an existing fieldset into the form
 	 *
 	 * @param	TodoyuFieldset	$fieldset
+	 * @param	Integer			$position
 	 * @return	TodoyuFieldset
 	 */
 	public function injectFieldset(TodoyuFieldset $fieldset, $position = null) {
@@ -781,20 +783,20 @@ class TodoyuForm implements ArrayAccess {
 
 
 	/**
-	 * Set enctype attribute
+	 * Set content encoding type
 	 *
-	 * @param	String		$enctype
+	 * @param	String		$encType
 	 */
-	public function setEnctype($enctype) {
-		$this->setAttribute('enctype', $enctype);
+	public function setEnctype($encType) {
+		$this->setAttribute('enctype', $encType);
 	}
 
 
 
 	/**
 	 * Set the form name.
-	 * Used by the XML-parser to set the formname
-	 * You can change the formname here
+	 * Used by the XML-parser to set the form name
+	 * You can change the form name here
 	 *
 	 * @param	String		$name
 	 */
@@ -1014,6 +1016,7 @@ class TodoyuForm implements ArrayAccess {
 	/**
 	 * Get data of all fields to store in the database
 	 *
+	 * @param	Array	$formData
 	 * @return	Array
 	 */
 	public function getStorageData(array $formData = null) {
@@ -1083,7 +1086,7 @@ class TodoyuForm implements ArrayAccess {
 	/**
 	 * Get form data
 	 *
-	 * @return	String
+	 * @return	Array
 	 */
 	private function getData() {
 		if( ! $this->hasAttribute('action') ) {
