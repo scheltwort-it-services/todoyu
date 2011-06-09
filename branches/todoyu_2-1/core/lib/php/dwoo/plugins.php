@@ -35,12 +35,27 @@
  *
  * @param	Dwoo_Compiler	$compiler
  * @param	String			$key		label key
- * @param	Boolean			$plain		If true, the label needs a LLL: prefix to be recognized as label. Used if labelkeys and plaintext is possible
  * @param	String			$locale		locale (de,en,...)
  * @return	String
  */
 function Dwoo_Plugin_Label_compile(Dwoo_Compiler $compiler, $key, $locale = null) {
 	return 'TodoyuLabelManager::getLabel(' . $key . ', ' . $locale . ')';
+}
+
+/**
+ * Dwoo plugin function for label translation with dynamic values
+ *
+ * @package		Todoyu
+ * @subpackage	Template
+ *
+ * @param	Dwoo			$dwoo
+ * @param	String			$key		label key
+ * @param	Array			$values		Data variables
+ * @param	String			$locale		locale (de_DE,en_GB,...)
+ * @return	String
+ */
+function Dwoo_Plugin_LabelFormat(Dwoo $dwoo, $key, array $values, $locale = null) {
+	return TodoyuLabelManager::getFormatLabel($key, $values, $locale);
 }
 
 
@@ -277,10 +292,10 @@ function Dwoo_Plugin_debug(Dwoo $dwoo, $variable, $phpFormat = false) {
  *
  * @param	Dwoo 		$dwoo
  * @param	Mixed		$variable
- * @return	String
+ * @param	String		$label
  */
-function Dwoo_Plugin_firebug_compile(Dwoo_Compiler $compiler, $variable) {
-	return 'TodoyuDebug::printInFirebug(' . $variable . ')';
+function Dwoo_Plugin_firebug(Dwoo $dwoo, $variable, $label = 'dwoo debug') {
+	TodoyuDebug::printInFirebug($variable, $label);
 }
 
 
@@ -511,24 +526,12 @@ function Dwoo_Plugin_allowedAndOwn_compile(Dwoo_Compiler $compiler, $ext, $right
 
 
 /**
- * Check if person is internal
- *
- * @param	Dwoo_Compiler	$compiler
- * @return	String		(Bool)
- */
-function Dwoo_Plugin_isInternal_compile(Dwoo_Compiler $compiler) {
-	return 'Todoyu::person()->isInternal()';
-}
-
-
-
-/**
  * Subtract given subtrahend from given minuend
  *
- * @param	Dwoo		$compiler
- * @param	Mixed		$minuend
- * @param	Mixed		$subtrahend
- * @return	Integer							difference
+ * @param	Dwoo_Compiler	$compiler
+ * @param	Mixed			$minuend
+ * @param	Mixed			$subtrahend
+ * @return	Integer			difference
  */
 function Dwoo_Plugin_subtract_compile(Dwoo_Compiler $compiler, $minuend, $subtrahend) {
 	return '(floatval(' . $minuend . ')-floatval(' . $subtrahend . '))';
@@ -553,15 +556,18 @@ function Dwoo_Plugin_html2text_compile(Dwoo_Compiler $compiler, $html) {
  * Render select element with options
  *
  * @param	Dwoo 		$dwoo
- * @param	String		$id		HTML id
- * @param	String		$name	HTML name
+ * @param	Array		$options
+ * @param	Array		$value		Array to allow for multi selection
+ * @param	String		$id			HTML id
+ * @param	String		$name		HTML name
  * @param	String		$class
  * @param	Integer		$size
  * @param	Boolean		$multiple
  * @param	Boolean		$disabled
  * @param	String		$onchange
- * @param	Array		$options
- * @param	Array		$value		Array to allow for multi selection
+ * @param	String		$onclick
+ * @param	Boolean		$noPleaseSelect
+ * @param	Array		$value
  * @return	String
  */
 function Dwoo_Plugin_select(Dwoo $dwoo, array $options, array $value = array(), $id = '', $name = '', $class = '', $size = 0, $multiple = false, $disabled = false, $onchange = '', $onclick = '', $noPleaseSelect = false) {

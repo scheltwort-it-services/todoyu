@@ -56,6 +56,14 @@ Todoyu.Notification = {
 	closeDelay: 3,
 
 	/**
+	 * Close delay for sticky messages
+	 *
+	 * @property	closeDelaySticky
+	 * @type		Number
+	 */
+	closeDelaySticky: 20,
+
+	/**
 	 * Template object
 	 * @property	template
 	 * @type		Template
@@ -91,12 +99,10 @@ Todoyu.Notification = {
 		};
 
 		var note	= this.template.evaluate(data);
+		var delay	= sticky ? this.closeDelaySticky : this.closeDelay;
 
 		this.appendNote(id, note);
-
-		if( type !== this.ERROR && ! sticky ) {
-			this.closeNote.bind(this, id).delay(this.closeDelay);
-		}
+		this.closeNote.bind(this, id).delay(delay);
 	},
 
 
@@ -262,7 +268,7 @@ Todoyu.Notification = {
 		var htmlID	= 'notification-note-' + idNote;
 
 			// Observe mouse over of note
-		$(htmlID).on('mouseover', this.onMouseOver.bindAsEventListener(this, idNote));
+		$(htmlID).on('mouseover', this.onMouseOver.bind(this, idNote));
 			// Hide the note before appearing
 		$(htmlID).hide();
 			// Appear with effect
@@ -277,10 +283,10 @@ Todoyu.Notification = {
 	 * Handler for note mouse over
 	 *
 	 * @method	onMouseOver
-	 * @param	{Event}		event
 	 * @param	{Number}	idNote
+	 * @param	{Event}		event
 	 */
-	onMouseOver: function(event, idNote) {
+	onMouseOver: function(idNote, event) {
 		this.closeNote(idNote);
 	},
 
