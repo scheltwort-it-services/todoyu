@@ -29,6 +29,7 @@
 	<label index="update">Aktualisieren</label>
 	<label index="search">Suche</label>
 	<label index="back">Zurück</label>
+	<label index="version">Version</label>
 	<label index="filter">Auswahl</label>
 	<label index="type">Typ</label>
 	<label index="record">Datensatz</label>
@@ -90,7 +91,7 @@
 	<label index="log.error">Normale Fehler</label>
 	<label index="log.security">Sicherheitshinweise</label>
 	<label index="log.fatal">Schwere Fehler</label>
-   	<label index="wizard">Assistent</label>
+	<label index="wizard">Assistent</label>
 	<label index="wizard.close">Schliessen</label>
 	<label index="wizard.close.confirm">Sind Sie sicher, dass Sie den Assistenten schliessen möchten?</label>
 	<label index="wizard.back">Zurück</label>

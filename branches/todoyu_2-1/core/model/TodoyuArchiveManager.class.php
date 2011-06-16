@@ -18,6 +18,8 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
+require_once( PATH_LIB . '/php/pclzip/pclzip.lib.php' );
+
 /**
  * Manage zip archives
  *
@@ -33,8 +35,9 @@ class TodoyuArchiveManager {
 	 * @param	String			$targetFolder
 	 * @param	String|Array	$entries
 	 * @throws	TodoyuException
+	 * @return	Boolean
 	 */
-	public static function extract($zipFile, $targetFolder, $entries = null) {
+	public static function extractTo($zipFile, $targetFolder, $entries = null) {
 		@set_time_limit(60);
 
 		$zipFile	= TodoyuFileManager::pathAbsolute($zipFile);
@@ -48,18 +51,16 @@ class TodoyuArchiveManager {
 
 		TodoyuFileManager::makeDirDeep($targetFolder);
 
-		$zip	= new ZipArchive();
-		$zip->open($zipFile);
+			// Extract files
+		$zip	= new PclZip($zipFile);
+		$result	= $zip->extract(PCLZIP_OPT_PATH, $targetFolder);
 
-			// Workaround because null is not a valid default parameter
-			// @see http://pecl.php.net/bugs/bug.php?id=14962
-		if( is_null($entries) ) {
-			$zip->extractTo($targetFolder);
+		if( $result == 0 ) {
+			TodoyuLogger::logFatal('Cannot extract archive. ' . $zip->errorInfo(true));
+			return false;
 		} else {
-			$zip->extractTo($targetFolder, $entries);
+			return true;
 		}
-
-		$zip->close();
 	}
 
 
@@ -68,37 +69,40 @@ class TodoyuArchiveManager {
 	 * Create an archive from a folder
 	 *
 	 * @param	String			$pathFolder
-	 * @param	String|Boolean	$baseFolder
-	 * @param	Boolean			$recursive
 	 * @param	Array			$exclude
 	 * @return	String
 	 */
-	public static function createArchiveFromFolder($pathFolder, $baseFolder = false, $recursive = true, array $exclude = array()) {
-		if( $baseFolder === false ) {
-			$baseFolder = $pathFolder;
-		}
+	public static function createArchiveFromFolder($pathFolder, array $exclude = array()) {
+		$pathFolder		= TodoyuFileManager::pathAbsolute($pathFolder);
+		$randomFile		= md5(uniqid($pathFolder, microtime(true))) . '.zip';
+		$tempArchivePath= TodoyuFileManager::pathAbsolute('cache/temp/' . $randomFile);
 
-		$pathFolder	= TodoyuFileManager::pathAbsolute($pathFolder);
-		$baseFolder	= TodoyuFileManager::pathAbsolute($baseFolder);
-		$randomFile	= md5(uniqid($pathFolder, microtime(true))) . '.zip';
-		$tempPath	= TodoyuFileManager::pathAbsolute('cache/temp/' . $randomFile);
-		$archive	= new ZipArchive();
+			// Create temp folder with content
+		$tempFolder	= TodoyuFileManager::makeRandomCacheDir('archive');
+		TodoyuFileManager::copyRecursive($pathFolder, $tempFolder, $exclude);
 
-			// Prepare exclude paths
-		foreach($exclude as $index => $path) {
-			$exclude[$index] = TodoyuFileManager::pathAbsolute($path);
-		}
+//			// Remove excluded
+//		foreach($exclude as $excludeElement) {
+//			$excludeElement		= TodoyuFileManager::pathAbsolute($excludeElement);
+//			$excludeElementRel	= str_replace(PATH, '', $excludeElement);
+//			$excludeElement		= TodoyuFileManager::pathAbsolute($tempFolder . $excludeElementRel);
+//
+//			if( is_file($excludeElement) ) {
+//				TodoyuFileManager::deleteFile($excludeElement);
+//			} elseif( is_dir($excludeElement) ) {
+//				TodoyuFileManager::deleteFolder($excludeElement);
+//			}
+//		}
 
 			// Create temp dir
-		TodoyuFileManager::makeDirDeep(dirname($tempPath));
+		TodoyuFileManager::makeDirDeep(dirname($tempArchivePath));
 
-		$archive->open($tempPath, ZipArchive::CREATE);
+		$archive	= new PclZip($tempArchivePath);
+		$archive->create($tempFolder, PCLZIP_OPT_REMOVE_PATH, $tempFolder);
 
-		self::addFolderToArchive($archive, $pathFolder, $baseFolder, $recursive, $exclude);
+		TodoyuFileManager::deleteFolder($tempFolder);
 
-		$archive->close();
-
-		return $tempPath;
+		return $tempArchivePath;
 	}
 
 
@@ -121,6 +125,7 @@ class TodoyuArchiveManager {
 
 			if( ! in_array($filePath, $exclude) ) {
 				$relPath	= str_replace($baseFolder . DIR_SEP, '', $filePath);
+				$relPath	= str_replace('\\', '/', $relPath);
 
 				$archive->addFile($filePath, $relPath);
 			}

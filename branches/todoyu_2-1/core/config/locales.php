@@ -32,32 +32,13 @@
 	// Default locale for fallback
 Todoyu::$CONFIG['LOCALE']['default']	= 'en_GB';
 
-	// Available locales on the system
-Todoyu::$CONFIG['LOCALE']['available']	= array(
-	'en_GB',
-	'en_US',
-	'de_DE',
-	'de_CH',
-	'pt_BR',
-	'ru_RU',
-	'fr_FR',
-	'nl_NL',
-	'cs_CZ',
-	'sr_RS',
-	'ja_JP',
-	'it_IT',
-	'es_CO',
-	'sl_SL'
-	/*,'hr_HR','sr_ME'*/
-);
-
 	// System locales for server system
 Todoyu::$CONFIG['LOCALE']['SYSTEMLOCALES'] = array(
 	'en_GB' => array('en_GB.utf8', 'en_GB', 'en', 'English_GB'), // English (United Kingdom)
 	'en_US'	=> array('en_US.utf8', 'en_US', 'en', 'English_US', 'English_United States.1252'),
 	'de_DE'	=> array('de_DE.utf8', 'de_DE', 'de', 'de_DE@euro', 'de_DE.utf8@euro', 'German_Germany.1252', 'deu_deu'), // German (Germany)
 	'de_CH'	=> array('de_CH.utf8', 'de_CH', 'de', 'German_Switzerland.1252'),
-	//'de_AT'	=> array('de_AT.utf8', 'de_AT', 'de', 'de_AT@euro', 'de_AT.utf8@euro', 'German_Austria.1252'),
+	'de_AT'	=> array('de_AT.utf8', 'de_AT', 'de', 'de_AT@euro', 'de_AT.utf8@euro', 'German_Austria.1252'),
 	'fr_FR'	=> array('fr_FR.utf8', 'fr_FR', 'fr'), // French
 	'pt_BR' => array('pt_BR.utf8', 'pt_BR', 'pt'), // Portuguese (Brasilia)
 	'ru_RU' => array('ru_RU.utf8', 'ru_RU', 'ru'), // Russian
@@ -69,7 +50,8 @@ Todoyu::$CONFIG['LOCALE']['SYSTEMLOCALES'] = array(
 	'it_IT' => array('it_IT.utf8', 'it_IT', 'it'), // Italian
 	'es_CO' => array('es_CO.utf8', 'es_CO', 'es'), // Spanish (Columbia)
 	'ja_JP' => array('ja_JP', 'ja', 'ja_JP.eucjp', 'ja_JP.ujis', 'japanese', 'japanese.euc'), // Japanese
-	'sl_SI'	=> array('sl_SI.utf8')
+	'sl_SI'	=> array('sl_SI.utf8'),
+	'zh_TW' => array('zh_TW', 'tw', 'Taiwan_Traditional_Chinese') // Taiwan Traditional Chinese
 );
 
 	// Fallback locales for labels

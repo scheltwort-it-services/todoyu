@@ -93,6 +93,12 @@ class TodoyuFileManager {
 	 */
 	public static function deleteFolderContents($folderPath, $deleteHidden = false) {
 		$folderPath = self::pathAbsolute($folderPath);
+
+			// No folder, no action taken
+		if( ! is_dir($folderPath) ) {
+			return true;
+		}
+
 		$folders	= self::getFoldersInFolder($folderPath, $deleteHidden);
 		$files		= self::getFilesInFolder($folderPath, $deleteHidden);
 		$success	= true;
@@ -465,6 +471,8 @@ class TodoyuFileManager {
 		if( $pathFile !== false && file_exists($pathFile) ) {
 			if( is_readable($pathFile) ) {
 				if( self::isFileInAllowedDownloadPath($pathFile) ) {
+						// Clear file information cache
+					clearstatcache();
 						// Send download headers
 					$fileSize	= filesize($pathFile);
 					$fileName	= is_null($fileName) ? basename($pathFile) : $fileName;
@@ -821,13 +829,18 @@ class TodoyuFileManager {
 	 *
 	 * @param	String		$sourceFolder
 	 * @param	String		$destinationFolder
+	 * @param	Array		$exclude
 	 * @param	Boolean		$move					Move instead copy
 	 * @param	Boolean		$hiddenFiles
 	 */
-	public static function copyRecursive($sourceFolder, $destinationFolder, $move = false, $hiddenFiles = false) {
-		$sourceFolder	= self::pathAbsolute($sourceFolder);
-		$destinationFolder		= self::pathAbsolute($destinationFolder);
-		$removeFolders	= array();
+	public static function copyRecursive($sourceFolder, $destinationFolder, array $exclude = array(), $move = false, $hiddenFiles = false) {
+		$sourceFolder		= self::pathAbsolute($sourceFolder);
+		$destinationFolder	= self::pathAbsolute($destinationFolder);
+		$removeFolders		= array();
+
+		foreach($exclude as $index => $item) {
+			$exclude[$index] = TodoyuFileManager::pathAbsolute($item);
+		}
 
 		self::makeDirDeep($destinationFolder);
 
@@ -837,12 +850,17 @@ class TodoyuFileManager {
 			$pathElement	= self::pathAbsolute($sourceFolder . '/' . $element);
 			$pathDestElement= self::pathAbsolute($destinationFolder . '/' . $element);
 
+				// Skip excluded files
+			if( in_array($pathElement, $exclude) ) {
+				continue;
+			}
+
 			if( is_dir($pathElement) ) {
 					// Folder
 				if( ! is_dir($pathDestElement) ) {
 					self::makeDirDeep($pathDestElement);
 				}
-				self::copyRecursive($pathElement, $pathDestElement, $move);
+				self::copyRecursive($pathElement, $pathDestElement, $exclude, $move, $hiddenFiles);
 				if( $move ) {
 					$removeFolders[] = $pathElement;
 				}
@@ -862,6 +880,19 @@ class TodoyuFileManager {
 		foreach($removeFolders as $folder) {
 			rmdir($folder);
 		}
+	}
+
+
+
+	/**
+	 * Move folders and files recursive
+	 *
+	 * @param	String		$sourceFolder
+	 * @param	String		$destinationFolder
+	 * @param	Boolean		$hiddenFiles
+	 */
+	public static function moveRecursive($sourceFolder, $destinationFolder, array $exclude = array(), $hiddenFiles = false) {
+		self::copyRecursive($sourceFolder, $destinationFolder, true, $hiddenFiles);
 	}
 
 
@@ -910,6 +941,36 @@ class TodoyuFileManager {
 		}
 
 		return $updateFiles;
+	}
+
+
+
+	/**
+	 * Get a recursive file list of all elements
+	 *
+	 * @param	String		$pathFolder
+	 * @return	Array
+	 */
+	public static function getRecursiveFileList($pathFolder) {
+		$pathFolder	= self::pathAbsolute($pathFolder);
+		$files		= self::getFilesInFolder($pathFolder);
+		$folders	= self::getFoldersInFolder($pathFolder);
+		$elements	= array();
+
+			// Add files
+		foreach($files as $filename) {
+			$elements[] = self::pathAbsolute($pathFolder . '/' . $filename);
+		}
+
+		foreach($folders as $folder) {
+			$pathSubfolder	= self::pathAbsolute($pathFolder . '/' . $folder);
+			$elements[]		= $pathSubfolder;
+			$subElements	= self::getRecursiveFileList($pathSubfolder);
+
+			$elements		= array_merge($elements, $subElements);
+		}
+
+		return $elements;
 	}
 
 }

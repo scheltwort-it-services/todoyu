@@ -52,23 +52,33 @@ var Todoyu = {
 
 	/**
 	 * Store the format of all available jsCalendars
+	 *
 	 * @property	JsCalFormat
-	 * @type		Array
+	 * @type		Object
 	 */
 	JsCalFormat: {},
 
 	/**
 	 * Extension container
+	 *
+	 * @property	Ext
+	 * @type		Object
 	 */
 	Ext: {},
 
 	/**
 	 * Core headlets container
+	 *
+	 * @property	CoreHeadlets
+	 * @type		Object
 	 */
 	CoreHeadlets: {},
 
 	/**
 	 * Registry
+	 *
+	 * @property	R
+	 * @type		Object
 	 */
 	R: {},
 
@@ -269,10 +279,9 @@ var Todoyu = {
 	 *
 	 * @method	notifyError
 	 * @param	{String}		message
-	 * @param	{Number}		countdown
 	 */
-	notifyError: function(message, countdown) {
-		Todoyu.Notification.notifyError(message, countdown);
+	notifyError: function(message) {
+		Todoyu.Notification.notifyError(message);
 	},
 
 
@@ -282,10 +291,10 @@ var Todoyu = {
 	 *
 	 * @method	notifyInfo
 	 * @param	{String}		message
-	 * @param	{Number}		countdown
+	 * @param	{Number}		delay
 	 */
-	notifyInfo: function(message, countdown) {
-		Todoyu.Notification.notifyInfo(message, countdown);
+	notifyInfo: function(message, delay) {
+		Todoyu.Notification.notifyInfo(message, false, delay);
 	},
 
 
@@ -295,10 +304,10 @@ var Todoyu = {
 	 *
 	 * @method	notifySuccess
 	 * @param	{String}		message
-	 * @param	{Number}		countdown
+	 * @param	{Number}		delay
 	 */
-	notifySuccess: function(message, countdown) {
-		Todoyu.Notification.notifySuccess(message, countdown);
+	notifySuccess: function(message, delay) {
+		Todoyu.Notification.notifySuccess(message, false, delay);
 	},
 
 
@@ -451,12 +460,12 @@ var Todoyu = {
 	observeZoom: function(callback) {
 			// Observe mouse wheel
 		document.on('mousewheel', function(e){
-			if(e.ctrlKey) {
+			if( e.ctrlKey ) {
 				callback();
 			}
 		});
 		document.on('DOMMouseScroll', function(e){
-			if(e.ctrlKey) {
+			if( e.ctrlKey ) {
 				callback();
 			}
 		});
@@ -465,14 +474,14 @@ var Todoyu = {
 		document.on('keydown', function(e) {
 			switch (true) {
 				case Prototype.Browser.Gecko || Prototype.Browser.IE :
-					if(e.ctrlKey && (
+					if( e.ctrlKey && (
 						e.which === 187 ||
 						e.which === 189 ||
 						e.which === 107 ||
 						e.which === 109 ||
 						e.which === 96  ||
 						e.which === 48
-					)) {
+					) ) {
 						callback();
 					}
 				break;

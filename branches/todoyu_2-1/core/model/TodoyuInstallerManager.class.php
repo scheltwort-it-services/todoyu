@@ -27,6 +27,13 @@
 class TodoyuInstallerManager {
 
 	/**
+	 * Path to last version file
+	 *
+	 * @var string
+	 */
+	private static $lastVersionFile = 'install/config/LAST_VERSION';
+
+	/**
 	 * Process first step of installation: locale selection for installer and as preset for system locale
 	 *
 	 * @param	Array	$data
@@ -448,16 +455,13 @@ class TodoyuInstallerManager {
 	 */
 	private static function saveInternalCompanyName($name) {
 		$name	= trim($name);
-
-		$table	= 'ext_contact_company';
-		$where	= 'id = 1';
 		$update	= array(
 			'title'		=> $name,
 			'shortname'	=> $name,
 			'date_enter'=> NOW
 		);
 
-		Todoyu::db()->doUpdate($table, $where, $update);
+		TodoyuContactCompanyManager::updateCompany(1, $update);
 	}
 
 
@@ -792,47 +796,39 @@ class TodoyuInstallerManager {
 	/**
 	 * Run SQL and PHP version updates.
 	 */
-	public static function runVersionUpdates() {
+	public static function runCoreVersionUpdates() {
 		$lastVersion	= self::getLastVersion();
 
-		self::runVersionUpdatesSQL($lastVersion);
-		self::runVersionUpdatesPHP($lastVersion);
+		$updates	= array();
+		$baseSQL	= 'core/update/db';
+		$basePhp	= 'core/update/php';
+		$sqlFiles	= self::getUpdateFiles($baseSQL, 'sql', $lastVersion);
+		$phpFiles	= self::getUpdateFiles($basePhp, 'php', $lastVersion);
+
+			// Collect files grouped by version
+		foreach($sqlFiles as $sqlFile) {
+			$version	= basename($sqlFile, '.sql');
+			$updates[$version]['sql'] = $sqlFile;
+		}
+		foreach($phpFiles as $phpFile) {
+			$version	= basename($phpFile, '.php');
+			$updates[$version]['php'] = $phpFile;
+		}
+
+			// Sort by version
+		uksort($updates, 'version_compare');
+
+			// Execute all updates which are between last and current version
+		foreach($updates as $version => $files) {
+			if( $files['sql'] ) {
+				TodoyuSQLManager::executeQueriesFromFile($baseSQL . '/' . $files['sql']);
+			}
+			if( $files['php'] ) {
+				include($basePhp . '/' . $files['php']);
+			}
+		}
 
 		self::saveCurrentVersion();
-	}
-
-
-
-	/**
-	 * Run version updates from SQL files
-	 *
-	 * @param	String		$lastVersion
-	 */
-	public static function runVersionUpdatesSQL($lastVersion) {
-		$baseFolder	= 'install/update/db';
-		$updateFiles= self::getUpdateFiles($baseFolder, 'sql', $lastVersion);
-
-		foreach($updateFiles as $updateFile) {
-			TodoyuSQLManager::executeQueriesFromFile($baseFolder . '/' . $updateFile);
-		}
-	}
-
-
-
-	/**
-	 * Run version updates from PHP files
-	 *
-	 * @param	String		$lastVersion
-	 */
-	public static function runVersionUpdatesPHP($lastVersion) {
-		$baseFolder	= 'install/update/php';
-		$updateFiles= self::getUpdateFiles($baseFolder, 'php', $lastVersion);
-
-		foreach($updateFiles as $updateFile) {
-			$pathFile	= TodoyuFileManager::pathAbsolute($baseFolder . '/' . $updateFile);
-
-			include($pathFile);
-		}
 	}
 
 
@@ -887,7 +883,7 @@ class TodoyuInstallerManager {
 	 * @return	String
 	 */
 	public static function getLastVersion() {
-		$pathFile	= TodoyuFileManager::pathAbsolute('install/config/LAST_VERSION');
+		$pathFile	= TodoyuFileManager::pathAbsolute(self::$lastVersionFile);
 		$version	= TODOYU_VERSION;
 
 		if( is_file($pathFile) ) {
@@ -903,9 +899,7 @@ class TodoyuInstallerManager {
 	 * Save current todoyu version as DB version in the LAST_VERSION file
 	 */
 	public static function saveCurrentVersion() {
-		$pathFile	= 'install/config/LAST_VERSION';
-
-		TodoyuFileManager::saveFileContent($pathFile, TODOYU_VERSION);
+		TodoyuFileManager::saveFileContent(self::$lastVersionFile, TODOYU_VERSION);
 	}
 
 

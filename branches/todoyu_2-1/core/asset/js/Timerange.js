@@ -54,6 +54,9 @@ Todoyu.Timerange = Class.create({
 
 	/**
 	 * Default options for the slider object
+	 *
+	 * @property	defaultOptions
+	 * @type		Object
 	 */
 	defaultOptions: {
 		axis: 'horizontal',
@@ -62,6 +65,9 @@ Todoyu.Timerange = Class.create({
 
 	/**
 	 * Internal options
+	 *
+	 * @property	options
+	 * @type		Object
 	 */
 	options: {
 		dateFormat: '%d.%m.%Y'
@@ -253,6 +259,12 @@ Todoyu.Timerange = Class.create({
 				endDate.setMonth(curQuarterMonth, 0);
 				startDate	= new Date(endDate);
 				startDate.setMonth(startDate.getMonth()-2, 1);
+				break;
+
+			case 'previousYear':
+				var prevYear= today.getFullYear()-1;
+				startDate	= new Date(prevYear, 0, 1);
+				endDate 	= new Date(prevYear, 11, 31);
 				break;
 
 			case 'fullTimeRange':

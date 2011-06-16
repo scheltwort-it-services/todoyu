@@ -28,7 +28,6 @@
 	background:url(../img/timerange-track-end.png) no-repeat;
 }
 
-
 .timerange .bar .slider .handle {
 	position:absolute;
 	width:20px;
@@ -54,7 +53,6 @@
 	background-color:#000;
 	/*opacity:0.5;*/
 	cursor:default;
-
 }
 
 .timerange .limits {
@@ -72,6 +70,7 @@
 	float:left;
 	text-align:left;
 }
+
 .timerange .limits .limit.max {
 	float:right;
 	text-align:right;
@@ -105,10 +104,10 @@
 .timerange .dates .ranges {
 	position:absolute;
 	top:0;
-	z-index:0;
+	z-index:1000;
 	left:50%;
 	right: 50%;
-	width:125px;
+	width:185px;
 	margin:-2px 0 0 -75px;
 	padding:0 5px;
 	cursor:pointer;
@@ -119,6 +118,7 @@
 	border:1px solid #bbb;
 	border-radius:13px;
 }
+
 .timerange .dates .ranges:hover {
 	margin:-7px -15px -10px -80px;
 	padding:5px 10px 10px 10px;
@@ -131,15 +131,19 @@
 	background-color:#fff;
 	background-image: none;
 }
+
 .timerange .dates .ranges:hover span.chooseRange {
 	font-weight:bold;
 }
+
 .timerange .dates .ranges ul {
 	display:none;
 	z-index:9999; /* always in front */
 	padding:0;
 	color:#666;
+    text-align:left;
 }
+
 .timerange .dates .ranges:hover ul {
 	display:block;
 }

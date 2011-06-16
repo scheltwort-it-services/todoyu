@@ -83,7 +83,7 @@ class TodoyuLabelManager {
 
 
 	/**
-	 * Get label which will be parsed with wildcards like printf()
+	 * Get label which will be parsed with wild cards like printf()
 	 *
 	 * @param	String		$labelKey
 	 * @param	Array		$data
@@ -305,6 +305,25 @@ class TodoyuLabelManager {
 		}
 
 		return $labels;
+	}
+
+
+
+	/**
+	 * Clear locale cache
+	 *
+	 * @param	String|Boolean	$locale
+	 */
+	public static function clearCache($locale = false) {
+		$pathCache	= Todoyu::$CONFIG['LOCALE']['labelCacheDir'];
+
+		if( $locale  ) {
+			$pathCache	.= '/' . $locale;
+		}
+
+		$pathCache	= TodoyuFileManager::pathAbsolute($pathCache);
+
+		TodoyuFileManager::deleteFolderContents($pathCache);
 	}
 
 
