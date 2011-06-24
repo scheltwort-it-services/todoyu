@@ -20,6 +20,8 @@
 
 	// Update projectbilling if installed
 if( TodoyuExtensions::isInstalled('projectbilling') ) {
+	require( PATH_CORE . '/inc/load_extensions.php' );
+
 	TodoyuProjectbillingUpdate::prepareDatabaseForUpdateTo11();
 }
 
