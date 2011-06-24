@@ -20,9 +20,7 @@
 
 	// Update projectbilling if installed
 if( TodoyuExtensions::isInstalled('projectbilling') ) {
-	$changedPrices	= TodoyuProjectbillingUpdate::fixPrepaymentPricesWithoutVAT();
-
-	//echo "Updated " . $changedPrices . " prices for prepayment invoices";
+	TodoyuProjectbillingUpdate::prepareDatabaseForUpdateTo11();
 }
 
 ?>
