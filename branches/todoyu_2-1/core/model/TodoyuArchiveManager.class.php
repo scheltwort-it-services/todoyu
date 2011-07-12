@@ -18,7 +18,6 @@
 * This copyright notice MUST APPEAR in all copies of the script.
 *****************************************************************************/
 
-require_once( PATH_LIB . '/php/pclzip/pclzip.lib.php' );
 
 /**
  * Manage zip archives
@@ -31,36 +30,93 @@ class TodoyuArchiveManager {
 	/**
 	 * Extract an archive to a folder
 	 *
-	 * @param	String			$zipFile
+	 * @param	String			$pathArchive
 	 * @param	String			$targetFolder
-	 * @param	String|Array	$entries
 	 * @throws	TodoyuException
 	 * @return	Boolean
 	 */
-	public static function extractTo($zipFile, $targetFolder, $entries = null) {
-		@set_time_limit(60);
+	public static function extractTo($pathArchive, $targetFolder) {
+		@set_time_limit(120);
 
-		$zipFile	= TodoyuFileManager::pathAbsolute($zipFile);
+		$pathArchive	= TodoyuFileManager::pathAbsolute($pathArchive);
+		$targetFolder	= TodoyuFileManager::pathAbsolute($targetFolder);
 
-		if( ! is_file($zipFile) ) {
-			throw new TodoyuException('Archive not found for extraction: ' . $zipFile);
-		}
-		if( ! is_string($targetFolder) ) {
-			throw new TodoyuException('Invalid target folder to extract ' . $zipFile . ' to');
+		if( ! is_file($pathArchive) ) {
+			throw new TodoyuException('Archive not found for extraction: ' . $pathArchive);
 		}
 
 		TodoyuFileManager::makeDirDeep($targetFolder);
 
+		try {
+			if( TodoyuServer::isPhp53() ) {
+				return self::extractToPhp53($pathArchive, $targetFolder);
+			} else {
+				return self::extractToPhp52($pathArchive, $targetFolder);
+			}
+		} catch(TodoyuException $e) {
+			TodoyuLogger::logFatal('Cannot extract archive: ' . $e->getMessage());
+
+			return false;
+		}
+	}
+
+
+
+	/**
+	 * Extract archive on server with php 5.2
+	 *
+	 * @throws	TodoyuException
+	 * @param	String		$pathArchive
+	 * @param	String		$targetFolder
+	 * @return	Boolean
+	 */
+	private static function extractToPhp52($pathArchive, $targetFolder) {
+		self::loadPclZip();
+
 			// Extract files
-		$zip	= new PclZip($zipFile);
-		$result	= $zip->extract(PCLZIP_OPT_PATH, $targetFolder);
+		$archive	= new PclZip($pathArchive);
+		$result		= $archive->extract(PCLZIP_OPT_PATH, $targetFolder);
 
 		if( $result == 0 ) {
-			TodoyuLogger::logFatal('Cannot extract archive. ' . $zip->errorInfo(true));
-			return false;
-		} else {
-			return true;
+			throw new TodoyuException($archive->errorInfo(true));
 		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * Load pcl Zip library
+	 *
+	 */
+	private static function loadPclZip() {
+		require_once( PATH_LIB . '/php/pclzip/pclzip.lib.php' );
+	}
+
+
+
+	/**
+	 * Extract archive on server with php 5.3
+	 *
+	 * @throws	TodoyuException
+	 * @param	String		$pathArchive
+	 * @param	String		$targetFolder
+	 * @return	Boolean
+	 */
+	private static function extractToPhp53($pathArchive, $targetFolder) {
+		$archive	= new ZipArchive();
+		$archive->open($pathArchive);
+
+		$result	= $archive->extractTo($targetFolder);
+
+		$archive->close();
+
+		if( $result === false ) {
+			throw new TodoyuException('Unknown error');
+		}
+
+		return true;
 	}
 
 
@@ -74,35 +130,43 @@ class TodoyuArchiveManager {
 	 */
 	public static function createArchiveFromFolder($pathFolder, array $exclude = array()) {
 		$pathFolder		= TodoyuFileManager::pathAbsolute($pathFolder);
-		$randomFile		= md5(uniqid($pathFolder, microtime(true))) . '.zip';
-		$tempArchivePath= TodoyuFileManager::pathAbsolute('cache/temp/' . $randomFile);
+		$pathArchive	= TodoyuFileManager::getTempFile('zip', false);
 
-			// Create temp folder with content
-		$tempFolder	= TodoyuFileManager::makeRandomCacheDir('archive');
-		TodoyuFileManager::copyRecursive($pathFolder, $tempFolder, $exclude);
+			// Prevent empty archive (which will not be created)
+		$elements	= TodoyuFileManager::getFolderContents($pathFolder);
 
-//			// Remove excluded
-//		foreach($exclude as $excludeElement) {
-//			$excludeElement		= TodoyuFileManager::pathAbsolute($excludeElement);
-//			$excludeElementRel	= str_replace(PATH, '', $excludeElement);
-//			$excludeElement		= TodoyuFileManager::pathAbsolute($tempFolder . $excludeElementRel);
-//
-//			if( is_file($excludeElement) ) {
-//				TodoyuFileManager::deleteFile($excludeElement);
-//			} elseif( is_dir($excludeElement) ) {
-//				TodoyuFileManager::deleteFolder($excludeElement);
-//			}
-//		}
+		if( sizeof($elements) === 0 ) {
+			self::createEmptyArchive($pathArchive);
+		} else {
+				// Prepare exclude paths
+			foreach($exclude as $index => $path) {
+				$exclude[$index] = TodoyuFileManager::pathAbsolute($path);
+			}
 
-			// Create temp dir
-		TodoyuFileManager::makeDirDeep(dirname($tempArchivePath));
+				// Create archive
+			$archive = new ZipArchive();
+			$archive->open($pathArchive, ZipArchive::CREATE);
 
-		$archive	= new PclZip($tempArchivePath);
-		$archive->create($tempFolder, PCLZIP_OPT_REMOVE_PATH, $tempFolder);
+			self::addFolderToArchive($archive, $pathFolder, $pathFolder, true, $exclude);
 
-		TodoyuFileManager::deleteFolder($tempFolder);
+			$archive->close();
+		}
 
-		return $tempArchivePath;
+		return $pathArchive;
+	}
+
+
+
+	/**
+	 * Create an empty archive
+	 *
+	 * @param	String		$pathArchive
+	 */
+	private static function createEmptyArchive($pathArchive) {
+		self::loadPclZip();
+
+		$archive	= new PclZip($pathArchive);
+		$archive->create('');
 	}
 
 
@@ -126,7 +190,6 @@ class TodoyuArchiveManager {
 			if( ! in_array($filePath, $exclude) ) {
 				$relPath	= str_replace($baseFolder . DIR_SEP, '', $filePath);
 				$relPath	= str_replace('\\', '/', $relPath);
-
 				$archive->addFile($filePath, $relPath);
 			}
 		}
@@ -148,6 +211,7 @@ class TodoyuArchiveManager {
 			}
 		}
 	}
+
 }
 
 ?>

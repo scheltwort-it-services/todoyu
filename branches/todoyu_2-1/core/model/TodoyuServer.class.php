@@ -77,7 +77,7 @@ class TodoyuServer {
 	public static function assertMinimalRequirements() {
 		$loadedExtension	= get_loaded_extensions();
 		$problems			= array();
-		$requiredVersion	= '5.2.0';
+		$requiredVersion	= '5.2.3';
 
 			// Check php version
 		if( version_compare(PHP_VERSION, $requiredVersion) === -1 ) {
@@ -126,6 +126,16 @@ class TodoyuServer {
 		}
 	}
 
+
+
+	/**
+	 * Check whether the server runs php 5.3.0 at least
+	 *
+	 * @return	Boolean
+	 */
+	public static function isPhp53() {
+		return version_compare(PHP_VERSION, '5.3.0') > -1;
+	}
 
 }
 

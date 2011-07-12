@@ -254,6 +254,32 @@ class TodoyuFileManager {
 
 
 	/**
+	 * Get random temp file (path) in cache
+	 *
+	 * @param	String|Boolean	$ext		File extension
+	 * @param	Boolean			$create		Create empty file with (touch)
+	 * @return	String
+	 */
+	public static function getTempFile($ext = false, $create = false) {
+		$key	= md5(PATH . time() . microtime(true) . uniqid());
+		$path	= self::pathAbsolute(PATH_CACHE . '/temp/' . $key);
+
+		if( $ext !== false ) {
+			$path .= '.' . $ext;
+		}
+
+		self::makeDirDeep(dirname($path));
+
+		if( $create ) {
+			touch($path);
+		}
+
+		return $path;
+	}
+
+
+
+	/**
 	 * Check if file exists. Also relative path from PATH
 	 *
 	 * @param	String		$path
@@ -671,8 +697,12 @@ class TodoyuFileManager {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FAILONERROR, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+
+			// Only set curl options if safe mode is not enabled
+		if( intval(ini_get('safe_mode')) !== 1 ) {
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		}
 
 		if( $options['fullRequest'] || $options['onlyHeaders'] ) {
 			curl_setopt($ch, CURLOPT_HEADER, true);
