@@ -104,6 +104,10 @@ class TodoyuString {
 				$spacePos	= mb_strrpos($cropped, ' ', 0, 'utf-8');
 				$cropped	= mb_substr($cropped, 0, $spacePos, 'utf-8');
 			}
+
+				// Remove chars which will be postfixes anyway (prevents 3 points at the end)
+			$cropped = rtrim($cropped, substr($postFix, 0, 1));
+
 			$cropped .= $postFix;
 		} else {
 			$cropped = $text;
@@ -608,7 +612,7 @@ class TodoyuString {
 		$replaceSimple	= '\1<a href="http://\2" target="_blank">\2</a>';
 
 			// Find mailto links
-		$patternEmail	= '/(^|[">; ])((?:[\w-\.]+)@(?:[\w-\.]{2,})\.(?:\w{2,6}))/';
+		$patternEmail	= '/(^|[">;: ])((?:[\w-\.]+)@(?:[\w-\.]{2,})\.(?:\w{2,6}))/';
 		$replaceEmail	= '\1<a href="mailto:\2">\2</a>';
 
 			// Replace URLs
