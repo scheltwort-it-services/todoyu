@@ -44,6 +44,7 @@ Todoyu.LoaderBox = Class.create({
 	},
 
 
+
 	/**
 	 * Loader box element
 	 * @property	box
@@ -59,9 +60,11 @@ Todoyu.LoaderBox = Class.create({
 	screenBlock: null,
 
 
+
 	/**
 	 * Initialize
 	 *
+	 * @method	initialize
 	 * @param	{String}	name
 	 * @param	{Object}	config
 	 */
@@ -90,8 +93,11 @@ Todoyu.LoaderBox = Class.create({
 	},
 
 
+
 	/**
 	 * Remove HTML of the box
+	 *
+	 * @method	destroy
 	 */
 	destroy: function() {
 		if( this.box ) {
@@ -104,6 +110,8 @@ Todoyu.LoaderBox = Class.create({
 
 	/**
 	 * Remove elements
+	 *
+	 * @method	remove
 	 */
 	remove: function() {
 		this.box.remove();
@@ -115,6 +123,7 @@ Todoyu.LoaderBox = Class.create({
 	/**
 	 * Set text
 	 *
+	 * @method	setText
 	 * @param	{String}	text
 	 */
 	setText: function(text) {
@@ -127,6 +136,7 @@ Todoyu.LoaderBox = Class.create({
 	 * Update content with a new element
 	 * Like text, but inserts a HTML element
 	 *
+	 * @method	update
 	 * @param 	{Element}	element
 	 */
 	update: function(element) {
@@ -139,11 +149,13 @@ Todoyu.LoaderBox = Class.create({
 	/**
 	 * Set box title
 	 *
+	 * @method	setTitle
 	 * @param	{String}	title
 	 */
 	setTitle: function(title) {
 		this.box.down('.title').update(title);
 	},
+
 
 
 	/**
@@ -182,6 +194,8 @@ Todoyu.LoaderBox = Class.create({
 
 	/**
 	 * Build HTML structure
+	 *
+	 * @method	build
 	 */
 	build: function() {
 		this.buildBox();
@@ -192,7 +206,6 @@ Todoyu.LoaderBox = Class.create({
 
 	/**
 	 * Build the loader box with its sub elements
-	 *
 	 *
 	 * @method	buildBox
 	 */
@@ -222,8 +235,11 @@ Todoyu.LoaderBox = Class.create({
 	},
 
 
+
 	/**
 	 * Build screen blocker
+	 *
+	 * @method	buildScreenBlock
 	 */
 	buildScreenBlock: function() {
 		this.screenBlock	= new Element('div', {
@@ -259,6 +275,8 @@ Todoyu.LoaderBox = Class.create({
 
 	/**
 	 * Hide blocker
+	 *
+	 * @method	hideBlock
 	 */
 	hideBlock: function() {
 		this.screenBlock.hide();

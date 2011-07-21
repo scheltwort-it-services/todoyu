@@ -28,6 +28,7 @@
  * @see http://prototype-window.xilinus.com/documentation.html
  */
 Todoyu.Popups = {
+
 	/**
 	 * References to opened popoups
 	 */
@@ -37,6 +38,7 @@ Todoyu.Popups = {
 	 * Stack of opened popup IDs
 	 */
 	stack: [],
+
 
 
 	/**
@@ -128,6 +130,7 @@ Todoyu.Popups = {
 	/**
 	 * Handler called after popup shown
 	 *
+	 * @method	onShow
 	 * @param	{String}	idPopup
 	 */
 	onShow: function(idPopup) {
@@ -139,6 +142,7 @@ Todoyu.Popups = {
 	/**
 	 * Focus first field (of first form) inside given/ most recent popup
 	 *
+	 * @method	focusFirstField
 	 * @param	{String}	idPopup
 	 */
 	focusFirstField: function(idPopup) {
@@ -153,18 +157,19 @@ Todoyu.Popups = {
 
 
 	/**
-	 * Handler when popup is destroyed
-	 * Close RTE references
+	 * Handler when popup is destroyed: close RTE references
 	 *
 	 * @method	onDestroy
 	 * @param	{Todoyu.Popup}	popup
 	 */
 	onDestroy: function(popup) {
+		var idPopup	= popup.getPopupID();
+
 		Todoyu.Ui.closeRTE(popup.content);
 
-		delete this.popups[popup.getPopupID()];
+		delete this.popups[idPopup];
 
-		this.stack = this.stack.without(popup.getPopupID());
+		this.stack = this.stack.without(idPopup);
 	},
 
 
@@ -182,12 +187,12 @@ Todoyu.Popups = {
 	 */
 	open: function(idPopup, title, minWidth, contentUrl, requestOptions) {
 		return this.show({
-			id:				idPopup,
-			title:			title,
-			minWidth:		minWidth || 220,
-			minHeight:		240,
-			contentUrl:		contentUrl,
-			requestOptions:	requestOptions || {}
+			id:					idPopup,
+			title:				title,
+			minWidth:			minWidth || 220,
+			minHeight:			240,
+			contentUrl:			contentUrl,
+			requestOptions:		requestOptions || {},
 		});
 	},
 

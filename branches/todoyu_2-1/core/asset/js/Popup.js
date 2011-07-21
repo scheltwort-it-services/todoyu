@@ -30,9 +30,17 @@
  */
 Todoyu.Popup = Class.create(Window, {
 
-	isClosing: false,
+	/**
+	 * Closing status
+	 */
+	isClosing:		false,
 
-	escBodyHandler: null,
+	/**
+	 * ESC key event handler for popup closing
+	 */
+	escBodyHandler:	null,
+
+
 
 	/**
 	 * Default todoyu options for window
@@ -52,6 +60,7 @@ Todoyu.Popup = Class.create(Window, {
 		effectOptions:		null,
 		destroyOnClose:		true
 	},
+
 
 
 	/**
@@ -85,6 +94,8 @@ Todoyu.Popup = Class.create(Window, {
 
 	/**
 	 * Add internal onComplete wrapper to give popup instance as second parameter
+	 *
+	 * @method	addOnCompleteWrap
 	 */
 	addOnCompleteWrap: function() {
 			// Assert that request options exists
@@ -100,6 +111,7 @@ Todoyu.Popup = Class.create(Window, {
 	/**
 	 * Internal onComplete handler
 	 *
+	 * @method	onComplete
 	 * @param	{Function}		originalOnComplete
 	 * @param	{Ajax.Response}	response
 	 */
@@ -139,6 +151,7 @@ Todoyu.Popup = Class.create(Window, {
 	/**
 	 * Custom keyup handler - close last opened popup on [ESC] key up
 	 *
+	 * @method	onEscUp
 	 * @param	{Event}		event
 	 */
 	onEscUp: function(event) {
@@ -197,12 +210,16 @@ Todoyu.Popup = Class.create(Window, {
 	 * Wrapper for close method
 	 * Prevent close callback loops
 	 *
+	 * @method	close
 	 * @param	{Function}	$super
 	 */
 	close: function($super) {
 		this.isClosing = true;
 
 		Todoyu.Ui.closeRTE(this.content);
+
+			// Fire custom 'close' event
+		Todoyu.Helper.fireEvent($(this.options.id), 'close');
 
 		$super();
 	},
@@ -211,7 +228,10 @@ Todoyu.Popup = Class.create(Window, {
 
 	/**
 	 * Close callback
-	 * @param popup
+	 *
+	 * @method	closeCallback
+	 * @param	unknown		popup
+	 * @return	Boolean
 	 */
 	closeCallback: function(popup) {
 		if( this.isClosing ) {

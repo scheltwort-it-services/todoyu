@@ -83,6 +83,7 @@ var Todoyu = {
 	R: {},
 
 
+
 	/**
 	 * Initialize todoyu object
 	 *
@@ -279,9 +280,24 @@ var Todoyu = {
 	 *
 	 * @method	notifyError
 	 * @param	{String}		message
+	 * @param	{String}		identifier
 	 */
-	notifyError: function(message) {
-		Todoyu.Notification.notifyError(message);
+	notifyError: function(message, identifier) {
+		Todoyu.Notification.notifyError(message, identifier);
+	},
+
+
+
+	/**
+	 * Show success notification
+	 *
+	 * @method	notifySuccess
+	 * @param	{String}		message
+	 * @param	{String}		identifier
+	 * @param	{Number}		delay
+	 */
+	notifySuccess: function(message, identifier, delay) {
+		Todoyu.Notification.notifySuccess(message, false, delay, identifier);
 	},
 
 
@@ -300,21 +316,10 @@ var Todoyu = {
 
 
 	/**
-	 * Show success notification
+	 * Check whether the current user is logged in- guess for logged-in if headlets are shown
 	 *
-	 * @method	notifySuccess
-	 * @param	{String}		message
-	 * @param	{Number}		delay
-	 */
-	notifySuccess: function(message, delay) {
-		Todoyu.Notification.notifySuccess(message, false, delay);
-	},
-
-
-
-	/**
-	 * Check whether the current user is logged in
-	 * Guess for logged in if headlets are shown
+	 * @method	isLoggedIn
+	 * @return	{Boolean}
 	 */
 	isLoggedIn: function() {
 		return this.exists('headlets');
@@ -364,6 +369,7 @@ var Todoyu = {
 	 * Get a function reference from a function string
 	 * Ex: 'Todoyu.Ext.project.edit'
 	 *
+	 * @method	getFunctionFromString
 	 * @param	{String}		functionName
 	 * @param	{Boolean}		bind
 	 * @return	{Function}
