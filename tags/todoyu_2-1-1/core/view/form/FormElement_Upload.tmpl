@@ -1,0 +1,7 @@
+{extends "core/view/form/FormElement.tmpl"}
+
+{block name="field"}
+<div class="styledUpload">
+	<input type="file" name="{$htmlName}" id="{$htmlId}" class="{$inputClass} {$class}" {$extraAttributes} />
+</div>
+{/block}

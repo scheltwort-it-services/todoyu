@@ -1,0 +1,88 @@
+todoyu core changelog
+
+core 2.1.1 - 2011-07-25
+	* Feature: Added optional event identifier to error/success notifications- notifications of the same event are now closing preceding notes of the same event (if present)
+	* Bugfix: Installer- Fixed icon display bug of installer steps with long labels
+	* Bugfix: open duration picker wasn't hidden when closing parent dialog
+	* Bugfix: Added more tags to the badHtmlTags list to make sure they are escaped and not rendered (ex: embed)
+	* Bugfix: Parsing dates in british english format failed (was interpreted as american)
+	* Bugfix: List of available locales contained default locale twice
+	* Bugfix: Timerange date selector had to high z-index
+	* Bugfix: Detect also links in this format: "mailto:name@domain.com"
+	* Bugfix: Archive manager creates now valid zip archives on windows (valid extraction on linux)
+	* Bugfix: Contextmenu sub menu works now correct on linux firefox 5
+	* Bugfix: Validate empty dates as valid
+	* Changed: Rename Todoyu.Notification.onValueChange to validateDateFormat
+	* Changed: Rename Todoyu.Notification.observeChange to addValidator
+	* Changed: Padding of inline filter forms to prevent layout problems
+	* Changed: Only set curl option CURLOPT_FOLLOWLOCATION when safe mode is not enabled
+	* Changed: Minimum php version is 5.2.3 (instead only 5.2.0)
+	* Changed: Updated highcharts library to 2.1.6
+	* Changed: Updated tinyMCE to 3.4.3.2
+	* Changed: <a>-tags are now removed from RTE when saving (autolink function rebuilds them when necessary for output)
+	* Changed: Logger init position. Init before todoyu is initialized to log init errors. Added check if file logger has a problem. Check for resource instead null
+	* Changed: Tabs are now cropped in javascript and use dynamically as much space as available. Removed template label cropping for tabs
+	* Changed: Moved javascript object prototype definitions from core/lib/js/prototype.js to core/asset/js/prototypes.js
+	* Changed: Session key is now the web path. Multiple todoyu instances on the same server have now different session namespaces
+	* Changed: Frequency of a cronjob if given to the job to calculate next expected execution time
+	* Changed: Merged duration wizard icon into general sprite
+	* Added: Array.prototype.sum()
+
+
+
+core 2.1.0 - 2011-06-17
+	1. Note: Since release 2.1.0, the todoyu extension repository is enabling us to decouple version updates of the todoyu core and basic extensions from one another.
+	Respectively, the core and extensions changelogs are now maintained separately.
+	2. Upgrade instruction: When upgrading an existing todoyu installation to 2.1.0 please read the instructions in the file __UPGRADE_TODOYU___READ_THIS_FIRST.txt
+	which you'll find in the todoyu root folder.
+
+	* Feature: Added TodoyuMail objects which handles mail sending. Extendable by extensions
+	* Feature: Added auto-growing behavior textareas and RTE areas
+	* Feature: Added authentication with tokens to allow public data access interfacing
+	* Feature: Changed popup behaviour. Multiple popups are handled correct now. Close with escape
+	* Feature: Added method for creation of random named cache folders to TodoyuFileManager
+	* Feature: Extended TodoyuFileManager::getFolderContents with option to retrieve file stats
+	* Feature: Live validation of date/datetime fields
+	* Feature: Added Todoyu::db()->setDeleted() wrapper method
+	* Feature: Added TodoyuBaseObject::getCreatePersonID() and getCreatePerson() shortcut methods
+	* Feature: Added array helper method that merges TodoyuArray::reform() and TodoyuArray::useFieldAsIndex() => TodoyuArray::reformWithFieldAsIndex()
+	* Feature: Added check for items existence before applying hooked callbacks on items (Todoyu.Hooks.exec())
+	* Feature: Added calling of JS hook after quickcreate popup has been opened ('headlet.quickcreate.' + type + '.popupOpened')
+	* Feature: Added Img-function to TodoyuString
+	* Feature: Quickinfos are now deactivatible via JS
+	* Changed: UI: easier deselection of simple / grouped select options - only the first current value option is preselected in case there are multiple identic options
+	* Changed: Every PHP class has extension prefix
+	* Changed: Implemented headlets (JS) as classes, general headlet cleanup
+	* Changed: Renamed DB table system_errorlog to system_log_error
+	* Changed: Moved core classes to core/model
+	* Changed: Moved document classes to core/model/document
+	* Changed: Moved form classes to core/model/form
+	* Changed: Removed TodoyuPanelWidgetIf
+	* Changed: Removed unused DB table system_log
+	* Changed: TodoyuPanelWidget::renderContent() only renders the content, parent class handles full render process
+	* Changed: Added globally used icons (unacknowledged/acknowledged/modified/accepted/emailed) to core
+	* Changed: Added deleteFile method (with success logging) to TodoyuFileManager
+	* Changed: Moved global functions to Todoyu namespace
+	* Changed: Renamed "assets" folder to "asset" (all folders now singular)
+	* Changed: Made allowed tags of RTE more precise to disallow styles that are not supported via RTE options (inserted via paste)
+	* Changed: Installer respects version order of php and sql files
+	* Changed: When last version is unknown during an update, prompt for user input
+	* Changed: Extension archives are created completely in core modules. Valid extraction to all OS
+	* Changed: Support exception handling for PHP 5.2 and 5.3
+	* Changed: Replaced functions of Prototype 1.6 with newer versions for 1.7
+	* Changed: Database connection uses now default sql mode (removed sql_mode=ansi)
+	* Added: Added locale en_US for proper date formatting
+	* Added: Todoyu.Helper.cropText() to crop text in js
+	* Added: addJsOnloadedFunction has now an autobind parameter
+	* Translation: Updated german, russian and japanese translation updates
+
+
+core 2.0.8 - beta
+	* Bugfix: Added forgotten button label to "add person" button of role form
+	* Bugfix: Deleted persons were shown in persons list of role
+	* Feature: Added dwoo plugin: addslashes, escaped installer-written strings inside config file
+	* Feature: Text form fields are trimmed before saving
+	* Bugfix: file downloads fail with internet explorer and https connection
+
+core 0.0.1 to 2.0.7 - core 2.0.7 released on 2011-01-17
+	* See release changelog in root
