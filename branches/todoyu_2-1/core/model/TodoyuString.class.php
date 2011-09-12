@@ -27,26 +27,71 @@
 class TodoyuString {
 
 	/**
-	 * Check if a string is utf-8 encoded
+	 * Detect encoding from a string
 	 *
-	 * @param	String		$stringToCheck
-	 * @return	Boolean
+	 * @param	String		$string
+	 * @return	String		Encoding type (one of the values from the list)
 	 */
-	public static function isUTF8($stringToCheck) {
-		return mb_detect_encoding($stringToCheck, 'UTF-16, UTF-8, ISO-8859-15, ISO-8859-1, ASCII') === 'UTF-8';
+	public static function getEncoding($string) {
+		return mb_detect_encoding($string, 'UTF-16,UTF-8,ISO-8859-15,ISO-8859-1,ASCII');
 	}
 
 
 
 	/**
-	 * Convert a string to UTF-8 if necessary
+	 * Check whether the given string has an upper-cased first letter
 	 *
-	 * @param	String		$stringToConvert
-	 * @param	String		$from
-	 * @return	String
+	 * @param	String	$word
+	 * @return	Boolean
 	 */
-	public static function convertToUTF8($stringToConvert, $from = 'UTF-16') {
-		return iconv($from, 'UTF-8', $stringToConvert);
+	public static function isUcFirst($string) {
+		$firstChar	= $string[0];
+
+		return strtoupper($firstChar) == $firstChar;
+	}
+
+
+
+	/**
+	 * Check whether the given string contains HTML tag(s)
+	 *
+	 * @param	String	$string
+	 * @return	Boolean
+	 */
+	public static function isContainingHTML($string) {
+		$length			= strlen($string);
+		$lengthNoTags	= strlen(strip_tags($string));
+
+		return	$length != $lengthNoTags;
+	}
+
+
+
+	/**
+	 * Check whether a string is utf-8 encoded
+	 *
+	 * @param	String		$string
+	 * @return	Boolean
+	 */
+	public static function isUTF8($string) {
+		return self::getEncoding($string) === 'UTF-8';
+	}
+
+
+
+	/**
+	 * Convert a string to UTF-8
+	 *
+	 * @param	String		$string
+	 * @param	String		$fromCharset	Charset to convert from. If not set, we try to auto detect
+	 * @return	String						The UTF-8 encoded string
+	 */
+	public static function convertToUTF8($string, $fromCharset = null) {
+		if( is_null($fromCharset) ) {
+			$fromCharset = self::getEncoding($string);
+		}
+
+		return iconv($fromCharset, 'UTF-8', $string);
 	}
 
 
@@ -78,6 +123,28 @@ class TodoyuString {
 		$regexp	= '#^[A-Za-z0-9\._-]+[@][A-Za-z0-9\._-]+[\.].[A-Za-z0-9]+$#';
 
 		return preg_match($regexp, $email) === 1;
+	}
+
+
+
+	/**
+	 * Check whether given string seems to be a valid phone number
+	 *
+	 * @param	String		$string
+	 * @param	String		$allowedChars		Allowed characters (besides numbers)
+	 * @return	Boolean
+	 */
+	public static function isValidPhoneNumber($string, $allowedChars = ' /+-().[]') {
+		$length	= strlen($string);
+
+		for($i = 0; $i < $length; $i++) {
+			$curChar	= substr($string, $i, 1);
+			if( ! is_numeric($curChar) && strpos($allowedChars, $curChar) === false ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 
@@ -171,7 +238,7 @@ class TodoyuString {
 		$text	= strip_tags($text);
 
 		if( $decodeChars === true ) {
-			$charSet= TodoyuString::isUTF8($text) ? 'UTF-8' : 'ISO-8859-1';
+			$charSet= self::isUTF8($text) ? 'UTF-8' : 'ISO-8859-1';
 			$text	= html_entity_decode($text, ENT_COMPAT, $charSet);
 		}
 
@@ -184,16 +251,22 @@ class TodoyuString {
 	 * Converts an HTML snippet into plain text.
 	 * 	- decodes html-entities & special chars
 	 *
-	 * @param	String		$string
-	 * @param	Boolean		$convertClosingPTagsToDoubleNewLine
+	 * @param	String		$html
 	 * @return	String
 	 */
-	public static function strictHtml2text($string, $convertClosingPTagsToDoubleNewLine = true) {
-		if( $convertClosingPTagsToDoubleNewLine === true ) {
-			$string = str_replace('</p>', chr(10) . chr(10), $string);
-		}
+	public static function strictHtml2text($html) {
+			// Add empty line after paragraph
+		$plain 	= str_replace('</p>', "\n\n", $html);
+			// <br> to newlines
+		$plain	= self::br2nl($plain);
+			// Decode special chars
+		$plain	= htmlspecialchars_decode($plain);
+			// Decode entities
+		$plain	= html_entity_decode($plain, ENT_COMPAT, 'UTF-8');
+			// Rest of html to text
+		$plain	= self::html2text($plain);
 
-		return self::html2text(html_entity_decode(htmlspecialchars_decode(self::br2nl($string)), ENT_COMPAT, 'UTF-8'));
+		return trim($plain);
 	}
 
 
@@ -425,29 +498,21 @@ class TodoyuString {
 	/**
 	 * Build an URL with given parameters prefixed with todoyu path
 	 *
-	 * @todo	Have a look at http_build_query(). Useful replacement?
 	 * @param	Array		$params		Parameters as key=>value
 	 * @param	String		$hash		Hash (#hash)
 	 * @param	Boolean		$absolute	Absolute URL with host server
 	 * @return	String
 	 */
 	public static function buildUrl(array $params = array(), $hash = '', $absolute = false) {
-		$pathWeb	= PATH_WEB;
-		$query		= rtrim($pathWeb, '/\\') . '/index.php';
-		$queryParts	= array();
-
+		$query	= '/' . ltrim(rtrim(PATH_WEB, '/\\') . '/index.php', '/');
+		
 			// Add question mark if there are query parameters
 		if( sizeof($params) > 0 ) {
 			$query .= '?';
 		}
 
 			// Add all parameters encoded
-		foreach($params as $name => $value) {
-			$queryParts[] = $name . '=' . urlencode($value);
-		}
-
-			// Concatenate
-		$query .= implode('&', $queryParts);
+		$query .= http_build_query($params);
 
 			// Add hash
 		if( ! empty($hash) ) {
@@ -456,7 +521,7 @@ class TodoyuString {
 
 			// Add absolute server URL
 		if( $absolute ) {
-			$query = SERVER_URL . $query;
+			$query = SERVER_URL . '/' . ltrim($query, '/');
 		}
 
 		return $query;
@@ -630,21 +695,79 @@ class TodoyuString {
 	 *  - Remove empty paragraphs from the beginning
 	 *  - Remove <pre> tags and add <br> tags for the newlines
 	 *
-	 * @param	String		$text
+	 * @param	String		$html
 	 * @return	String
 	 */
-	public static function cleanRTEText($text) {
-		if( substr($text, 0, 13) === '<p>&nbsp;</p>' ) {
-			$text	= substr($text, 13);
+	public static function cleanRTEText($html) {
+		if( substr($html, 0, 13) === '<p>&nbsp;</p>' ) {
+			$html	= substr($html, 13);
 		}
 
-		if( strpos($text, '<pre>') !== false ) {
-			$prePattern	= '/<pre>(.*?)<\/pre>/s';
-			$text		= preg_replace_callback($prePattern, array(self,'callbackPreText'), $text);
-			$text		= str_replace("\n", '', $text);
+			// Fix problem with <pre> tags from RTE
+		$html	= self::cleanPreTagsInRTE($html);
+			// Remove event handler attributes to prevent XSS
+		$html	= self::cleanXssTagAttributes($html);
+
+		return trim($html);
+	}
+
+
+
+	/**
+	 * Remove <pre> tags and add <br> tags for line breaks
+	 *
+	 * @param	String		$html
+	 * @return	String
+	 */
+	private static function cleanPreTagsInRTE($html) {
+		if( strpos($html, '<pre>') !== false ) {
+			$pattern	= '/<pre>(.*?)<\/pre>/s';
+			$html		= preg_replace_callback($pattern, array('TodoyuString','callbackPreText'), $html);
+			$html		= str_replace("\n", '', $html);
 		}
 
-		return trim($text);
+		return $html;
+	}
+
+
+
+	/**
+	 * Callback for cleanRTEText
+	 * Add <br> tags inside the <pre> tags
+	 *
+	 * @param	Array		$match
+	 * @return	String
+	 */
+	private static function callbackPreText(array $match) {
+		return nl2br(trim($match[1]));
+	}
+
+
+
+	/**
+	 * Cleanup for XSS in tag attributes (onclick, ...)
+	 *
+	 * @param	String		$html
+	 * @return	String
+	 */
+	private static function cleanXssTagAttributes($html) {
+		$pattern	= '/<(?:.+?)( on(?:\w{4,})=(["\'])(?:.*?)[^\\]\2)(?:[^>]*?)>/';
+		$html		= preg_replace_callback($pattern, array('TodoyuString','callbackXssTagAttributes'), $html);
+
+		return $html;
+	}
+
+
+
+	/**
+	 * Callback for XSS attribute cleanup
+	 * Replace event handler attributes from tags
+	 *
+	 * @param	Array	$match
+	 * @return	String
+	 */
+	private static function callbackXssTagAttributes(array $match) {
+		return str_replace($match[1], '', $match[0]);
 	}
 
 
@@ -782,9 +905,9 @@ class TodoyuString {
 	/**
 	 * Build a HTML tag with attributes
 	 *
-	 * @param	String		$tagName
-	 * @param	Array		$attributes
-	 * @param	String		$content			Optional HTML content to be wrapped
+	 * @param	String			$tagName
+	 * @param	Array			$attributes
+	 * @param	String|Boolean	$content			Optional HTML content to be wrapped
 	 * @return	String
 	 */
 	public static function buildHtmlTag($tagName, array $attributes = array(), $content = false) {
@@ -801,19 +924,6 @@ class TodoyuString {
 		} else {
 			return '<' . $tagName . ' ' . $attrList . ' />';
 		}
-	}
-
-
-
-	/**
-	 * Callback for cleanRTEText
-	 * Add <br> tags inside the <pre> tags
-	 *
-	 * @param	Array		$matches
-	 * @return	String
-	 */
-	private static function callbackPreText(array $matches) {
-		return nl2br(trim($matches[1]));
 	}
 
 
@@ -897,11 +1007,11 @@ class TodoyuString {
 	public static function getRangeString($dateStart, $dateEnd, $withDuration = true) {
 		$dateStart	= intval($dateStart);
 		$dateEnd	= intval($dateEnd);
-		$duration	= $dateEnd-$dateStart;
-		$hours		= intval($duration/3600);
+		$duration	= $dateEnd - $dateStart;
+		$hours		= intval($duration / 3600);
 		$hoursMax	= 23;
 
-			// Make day keys to detect multi day duration
+			// Make day keys to detect multi-day duration
 		$dateKeyStart	= date('dmY', $dateStart);
 		$dateKeyEnd		= date('dmY', $dateEnd);
 		$isMultiDay		= $dateKeyStart !== $dateKeyEnd;
@@ -919,7 +1029,7 @@ class TodoyuString {
 			$data['hours']			= $hours;
 			$data['duration']		= $duration;
 
-						// Duration is over multiple days?
+				// Duration over multiple days?
 			if( $isMultiDay ) {
 				$dayTimestamps	= TodoyuTime::getDayTimestampsInRange($dateStart, $dateEnd);
 
@@ -939,10 +1049,32 @@ class TodoyuString {
 	 * htmlentities with predefined config for todoyu
 	 *
 	 * @param	String		$string
+	 * @param	Boolean		$doubleEncode
 	 * @return	String
 	 */
-	public static function htmlentities($string) {
-		return htmlentities($string, ENT_QUOTES, 'UTF-8', false);
+	public static function htmlentities($string, $doubleEncode = false) {
+		return htmlentities($string, ENT_QUOTES, 'UTF-8', $doubleEncode);
+	}
+
+
+
+	/**
+	 * Replace (only) first occurrence of search string by given replacement
+	 *
+	 * @param	String	$search
+	 * @param	String	$replace
+	 * @param	String	$subject
+	 * @return	String
+	 */
+	public static function replaceOnce($search, $replace, $subject) {
+		$pos = strpos($subject, $search);
+
+		if( $pos !== false ) {
+			$length	= strlen($search);
+			$subject= substr_replace($subject, $replace, $pos, $length);
+		}
+
+		return $subject;
 	}
 
 }

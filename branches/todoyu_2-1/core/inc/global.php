@@ -28,6 +28,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 mb_internal_encoding('UTF-8');
 	// Set session lifetime to 5 hours
 session_cache_expire(300);
+	// Set default dummy timezone
+date_default_timezone_set('Europe/Paris');
 
 	// Start session
 session_start();
@@ -65,6 +67,7 @@ require_once( PATH_CORE . '/model/TodoyuHookManager.class.php' );
 require_once( PATH_CORE . '/model/TodoyuHeader.class.php' );
 require_once( PATH_CORE . '/model/TodoyuPanelWidgetManager.class.php' );
 require_once( PATH_CORE . '/model/TodoyuErrorHandler.class.php' );
+require_once( PATH_CORE . '/model/TodoyuAutoloader.class.php' );
 
 	// Include basic person classes
 require_once(PATH_EXT . '/contact/model/TodoyuContactPerson.class.php');
@@ -76,7 +79,7 @@ require_once( PATH_CORE . '/model/TodoyuDebug.class.php' );
 require_once( PATH_LIB . '/php/FirePHPCore/FirePHP.class.php' );
 
 	// Register autoloader
-spl_autoload_register( array('Todoyu', 'autoloader') );
+spl_autoload_register( array('TodoyuAutoloader', 'load') );
 
 	// Register error handler
 set_error_handler(array('TodoyuErrorHandler', 'handleError'));

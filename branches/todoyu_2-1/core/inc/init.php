@@ -23,6 +23,9 @@
  * @todo	Use hook functions to allow others to hook in here
  */
 
+	// Custom config overrides
+require_once( PATH_LOCALCONF . '/override.php');
+
 	// File Logger
 TodoyuLogger::addLogger('TodoyuLoggerFile', array(
 	'file'	=> PATH . '/log/error.log'
@@ -30,21 +33,9 @@ TodoyuLogger::addLogger('TodoyuLoggerFile', array(
 	// FirePhp Logger
 TodoyuLogger::addLogger('TodoyuLoggerFirePhp');
 
-	// Add form include path
-Todoyu::addIncludePath( PATH_CORE . '/model/form' );
-	// Add document include path
-Todoyu::addIncludePath( PATH_CORE . '/model/document');
-
 	// Init basic classes
 if( Todoyu::$CONFIG['INIT'] ) {
 	Todoyu::init();
 }
-
-	// Add all paths of installed extensions to autoload
-TodoyuExtensions::addAllExtensionAutoloadPaths();
-
-
-	// Custom config overrides
-require_once( PATH_LOCALCONF . '/override.php');
 
 ?>

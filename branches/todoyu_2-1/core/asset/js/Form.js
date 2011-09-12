@@ -44,11 +44,25 @@ Todoyu.Form = {
 	 * @method	onFormDisplay
 	 * @param	{String}  formID
 	 */
-	onFormDisplay: function(formID) {
-		if( Todoyu.exists(formID) ) {
-			this.expandInvalidForeignRecords(formID);
-			this.focusFirstFormField(formID);
+	onFormDisplay: function(idForm, name, idRecord) {
+		if( Todoyu.exists(idForm) ) {
+			this.expandInvalidForeignRecords(idForm);
+			this.focusFirstFormField(idForm);
+			this.callFormDisplayHooks(idForm, name, idRecord);
 		}
+	},
+
+
+
+	/**
+	 * Call hooks which are registered for the form display event
+	 *
+	 * @param	{String}	idForm
+	 * @param	{String}	name
+	 * @param	{Number}	idRecord
+	 */
+	callFormDisplayHooks: function(idForm, name, idRecord) {
+		Todoyu.Hook.exec('form.display', idForm, name, idRecord);
 	},
 
 
@@ -96,9 +110,13 @@ Todoyu.Form = {
 	 * @param	{Number}		index
 	 */
 	removeRecord: function(idRecord, fieldName, index) {
-		var idElement	= 'foreignrecord-' + idRecord + '-' + fieldName + '-' + index;
-
-		$(idElement).remove();
+        if( confirm('[LLL:core.form.records.removeconfirm]') ) {
+            var idElement    = 'foreignrecord-' + idRecord + '-' + fieldName + '-' + index;
+            $(idElement).remove();
+        } else {
+           	 // Click event toggled sub form, so toggle again
+            this.toggleRecordForm(idRecord, fieldName, index);
+        }
 	},
 
 
@@ -445,7 +463,7 @@ Todoyu.Form = {
 
 		var selectedOld = $(baseID + '-selector').select('.selected').first();
 
-		if(selectedOld) {
+		if( selectedOld ) {
 			selectedOld.toggleClassName('selected');
 		}
 
@@ -461,9 +479,7 @@ Todoyu.Form = {
 	 * @param	{Element}	form
 	 */
 	disableSaveButtons: function(form) {
-		$(form).down('fieldset.buttons').select('button').each(function(button){
-			Form.Element.disable(button);
-		});
+		$(form).down('fieldset.buttons').select('button').invoke('disable');
 	},
 
 
@@ -475,9 +491,7 @@ Todoyu.Form = {
 	 * @param	{Element}	form
 	 */
 	enableSaveButtons: function(form) {
-		$(form).down('fieldset.buttons').select('button').each(function(button){
-			Form.Element.enable(button);
-		});
+		$(form).down('fieldset.buttons').select('button').invoke('enable');
 	},
 
 
@@ -486,8 +500,8 @@ Todoyu.Form = {
 	 * Set selected options of a select element
 	 *
 	 * @method	selectOptions
-	 * @param	{Element}	element
-	 * @param	{Array}		selection
+	 * @param	{Element}		element
+	 * @param	{Array}			selection
 	 */
 	selectOptions: function(element, selection) {
 		element		= $(element);

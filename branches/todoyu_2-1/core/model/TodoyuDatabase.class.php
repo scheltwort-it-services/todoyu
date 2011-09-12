@@ -693,6 +693,7 @@ class TodoyuDatabase {
 	/**
 	 * Execute a query on the database
 	 *
+	 * @throws	TodoyuDbException
 	 * @param	String		$query
 	 * @return	Resource
 	 */
@@ -709,8 +710,6 @@ class TodoyuDatabase {
 				die("Cannot connect to the database. Unknown error.");
 			}
 		}
-
-
 
 		$resource	= mysql_query($query, $this->link);
 
@@ -1210,6 +1209,29 @@ class TodoyuDatabase {
 	 */
 	public function hasTable($table) {
 		return in_array($table, $this->getTables());
+	}
+
+
+
+	/**
+	 * Returns the number of rows in the given table. You can specify an
+	 * optional where clause to return a subset of the table.
+	 *
+	 * @param	String	$table
+	 * @param	String	$where
+	 * @param	Integer
+	 */
+	public function getRowCount($table, $where = null) {
+		$query = 'SELECT COUNT(*) FROM ' . $this->quoteFieldname($table);
+
+		if( ! is_null($where) ) {
+			$query .= ' WHERE ' . $where;
+		}
+
+		$result	= $this->query($query);
+		$rows	= TodoyuArray::flatten($this->resourceToArray($result));
+
+		return $rows[0];
 	}
 
 

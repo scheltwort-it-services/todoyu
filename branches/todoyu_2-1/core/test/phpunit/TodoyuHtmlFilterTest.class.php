@@ -48,29 +48,77 @@ class TodoyuHtmlFilterTest extends PHPUnit_Framework_TestCase {
 
 
 	/**
+	 * Test getBadTags
+	 */
+	public function testGetBadTags() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
+
+
+
+	/**
 	 * Test TodoyuHtmlFilter::clean
-	 * @todo Implement testClean().
 	 */
 	public function testClean() {
+			// Test cleaning of allowed HTML (no change expected)
 		$htmlNormal		= '<p>test</p>';
 		$expectNormal	= $htmlNormal;
 		$cleanNormal	= TodoyuHtmlFilter::clean($htmlNormal);
 
 		$this->assertEquals($expectNormal, $cleanNormal);
 
-
+			// Test escaping of script tag
 		$htmlScript		= '<script>alert("test");</script>';
-		$expectScript	= '&lt;script&gt;alert(&quot;test&quot;);&lt;script&gt;';
+		$expectScript	= '&lt;script&gt;alert("test");&lt;/script&gt;';
 		$cleanScript	= TodoyuHtmlFilter::clean($htmlScript);
 
 		$this->assertEquals($expectScript, $cleanScript);
 
-
+			// Test escaping of injecting iframe
 		$htmlIframe		= '<iframe src="http://evil.server.com"></iframe>';
-		$expectIframe	= '&lt;iframe src="http://evil.server.com"&gt;&lt;iframe&gt;';
+		$expectIframe	= '&lt;iframe src="http://evil.server.com"&gt;&lt;/iframe&gt;';
 		$cleanIframe	= TodoyuHtmlFilter::clean($htmlIframe);
 
 		$this->assertEquals($expectIframe, $cleanIframe);
+	}
+
+
+
+	/**
+	 * Test escapeComments
+	 */
+	public function testEscapeComments() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
+
+
+
+	/**
+	 * Test escapeBadTags
+	 */
+	public function testEscapeBadTags() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
+
+
+
+	/**
+	 * Test escapeBadTag
+	 */
+	public function testEscapeBadTag() {
+		// Remove the following lines when you implement this test.
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
 	}
 
 }

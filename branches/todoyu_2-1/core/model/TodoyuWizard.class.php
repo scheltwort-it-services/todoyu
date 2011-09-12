@@ -23,6 +23,7 @@
  *
  * @package		Todoyu
  * @subpackage	Core
+ * @abstract
  */
 abstract class TodoyuWizard {
 
@@ -33,13 +34,13 @@ abstract class TodoyuWizard {
 	 */
 	private $name;
 
-
 	/**
 	 * List with created step instances
 	 *
 	 * @var	Array
 	 */
 	private $steps = array();
+
 
 
 	/**
@@ -168,8 +169,9 @@ abstract class TodoyuWizard {
 	/**
 	 * Get step object
 	 *
-	 * @param	String		$stepName
+	 * @param	String				$stepName
 	 * @return	TodoyuWizardStep
+	 * @throws	TodoyuException
 	 */
 	protected function getStep($stepName) {
 		$stepName	= $this->getActiveStepName($stepName);

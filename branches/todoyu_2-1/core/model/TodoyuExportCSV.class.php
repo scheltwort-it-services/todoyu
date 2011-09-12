@@ -20,11 +20,13 @@
 
 
 /**
+ * TodoyuExportBase
+ * CSV export
  *
+ * @package		Todoyu
+ * @subpackage	Core
  */
 class TodoyuExportCSV extends TodoyuExportBase {
-
-
 
 	/**
 	 * @var string
@@ -101,7 +103,7 @@ class TodoyuExportCSV extends TodoyuExportBase {
 	public function getContent() {
 		$headers = $this->prepareHeaders();
 
-		if($this->useTableHeaders ) {
+		if( $this->useTableHeaders ) {
 			if( is_array($headers) ) {
 				fputcsv($this->filePointer, $headers, $this->delimiter, $this->enclosure);
 			}

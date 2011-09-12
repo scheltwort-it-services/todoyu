@@ -91,6 +91,9 @@ class Todoyu {
 
 			// Set system timezone
 		self::setTimezone();
+
+			// Add autoloader clear cache hook
+		TodoyuHookManager::registerHook('core', 'clearCache', 'TodoyuAutoloader::clearCacheHook');
 	}
 
 
@@ -275,7 +278,7 @@ class Todoyu {
 
 			// Log if operation fails
 		if( $status === false ) {
-			TodoyuLogger::logError('Can\'t set locale "' . $locale . '"');
+			TodoyuLogger::logError('Can\'t set system locale for "' . $locale . '"');
 		}
 	}
 
@@ -312,32 +315,13 @@ class Todoyu {
 	 * Add a path to the global include path for autoloading classes
 	 *
 	 * @param	String		$includePath
+	 * @deprecated
+	 * @todo	Remove in later version
 	 */
 	public static function addIncludePath($includePath) {
-		$includePath	= TodoyuFileManager::pathAbsolute($includePath);
-
-		if( ! in_array($includePath, self::$CONFIG['AUTOLOAD']) ) {
-			self::$CONFIG['AUTOLOAD'][] = $includePath;
-		}
+		TodoyuAutoloader::addPath($includePath);
 	}
 
-
-
-	/**
-	 * Autoload classes. Check all configured directories
-	 *
-	 * @param	String		$className
-	 */
-	public static function autoloader($className) {
-		$classFile = $className . '.class.php';
-
-		foreach(self::$CONFIG['AUTOLOAD'] as $includePath) {
-			if( is_file($includePath . DIR_SEP . $classFile) ) {
-				include_once($includePath . DIR_SEP . $classFile);
-				break;
-			}
-		}
-	}
 
 
 
@@ -480,7 +464,6 @@ class Todoyu {
 
 	/**
 	 * Restrict access to admin
-	 *
 	 */
 	public static function restrictAdmin() {
 		TodoyuRightsManager::restrictAdmin();
@@ -547,7 +530,6 @@ class Todoyu {
 
 	/**
 	 * Reset environment to a previous backup
-	 *
 	 */
 	public static function resetEnvironment() {
 		if( is_array(self::$environmentBackup) ) {

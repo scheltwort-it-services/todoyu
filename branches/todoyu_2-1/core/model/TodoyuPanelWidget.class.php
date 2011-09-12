@@ -23,6 +23,7 @@
  *
  * @package		Todoyu
  * @subpackage	Core
+ * @abstract
  */
 abstract class TodoyuPanelWidget {
 
@@ -204,7 +205,6 @@ abstract class TodoyuPanelWidget {
 	 *
 	 * @return	Integer
 	 */
-
 	public function getArea() {
 		return $this->idArea;
 	}
@@ -216,7 +216,6 @@ abstract class TodoyuPanelWidget {
 	 *
 	 * @return	Boolean
 	 */
-
 	public function isCollapsed() {
 		return $this->collapsed === true;
 	}

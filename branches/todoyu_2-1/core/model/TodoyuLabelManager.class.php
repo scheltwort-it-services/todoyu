@@ -27,17 +27,23 @@
 class TodoyuLabelManager {
 
 	/**
+	 * Locale
+	 *
 	 * @var	String		Current locale key
 	 */
 	private static $locale = 'en_GB';
 
 	/**
-	 * @var	Array		Locallang labels cache
+	 * Locallang labels cache
+	 *
+	 * @var	Array
 	 */
-	public static $cache = array();
+	private static $cache = array();
 
 	/**
-	 * @var	Array		Custom path to locale files for extKeys
+	 * Custom path to locale files for extKeys
+	 *
+	 * @var	Array
 	 */
 	private static $customPaths = array(
 		'core'		=> 'core',
@@ -71,7 +77,7 @@ class TodoyuLabelManager {
 
 	/**
 	 * Add a custom path for keys which are not located in the normal file structure
-	 * The folder has to contain a "locale" folder like the extensions
+	 * The folder has to contain a "locale" folder with locale key sub folders like the extensions
 	 *
 	 * @param	String		$key
 	 * @param	String		$customPath		Path relative to todoyu root
@@ -109,11 +115,7 @@ class TodoyuLabelManager {
 		$locale	= is_null($locale) ? self::$locale : $locale ;
 		$label	= self::getLabelInternal($fullKey, $locale);
 
-		if( $label === false ) {
-			return Todoyu::$CONFIG['DEBUG'] ? $fullKey : '';
-		} else {
-			return $label;
-		}
+		return $label === false ? $fullKey : $label;
 	}
 
 
@@ -141,23 +143,23 @@ class TodoyuLabelManager {
 	 * @param	String		$locale
 	 * @return	String|Boolean
 	 */
-	private static function getLabelInternal($fullKey, $locale = null) {
-		$fullKey	= str_replace('LLL:', '', $fullKey);
-		$keyParts	= explode('.', $fullKey, 3);
-		$extKey		= $keyParts[0];
-		$fileKey	= $keyParts[1];
-		$labelKey	= $keyParts[2];
+	private static function getLabelInternal($fullKey, $locale) {
+		if( substr($fullKey, 0, 4) === 'LLL:' ) {
+			$fullKey = substr($fullKey, 4);
+		}
 
-		if( empty($extKey) || empty($fileKey) || empty($labelKey) ) {
+		if( substr_count($fullKey, '.') < 2 ) {
 			if( Todoyu::$CONFIG['LOCALE']['logInvalidKeys'] ) {
 				TodoyuLogger::logError('Invalid label key: <' . $fullKey . '>');
 			}
 			return false;
+		} else {
+			list($extKey, $fileKey, $labelKey) = explode('.', $fullKey, 3);
+
+			$label	= self::getCachedLabel($extKey, $fileKey, $labelKey, $locale);
+
+			return is_null($label) ? false : $label;
 		}
-
-		$label	= self::getCachedLabel($extKey, $fileKey, $labelKey, $locale);
-
-		return is_null($label) ? false : $label;
 	}
 
 
@@ -172,9 +174,7 @@ class TodoyuLabelManager {
 	 * @param	String		$locale			Locale to load the label
 	 * @return	String		The label with the key $index for $language
 	 */
-	private static function getCachedLabel($extKey, $fileKey, $labelKey, $locale = null) {
-		$locale	= is_null($locale) ? self::$locale : $locale ;
-
+	private static function getCachedLabel($extKey, $fileKey, $labelKey, $locale) {
 		if( ! is_string(self::$cache[$extKey][$fileKey][$locale][$labelKey]) ) {
 			self::$cache[$extKey][$fileKey][$locale] = self::getFileLabels($extKey, $fileKey, $locale);
 		}
@@ -225,7 +225,7 @@ class TodoyuLabelManager {
 	 * @param	String		$locale
 	 * @return	Array
 	 */
-	public static function getFallbackLocales($locale) {
+	private static function getFallbackLocales($locale) {
 		$fallbacks	= TodoyuArray::assure(Todoyu::$CONFIG['LOCALE']['fallback']);
 		$fallback	= array();
 		$tmpLocale	= (string)$locale;
@@ -257,8 +257,7 @@ class TodoyuLabelManager {
 	 * @param	String		$locale
 	 * @return	Array
 	 */
-	private static function getFileLabels($extKey, $fileKey, $locale = null) {
-		$locale		= is_null($locale) ? self::$locale : $locale;
+	private static function getFileLabels($extKey, $fileKey, $locale) {
 		$locales	= self::getFallbackLocales($locale);
 		$cacheFile	= self::getCacheFileName($extKey, $fileKey, $locale);
 

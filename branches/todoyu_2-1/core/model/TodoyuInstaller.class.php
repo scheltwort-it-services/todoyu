@@ -33,10 +33,14 @@ class TodoyuInstaller {
 	 */
 	private static $versionFile = 'install/config/LAST_VERSION';
 
+
+
 	/**
 	 * Process and display current step of installer
 	 */
 	public static function run() {
+		TodoyuHeader::sendNoCacheHeaders();
+		
 			// Start output buffer
 		ob_start();
 

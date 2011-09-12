@@ -23,6 +23,7 @@
  *
  * @package		Todoyu
  * @subpackage	Form
+ * @abstract
  */
 abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
@@ -167,7 +168,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 
 	/**
-	 * Set parent fieldset. Only necessary when inserted into an other form
+	 * Set parent fieldset. Only necessary when inserted into another form
 	 *
 	 * @param	TodoyuFieldset		$fieldset
 	 */
@@ -399,7 +400,13 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @return	Mixed
 	 */
 	public function getValue() {
-		return $this->getAttribute('value');
+		$value	= $this->getAttribute('value');
+
+		if( empty($value) && /*$this->isRequired() &&*/ $this->hasAttribute('default') ) {
+			$value	= $this->getAttribute('default');
+		}
+
+		return $value;
 	}
 
 
@@ -545,7 +552,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 				if( ! empty($this->config['required']['@attributes']['label']) ) {
 					$this->setErrorMessage($this->config['required']['@attributes']['label']);
 				} else {
-					$this->setErrorMessage('LLL:core.form.field.isrequired');
+					$this->setErrorMessage('core.form.field.isrequired');
 				}
 
 				return false;
@@ -577,7 +584,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 				if( isset($validatorConfig['@attributes']['msg']) ) {
 					$this->setErrorMessage(Todoyu::Label($validatorConfig['@attributes']['msg']));
 				} else {
-					$this->setErrorMessage('LLL:core.form.field.hasError');
+					$this->setErrorMessage('core.form.field.hasError');
 				}
 			}
 

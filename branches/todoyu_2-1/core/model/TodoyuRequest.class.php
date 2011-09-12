@@ -355,7 +355,9 @@ class TodoyuRequest {
 	 * @return	Array
 	 * @throws	TodoyuException
 	 */
-	public static function sendPostRequest($host, $getQuery = '', array $data = array(), $dataVar = 'data', array $headers = array(), $port = 80, $timeout = 30) {
+	public static function sendPostRequest($host, $getQuery = '', array $data = array(), $dataVar = 'data', array $headers = array(), $port = 80, $timeout = 10) {
+		TodoyuLogger::logDebug('Open connection to host ' . $host);
+
 			// Disable error handler
 		TodoyuErrorHandler::setActive(false);
 			// Open socket
@@ -365,11 +367,13 @@ class TodoyuRequest {
 
 			// Check whether connection was successful
 		if( ! $sock ) {
-			throw new TodoyuException('Cannot connect to host "' . $host . '"');
+			throw new TodoyuException('Cannot connect to host "' . $host . '" (' . $errno . ', ' . $errstr . ')');
 		}
 
 			// Encode data
 		$postData 	= $dataVar . '=' . urlencode(json_encode($data));
+
+		TodoyuLogger::logDebug('Start sending data to host ' . $host);
 
 			// Send HTTP headers
 		fwrite($sock, "POST /$getQuery HTTP/1.0\r\n");
@@ -388,6 +392,8 @@ class TodoyuRequest {
 		fwrite($sock, "$postData\r\n");
 		fwrite($sock, "\r\n");
 
+		TodoyuLogger::logDebug('Start reading response data from host ' . $host);
+
 			// Receive data
 		$content	= '';
 		while( ! feof($sock) ) {
@@ -396,6 +402,8 @@ class TodoyuRequest {
 		}
 
 		fclose($sock);
+
+		TodoyuLogger::logDebug('Closed connection to host ' . $host);
 
 			// Parse response data
 		$requestParts	= explode("\r\n\r\n", $content, 2);

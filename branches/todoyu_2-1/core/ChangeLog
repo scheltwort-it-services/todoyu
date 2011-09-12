@@ -1,5 +1,40 @@
 todoyu core changelog
 
+core 2.1.2 - not released yet
+	* Bugfix: #123 Text form fields are ignoring defined default values
+	* Bugfix: #185 Deleting an access role in sysmanager caused a fatal error (invalid function call)
+	* Bugfix: #189 Problems with character set conversion when server character sets are not utf-8
+	* Bugfix: Problems with close handling for popups in IE8. Redesigned callback structure
+	* Bugfix: #199 Parsing mysql date (standard date YYYY-MM-DD) failed. Birthdays were not received correct from form field
+	* Bugfix: Option class name was not used (invalid variable name in template)
+	* Bugfix: Remove event handler attributes from tags in RTE HTML to prevent RSS attacks
+	* Change: TodoyuTime::parseDateString has now a fallback to strtotime() if date was not recognized before
+	* Change: Made TodoyuLabelManager::$cache private
+	* Change: Made TodoyuLabelManger::getFallbackLocales private
+	* Change: Comment out unused database relation input field (relations have their own sub fields)
+	* Change: Cleanup adding the language file for jscalendar
+	* Change: Set default dummy timezone to prevent problems with date() before setting the users timezone
+	* Change: Allow installation in not empty database (as long as no conflicts with existing tables occurs)
+	* Change: Simplified TodoyuForm::injectFieldset (by Captain_FLAM)
+	* Change: Load the override config before init (CaptainFLAM)
+	* Change: Always return the label (or the key) for a label (never empty)
+	* Change: Cleanup hook manager. Hooks are now case insensitive and stored internally (Todoyu::$CONFIG['HOOKS'] is deprecated now)
+	* Add: Added doubleEncode parameter for TodoyuString::htmlentities
+	* Add: Translated log levels in core/locale/en_GB/global.xml
+	* Add: Caching for class autoloader
+	* Add: Custom callback on empty result for searchlist panel widget
+	* Add: TodoyuMail::setCurrentUserAsSender() as a shortcut
+	* Add: Confirm removal of sub record in db relation in form
+	* Add: Allow to hook in into the form display event in javascript
+	* Add: Hook core.login on successful login
+	* Add: Hooks core.record.add, core.record.update, core.record.delete
+	* Add: Added getRowCount() method to TodoyuDatabase
+	* Remove: Removed unused function TodoyuArray::convertToUTF8Array
+	* Update: JsCalendar library updated. Added some extra utf-8 language packages (provided by Captain_FLAM)
+	* Update: tinyMCE 3.4.4
+
+	
+
 core 2.1.1 - 2011-07-25
 	* Feature: Added optional event identifier to error/success notifications- notifications of the same event are now closing preceding notes of the same event (if present)
 	* Bugfix: Installer- Fixed icon display bug of installer steps with long labels

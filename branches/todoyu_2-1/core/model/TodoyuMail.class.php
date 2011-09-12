@@ -21,7 +21,7 @@
 require_once( PATH_LIB . '/php/phpmailer/class.phpmailer-lite.php' );
 
 /**
- * [Enter Class Description]
+ * Todoyu mail
  *
  * @package		Todoyu
  * @subpackage	Core
@@ -190,6 +190,24 @@ class TodoyuMail extends PHPMailerLite {
 	public function setSystemAsSender() {
 		$this->SetFrom(Todoyu::$CONFIG['SYSTEM']['email'], Todoyu::$CONFIG['SYSTEM']['name']);
 	}
+
+
+
+	/**
+	 * Set currently logged in user as sender
+	 * Fallback to system if no user is logged in
+	 *
+	 */
+	public function setCurrentUserAsSender() {
+		$idPerson	= Todoyu::personid();
+
+		if( $idPerson === 0 ) {
+			$this->setSystemAsSender();
+		} else {
+			$this->setSender($idPerson);
+		}
+	}
+
 
 
 

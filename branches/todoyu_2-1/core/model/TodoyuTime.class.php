@@ -27,22 +27,30 @@
 class TodoyuTime {
 
 	/**
-	 * @var	Integer		Seconds per minute
+	 * Seconds per minute
+	 *
+	 * @var	Integer
 	 */
 	const SECONDS_MIN	= 60;
 
 	/**
-	 * @var	Integer		Seconds per hour
+	 * Seconds per hour
+	 *
+	 * @var	Integer
 	 */
 	const SECONDS_HOUR	= 3600;
 
 	/**
-	 * @var	Integer		Seconds per day
+	 * Seconds per day
+	 *
+	 * @var	Integer
 	 */
 	const SECONDS_DAY	= 86400;
 
 	/**
-	 * @var	Integer		Seconds per week
+	 * Seconds per week (7 days)
+	 *
+	 * @var	Integer
 	 */
 	const SECONDS_WEEK	= 604800;
 
@@ -175,7 +183,7 @@ class TodoyuTime {
 	public static function getWeekEnd($timestamp) {
 		$diff	= (7-date('w', $timestamp))%7;
 
-		return mktime(23, 59, 59, date('n', $timestamp), date('j', $timestamp)+$diff, date('Y', $timestamp));
+		return mktime(23, 59, 59, date('n', $timestamp), date('j', $timestamp) + $diff, date('Y', $timestamp));
 	}
 
 
@@ -349,13 +357,12 @@ class TodoyuTime {
 			return '-';
 		}
 
+			// Format timestamp with pattern
 		$format		= self::getFormat($formatName);
 		$string		= strftime($format, $timestamp);
 
-			// If server locale file is not yet UTF8, convert the string
-		if( ! TodoyuString::isUTF8($string) ) {
-			$string = utf8_encode($string);
-		}
+			// Convert to utf-8 if not already
+		$string		= TodoyuString::getAsUtf8($string);
 
 		return $string;
 	}
@@ -492,6 +499,10 @@ class TodoyuTime {
 			$time = self::parseDate($dateString);
 		}
 
+		if( $time === 0 ) {
+			$time	= strtotime($dateString);
+		}
+
 		return $time;
 	}
 
@@ -507,7 +518,13 @@ class TodoyuTime {
 		$dateString	= trim($dateString);
 		$time		= 0;
 
-		$format		= self::getFormat('date');
+			// Standard date from mysql date type
+		if( self::isStandardDate($dateString) ) {
+			$format	= '%Y-%m-%d';
+		} else {
+			$format	= self::getFormat('date');
+		}
+
 		$dateParts	= strptime($dateString, $format);
 
 		if( $dateParts !== false ) {
@@ -594,6 +611,18 @@ class TodoyuTime {
 
 
 	/**
+	 * Check whether date string has standard date format 2011-08-05 (year-month-day)
+	 *
+	 * @param	String		$dateString
+	 * @return	Boolean
+	 */
+	public static function isStandardDate($dateString) {
+		return preg_match('/^\d{4}-\d{2}-\d{2}$/', trim($dateString)) === 1;
+	}
+
+
+
+	/**
 	 * Round minutes by given steps
 	 *
 	 * @param	Integer		$time
@@ -663,6 +692,21 @@ class TodoyuTime {
 
 
 	/**
+	 * Get amount of days between given dates
+	 *
+	 * @param	Integer		$dateStart
+	 * @param	Integer		$dateEnd
+	 * @return	Integer
+	 */
+	public static function getAmountDaysInRange($dateStart, $dateEnd) {
+		$daysInRange	= self::getDayTimestampsInRange($dateStart, $dateEnd);
+
+		return sizeof($daysInRange);
+	}
+
+
+
+	/**
 	 * Get dates of the days (at 00:00) which intersect the two given timespans
 	 *
 	 * @param	Integer		$dateStart1
@@ -687,7 +731,7 @@ class TodoyuTime {
 
 	/**
 	 * Get days in month for the month of the timestamp
-	 * Use monthDelta to query an other month (ex: last = -1, next = 1, etc)
+	 * Use monthDelta to query another month (ex: last = -1, next = 1, etc)
 	 *
 	 * @param	Integer		$timestamp
 	 * @param	Integer		$monthDelta
@@ -760,7 +804,7 @@ class TodoyuTime {
 		$days	= intval($days);
 		$date	= getdate($time);
 
-		return mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday']+$days, $date['year']);
+		return mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'] + $days, $date['year']);
 	}
 }
 

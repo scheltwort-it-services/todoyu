@@ -26,6 +26,11 @@
  */
 class TodoyuFrontend {
 
+	/**
+	 * Navigation entries for all areas (stores key, label, href, position[, type]) for main and resp. sub navigational items
+	 *
+     * @var	Array
+     */
 	private static $navi = array();
 
 	/**
@@ -46,7 +51,7 @@ class TodoyuFrontend {
 
 
 	/**
-	 * Get active tab submenu tab
+	 * Get active tab sub menu tab
 	 *
 	 * @param	String		$parentTab
 	 * @return	String
@@ -229,8 +234,8 @@ class TodoyuFrontend {
 		$active		= self::getActiveSubmenuTab($parentKey);
 
 		if( is_array($subMenu) ) {
-			foreach($subMenu as $key => $vals) {
-				if($vals['key'] == $active) {
+			foreach($subMenu as $key => $values) {
+				if( $values['key'] == $active ) {
 					$subMenu[$key]['active'] = true;
 				}
 			}

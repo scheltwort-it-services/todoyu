@@ -26,6 +26,11 @@
  */
 class TodoyuStaticRecords {
 
+	/**
+	 * Locale config
+	 *
+	 * @var	Array
+	 */
 	private static $localeConfig = array(
 		'country'	=> array(
 			'value'		=> 'id',
@@ -43,6 +48,7 @@ class TodoyuStaticRecords {
 			'locale'	=> 'currency.static_currency'
 		)
 	);
+
 
 
 	/**
@@ -335,9 +341,9 @@ class TodoyuStaticRecords {
 		if( sizeof($options) === 0 ) {
 			$options[]	= array(
 				'value'		=> 'disabled',
-				'label'		=> 'LLL:contact.ext.address.noRegion',
+				'label'		=> 'contact.ext.address.noRegion',
 				'disabled'	=> true,
-				'classname'	=> 'error'
+				'class'		=> 'error'
 			);
 		}
 

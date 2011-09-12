@@ -183,7 +183,6 @@ class TodoyuForm implements ArrayAccess {
 	 * @param	String		$name
 	 * @return	Boolean
 	 */
-
 	public function __isset($name) {
 		return $this->hasFieldset($name);
 	}
@@ -362,7 +361,7 @@ class TodoyuForm implements ArrayAccess {
 		if( $field->hasAttribute('required') ) {
 			if( ! TodoyuValidator::isNotEmpty($this->formdata[$field->getName()]) ) {
 				$this->invalidFields[$field->getName()] = true;
-				$field->setAttribute('errorLabel', 'LLL:core.form.field.isrequired');
+				$field->setAttribute('errorLabel', 'core.form.field.isrequired');
 				$field->setAttribute('hasError', true);
 			}
 		}
@@ -440,26 +439,9 @@ class TodoyuForm implements ArrayAccess {
 	public function injectFieldset(TodoyuFieldset $fieldset, $position = null) {
 		$fieldset->setFieldsToForm($this);
 
-			// Find object to inject fieldset
-		if( is_null($position) ) {
-			$parentObject	= $this;
-		} else {
-				// Get field(set) name
-			$insertParts	= explode(':', $position);
-			$field			= $this->getField($insertParts[1]);
-				// If name was a field, get its fieldset
-			if( $field instanceof TodoyuFormElement ) {
-				$parentObject = $field->getFieldset();
-			} else {
-					// If no field was found, the name has to be a fieldset
-				$parentObject = $this->getFieldset($insertParts[1]);
-			}
-		}
+        $fieldset->setParent($this);
 
-			// Set the parent of the fieldset
-		$fieldset->setParent($parentObject);
-
-		return $parentObject->addFieldset($fieldset->getName(), $fieldset, $position);
+        return $this->addFieldset($fieldset->getName(), $fieldset, $position);
 	}
 
 
@@ -488,7 +470,7 @@ class TodoyuForm implements ArrayAccess {
 
 
 	/**
-	 * Add elements from an other XML into the form after the element named $name
+	 * Add elements from another XML into the form after the element named $name
 	 *
 	 * @see		$this->addElementsFromXML()
 	 * @param	String		$xmlPath		Path to the xml file
@@ -501,7 +483,7 @@ class TodoyuForm implements ArrayAccess {
 
 
 	/**
-	 * Add elements from an other XML into the form before the element named $name
+	 * Add elements from another XML into the form before the element named $name
 	 *
 	 * @see		$this->addElementsFromXML()
 	 * @param	String		$xmlPath		Path to the xml file
@@ -1112,6 +1094,7 @@ class TodoyuForm implements ArrayAccess {
 		$data['hiddenFields']	= $this->renderHiddenFields();
 		$data['fieldsets']		= $this->renderFieldsets();
 		$data['htmlId']			= $this->makeID('', 'form');
+		$data['isAjax']			= TodoyuRequest::isAjaxRequest();
 
 		return $data;
 	}
