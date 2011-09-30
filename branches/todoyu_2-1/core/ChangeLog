@@ -1,6 +1,16 @@
 todoyu core changelog
 
-core 2.1.2 - 2011-09-25
+core 2.1.3 - not released yet
+	* Changed: Don't require system locale data to set a locale for translation
+	* Changed: TodoyuDebug handles now debugging status
+	* Added: Wrappers for rename() and copy() in TodoyuFileManager
+	* Removed: Moved continuous integration files to private extension
+	* Removed: Username list from debug function. Were never used
+	* Translation: Added polish translation for core
+	* Translation: Serbian translation for installer
+
+
+core 2.1.2 - 2011-09-15
 	* Bugfix: Tab layout for chrome fixed
 	* Bugfix: labels of dynamic tabs float over bounding box of the tab in chrome (ex: view/edit event)
 	* Bugfix: fixed various button icons positions for Chrome
