@@ -1,1 +1,0 @@
-UPDATE `static_country_zone` SET `iso_num_country` = 124 WHERE `iso_num_country` = 142;
