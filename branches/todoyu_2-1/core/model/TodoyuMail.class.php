@@ -77,7 +77,7 @@ class TodoyuMail extends PHPMailerLite {
 		$this->CharSet	= $this->config['charset'];
 
 		if( is_array($this->config['from']) ) {
-			$this->SetFrom($this->config['from']['email'], $this->config['from']['name']);
+			$this->SetFrom($this->config['from']['email'], $this->config['from']['name'], 0);
 		} elseif( is_numeric($this->config['from']) ) {
 			$this->setSender($this->config['from']);
 		} elseif( $this->config['from'] !== false ) {
@@ -127,7 +127,7 @@ class TodoyuMail extends PHPMailerLite {
 				continue;
 			}
 
-			$replace[$link] = TODOYU_URL . '/' . $link;
+			$replace[$link] = SERVER_URL . '/' . ltrim($link, '/');
 		}
 
 		return str_replace(array_keys($replace), array_values($replace), $html);
@@ -188,7 +188,7 @@ class TodoyuMail extends PHPMailerLite {
 	 *
 	 */
 	public function setSystemAsSender() {
-		$this->SetFrom(Todoyu::$CONFIG['SYSTEM']['email'], Todoyu::$CONFIG['SYSTEM']['name']);
+		$this->SetFrom(Todoyu::$CONFIG['SYSTEM']['email'], Todoyu::$CONFIG['SYSTEM']['name'], 0);
 	}
 
 

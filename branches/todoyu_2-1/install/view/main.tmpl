@@ -30,7 +30,6 @@
 				<div class="panelWidget">
 					<h1 class="deniedOpen">
 						<span class="title">Todoyu 2.1</span>
-						<span class="rgt"></span>
 					</h1>
 					<img src="asset/img/banner.jpg">
 					<p class="slogan">
@@ -38,23 +37,19 @@
 					{Label install.installer.slogan.line2}
 					</p>
 				</div>
+				<div class="panelFooter"><!-- panel footer --></div>
 			</div>
 			{* ------------------- Panel end ------------- *}
 
 			<div id="contentBox">
-				<span class="lt"></span>
-				<span class="rt"></span>
-				<span class="lb"></span>
-				<span class="rb"></span>
 				<div class="content">
-					<div class="boxContent">
-						<h1>
+						<h1 class="headerLine">
 							<span class="title">Todoyu Installer - {Label $title}</span>
-							<span class="rgt"></span>
 						</h1>
+					<div class="boxContent">
 
 						{if $result.text || $text}
-							<p  class="installMessage {$result.textClass|default:$textClass}">{$result.text|default:$text}</p>
+							<p class="installMessage {$result.textClass|default:$textClass}">{$result.text|default:$text}</p>
 						{/if}
 
 						<form method="post" action="index.php" style="padding-left:12px;" >

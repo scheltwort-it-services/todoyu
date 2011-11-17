@@ -106,7 +106,7 @@ class TodoyuDatabase {
 			// Decide how to connect to mysql server
 		$mysqlFunc	= $this->config['persistent'] ? 'mysql_pconnect' : 'mysql_connect';
 
-			// Connect to mysql server
+			// Connect to MySQL server
 		$this->link	= @call_user_func($mysqlFunc, $this->config['server'], $this->config['username'], $this->config['password']);
 
 			// Check if connection to server has failed
@@ -131,7 +131,7 @@ class TodoyuDatabase {
 
 	/**
 	 * Initialize database connection
-	 * Use utf8 names and clear sql_mode
+	 * Use UTF-8 names and clear sql_mode
 	 */
 	private function initConnection() {
 		$this->query("SET sql_mode=''");
@@ -521,7 +521,11 @@ class TodoyuDatabase {
 
 		$query = 'UPDATE ' . $table . ' SET ';
 		$query .= implode(', ', $fields);
-		$query .= ' WHERE ' . $where;
+
+		if( !empty($where) ) {
+			$query .= ' WHERE ' . $where;
+		}
+
 
 		return $query;
 	}
@@ -557,6 +561,7 @@ class TodoyuDatabase {
 	 * @return	Boolean		Was record updated?
 	 */
 	public function doUpdateRecord($table, $idRecord, array $fieldNameValues, array $noQuoteFields = array()) {
+		$table  = '`' . $table . '`'; 
 		$where	= 'id = ' . intval($idRecord);
 
 		return $this->doUpdate($table, $where, $fieldNameValues, $noQuoteFields) === 1;
@@ -856,6 +861,7 @@ class TodoyuDatabase {
 	 *
 	 * @param	String		$table
 	 * @param	Integer		$fieldNameEntity1
+	 * @param	Integer		$idEntity1
 	 * @param	Integer		$fieldNameEntity2
 	 * @param	Integer		$idEntity2
 	 * @return	Integer
@@ -981,13 +987,13 @@ class TodoyuDatabase {
 	/**
 	 * Get all selected rows as an array
 	 *
-	 * @param	String		$fields
-	 * @param	String		$table
-	 * @param	String		$where
-	 * @param	String		$groupBy
-	 * @param	String		$orderBy
-	 * @param	String		$limit
-	 * @param	String		$indexField
+	 * @param	String			$fields
+	 * @param	String			$table
+	 * @param	String			$where
+	 * @param	String			$groupBy
+	 * @param	String			$orderBy
+	 * @param	String			$limit
+	 * @param	String|Boolean	$indexField
 	 * @return	Array
 	 */
 	public function getArray($fields, $table, $where = '', $groupBy = '', $orderBy = '', $limit = '', $indexField = false) {
@@ -1042,13 +1048,21 @@ class TodoyuDatabase {
 	 * @return	String
 	 */
 	public function getFieldValue($field, $table, $where = null, $groupBy = null, $orderBy = null, $limit = null, $resultFieldName = null) {
-		$resource	= $this->doSelect($field, $table, $where, $groupBy, $orderBy, $limit);
-		$key		= is_null($resultFieldName) ? $field : $resultFieldName;
-		$value		= false;
+		$cacheID	= sha1(serialize(func_get_args()));
 
-		if( $this->getNumRows($resource) > 0 ) {
-			$row	= $this->fetchAssoc($resource);
-			$value	= $row[$key];
+		if( TodoyuCache::isIn($cacheID) ) {
+			return TodoyuCache::get($cacheID);
+		} else {
+			$resource	= $this->doSelect($field, $table, $where, $groupBy, $orderBy, $limit);
+			$key		= is_null($resultFieldName) ? $field : $resultFieldName;
+			$value		= false;
+
+			if( $this->getNumRows($resource) > 0 ) {
+				$row	= $this->fetchAssoc($resource);
+				$value	= $row[$key];
+			}
+
+			TodoyuCache::set($cacheID, $value);
 		}
 
 		return $value;
@@ -1069,9 +1083,7 @@ class TodoyuDatabase {
 		$table	= '`' . $table . '`';
 		$where	= '`id` = ' . intval($idRecord);
 
-		$this->doUpdate($table, $where, $fieldValues, $noQuoteFields);
-
-		return $this->getAffectedRows() === 1;
+		return $this->doUpdate($table, $where, $fieldValues, $noQuoteFields) === 1;
 	}
 
 
@@ -1091,7 +1103,7 @@ class TodoyuDatabase {
 
 
 	/**
-	 * Fetch a row (array) out of a mysql result
+	 * Fetch a row (array) out of a MySQL result
 	 *
 	 * @param	Resource	$result
 	 * @return	Array					Numeric indexes
@@ -1103,7 +1115,7 @@ class TodoyuDatabase {
 
 
 	/**
-	 * Fetch a row (array) out of a mySql result
+	 * Fetch a row (array) out of a MySQL result
 	 *
 	 * @param	Resource	$result
 	 * @return	Array					Associative array with field names
@@ -1115,7 +1127,7 @@ class TodoyuDatabase {
 
 
 	/**
-	 * Fetch a row (object) out of a mysql result
+	 * Fetch a row (object) out of a MySQL result
 	 * StdObject with fields as public member variables
 	 *
 	 * @param	Resource	$result
@@ -1258,8 +1270,20 @@ class TodoyuDatabase {
 	 * Drop a table
 	 *
 	 * @param	String		$table
+	 * @deprecated
 	 */
 	public function drop($table) {
+		$this->dropTable($table);
+	}
+
+
+
+	/**
+	 * Drop a table
+	 *
+	 * @param	String		$table
+	 */
+	public function dropTable($table) {
 		$this->query('DROP TABLE IF EXISTS ' . $this->quoteFieldname($table));
 	}
 

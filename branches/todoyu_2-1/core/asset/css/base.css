@@ -37,11 +37,15 @@ caption {
 }
 
 table {
-	border-collapse:collapse;
+	border-collapse:separated;
+	border-spacing:0;
 }
 
 table.fixedTable {
 	table-layout:fixed;
+}
+table.autoWidthTable {
+	width:auto;
 }
 
 th {
@@ -74,6 +78,7 @@ p {
 h1 {
 	margin:0;
 	padding:0;
+	overflow:hidden;
 }
 
 h1 span {
@@ -87,6 +92,7 @@ h1, h1 * {
 	white-space:nowrap;
 	letter-spacing:0.1em;
 }
+
 /*
 h2 {}
 */
@@ -104,14 +110,13 @@ h4 {
 	height:12px;
 	padding:5px 0 7px 12px;
 	background-color:#fff;
-	border-bottom:1px solid #e1e1e1;
+	border-bottom:1px solid #eee;
 	font-weight:normal;
 	text-transform:uppercase;
 	white-space:nowrap;
 }
 
 h5 {
-	border-bottom:1px solid #000;
 	font-size:18px;
 	margin:5px 0;
 	padding-left:5px;
@@ -157,8 +162,7 @@ h5 {
 
 
 .overflow {
-	overflow:auto;
-	overflow-x:hidden;
+	overflow:hidden;
 	height:auto;
 	height:100%;
 	/* ie7 needs this sometimes */

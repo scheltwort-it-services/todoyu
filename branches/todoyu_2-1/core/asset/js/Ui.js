@@ -645,14 +645,12 @@ Todoyu.Ui = {
 	 *
 	 * @method	addBodyClickObserver
 	 * @param	{Event}	event
+	 * @todo	Remove, because never used? Was a workaround for bad dom structure which was fixed meanwhile
 	 */
 	stopEventBubbling: function(event) {
-		if( window.event ){
-			event.returnValue = false;
-			event.cancelBubble = true;
-		} else{
-			event.preventDefault();
-			event.stopPropagation();
+		if( event ) {
+			Event.extend(event);
+			event.stop();
 		}
 	},
 
@@ -777,6 +775,19 @@ Todoyu.Ui = {
 		}
 
 		return button;
+	},
+
+
+
+	/**
+	 * TinyMCE paste plugin callback
+	 * Remove first <br> tag from pasted text (prevents line break before content in webkit)
+	 *
+	 * @param	{Object}	plugin
+	 * @param	{Object}	pasteObject
+	 */
+	onTinyMcePasteCleanup: function(plugin, pasteObject) {
+		pasteObject.node.innerHTML = pasteObject.node.innerHTML.replace('<br />', '');
 	}
 
 };

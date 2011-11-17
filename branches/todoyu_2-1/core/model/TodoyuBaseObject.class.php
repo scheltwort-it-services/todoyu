@@ -43,6 +43,13 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 	 */
 	protected $cache = array();
 
+	/**
+	 * Table of the record
+	 *
+	 * @var	String
+	 */
+	protected $table;
+
 
 
 
@@ -54,6 +61,7 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 	 */
 	public function __construct($idRecord, $table) {
 		$idRecord	= intval($idRecord);
+		$this->table= trim(strtolower($table));
 
 		if( $idRecord > 0 ) {
 			$record		= Todoyu::db()->getRecord($table, $idRecord);
@@ -87,7 +95,6 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 			return $this->get($dataKey);
 		} else {
 			TodoyuLogger::logNotice('Data "' . $dataKey . '" not found in ' . get_class($this) . ' (ID:' . $this->data['id'] . ')', $this->data);
-//			die('<pre>'. print_r(debug_backtrace(false),true)) . '</pre>';
 			return '';
 		}
 	}
@@ -166,6 +173,36 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 
 
 	/**
+	 * Update the object and the database
+	 *
+	 * @param	Array	$data
+	 */
+	protected function update(array $data) {
+			// Update database
+		TodoyuRecordManager::updateRecord($this->table, $this->getID(), $data);
+			// Update internal record
+		$this->data = array_merge($this->data, $data);
+			// Remove record query cache
+		TodoyuRecordManager::removeRecordQueryCache($this->table, $this->getID());
+	}
+
+
+
+	/**
+	 * Update a single field
+	 *
+	 * @param	String		$fieldName
+	 * @param	Mixed		$value			Scalar value
+	 */
+	protected function updateField($fieldName, $value) {
+		$this->update(array(
+			$fieldName	=> $value
+		));
+	}
+
+
+
+	/**
 	 * Check whether a property is not empty
 	 *
 	 * @param	String		$key
@@ -179,7 +216,7 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 
 	/**
 	 * Inject data.
-	 * Usefull if user initialized without an ID to avoid an extra request
+	 * Useful if user initialized without an ID to avoid an extra request
 	 *
 	 * @param	Array	$data
 	 */
@@ -207,6 +244,28 @@ abstract class TodoyuBaseObject implements ArrayAccess, Dwoo_IDataProvider {
 	 */
 	public function getObjectData() {
 		return $this->data;
+	}
+
+
+
+	/**
+	 * Get date create
+	 *
+	 * @return	Integer
+	 */
+	public function getDateCreate() {
+		return intval($this->get('date_create'));
+	}
+
+
+
+	/**
+	 * Get date update
+	 *
+	 * @return	Integer
+	 */
+	public function getDateUpdate() {
+		return intval($this->get('date_update'));
 	}
 
 

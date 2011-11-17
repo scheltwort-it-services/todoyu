@@ -50,7 +50,6 @@ class TodoyuCli {
 		chdir(PATH);
 
 		TodoyuErrorHandler::setActive(false);
-		error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT);
 		@ini_set('show_errors', true);
 
 			// Predefine URL constants
@@ -117,6 +116,17 @@ class TodoyuCli {
 	 */
 	public static function isCliMode() {
 		return TODOYU_CLI === true;
+	}
+
+
+
+	/**
+	 * Print message to console
+	 *
+	 * @param	String		$message
+	 */
+	public static function printLine($message) {
+		echo $message . "\n";
 	}
 
 }

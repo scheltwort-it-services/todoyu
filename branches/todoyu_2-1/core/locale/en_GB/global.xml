@@ -38,9 +38,11 @@
 	<label index="components">Components</label>
 	<label index="status">Status</label>
 	<label index="locked">Locked</label>
+	<label index="enabled">Enabled</label>
 	<label index="what">What</label>
 	<label index="where">Where</label>
 	<label index="when">When</label>
+	<label index="new">New</label>
 	<label index="until">Until</label>
 	<label index="private">Private</label>
 	<label index="start">Start</label>
@@ -99,6 +101,6 @@
 	<label index="log.fatal">Fatal Errors</label>
 	<label index="controllerError.oops">Oops!</label>
 	<label index="controllerError.info">todoyu can't handle this request</label>
-	<label index="controllerError.reason">Maybe you misstyped the URL or the requested extension has been removed</label>
+	<label index="controllerError.reason">Maybe you misstyped the URL or the requested extension has been removed? If you added a new controller- did you empty the cache?</label>
 	<label index="controllerError.goBack">Go back to todoyu</label>
 </labels>

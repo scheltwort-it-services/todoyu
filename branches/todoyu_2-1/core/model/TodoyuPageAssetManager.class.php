@@ -75,7 +75,11 @@ class TodoyuPageAssetManager {
 				'localize'	=> $localize,
 				'lib'		=> strstr($absPathToFile, PATH_LIB) !== false
 			);
+
+			return true;
 		}
+
+		return false;
 	}
 
 
@@ -91,6 +95,7 @@ class TodoyuPageAssetManager {
 	 */
 	public static function addStylesheet($pathToFile, $media = 'all', $position = 100, $compress = true, $merge = true) {
 		$pathToFile	= TodoyuFileManager::pathAbsolute($pathToFile);
+		$media		= empty($media) ? 'all' : $media;
 		$position	= intval($position) == 0 ? 100 : intval($position);
 		$compress	= $compress === false ? false : true ;
 		$merge		= $merge 	=== false ? false : true ;
@@ -634,9 +639,7 @@ class TodoyuPageAssetManager {
 	 */
 	function addInternetExplorerAssets() {
 		if( TodoyuBrowserInfo::isIE() ) {
-			self::addJavascript('core/asset/js/IE.js', 1000);
 			self::addStylesheet('core/asset/css/ie.css', 'all', 1000);
-//			self::addJavascript('lib/js/excanvas.compiled.js', 24, false, false, false);
 		}
 	}
 

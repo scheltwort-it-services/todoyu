@@ -57,17 +57,31 @@ class TodoyuTime {
 
 
 	/**
-	 * Get timestamp of start (00:00:00) of day
+	 * Get current time if time is not a number
 	 *
-	 * @param	Integer|Boolean		$timestamp
+	 * @param	Integer		$time
 	 * @return	Integer
 	 */
-	public static function getStartOfDay($timestamp = false) {
-		$timestamp = $timestamp === false ? NOW : intval($timestamp);
+	public static function time($time = 0) {
+		$time	= intval($time);
+		
+		return $time === 0 ? NOW : $time;
+	}
 
-		$month	= date('n', $timestamp);
-		$day	= date('j', $timestamp);
-		$year	= date('Y', $timestamp);
+
+
+	/**
+	 * Get timestamp of start (00:00:00) of day
+	 *
+	 * @param	Integer		$time
+	 * @return	Integer
+	 */
+	public static function getStartOfDay($time = 0) {
+		$time = self::time($time);// $time === false ? NOW : intval($time);
+
+		$month	= date('n', $time);
+		$day	= date('j', $time);
+		$year	= date('Y', $time);
 
 		return mktime(0, 0, 0, $month, $day, $year);
 	}
@@ -77,15 +91,15 @@ class TodoyuTime {
 	/**
 	 * Make timestamp for end (23:59:59) of day
 	 *
-	 * @param	Integer|Boolean		$timestamp
+	 * @param	Integer		$time
 	 * @return	Integer
 	 */
-	public static function getEndOfDay($timestamp = false) {
-		$timestamp = $timestamp === false ? NOW : intval($timestamp);
+	public static function getEndOfDay($time = 0) {
+		$time = self::time($time);
 
-		$month	= date('n', $timestamp);
-		$day	= date('j', $timestamp);
-		$year	= date('Y', $timestamp);
+		$month	= date('n', $time);
+		$day	= date('j', $time);
+		$year	= date('Y', $time);
 
 		return mktime(23, 59, 59, $month, $day, $year);
 	}
@@ -177,13 +191,14 @@ class TodoyuTime {
 	 * Get timestamp for the end of the week (last second in the week)
 	 * 23:59:59
 	 *
-	 * @param	Integer		$timestamp
+	 * @param	Integer		$time
 	 * @return	Integer
 	 */
-	public static function getWeekEnd($timestamp) {
-		$diff	= (7-date('w', $timestamp))%7;
+	public static function getWeekEnd($time = 0) {
+		$time	= self::time($time);
+		$diff	= (7-date('w', $time))%7;
 
-		return mktime(23, 59, 59, date('n', $timestamp), date('j', $timestamp) + $diff, date('Y', $timestamp));
+		return mktime(23, 59, 59, date('n', $time), date('j', $time) + $diff, date('Y', $time));
 	}
 
 
@@ -191,13 +206,13 @@ class TodoyuTime {
 	/**
 	 * Get timestamp of first day (at 00:00:00) of month
 	 *
-	 * @param	Integer	$timestamp
+	 * @param	Integer	$time
 	 * @return	Integer
 	 */
-	public static function getMonthStart($timestamp) {
-		$timestamp	= intval($timestamp);
+	public static function getMonthStart($time = 0) {
+		$time	= self::time($time);
 
-		return mktime(0, 0, 0, date('n', $timestamp), 1, date('Y', $timestamp));
+		return mktime(0, 0, 0, date('n', $time), 1, date('Y', $time));
 	}
 
 
@@ -205,11 +220,41 @@ class TodoyuTime {
 	/**
 	 * Get timestamp for end of month (last second in the month, 23:59:59)
 	 *
-	 * @param	Integer		$timestamp
+	 * @param	Integer		$time
 	 * @return	Integer
 	 */
-	public static function getMonthEnd($timestamp) {
-		return mktime(0, 0, 0, date('n', $timestamp) + 1, 1, date('Y', $timestamp)) - 1;
+	public static function getMonthEnd($time = 0) {
+		$time	= self::time($time);
+		
+		return mktime(0, 0, 0, date('n', $time) + 1, 1, date('Y', $time)) - 1;
+	}
+
+
+
+	/**
+	 * Get timestamp for start of year
+	 *
+	 * @param	Integer		$time
+	 * @return	Integer
+	 */
+	public function getYearStart($time = 0) {
+		$time	= self::time($time);
+
+		return mktime(0, 0, 0, 1, 1, date('Y', $time));
+	}
+
+
+
+	/**
+	 * Get timestamp for end of year
+	 *
+	 * @param	Integer		$time
+	 * @return	Integer
+	 */
+	public static function getYearEnd($time = 0) {
+		$time	= self::time($time);
+
+		return mktime(0, 0, 0, 1, 1, date('Y', $time)+1) - 1;
 	}
 
 
@@ -217,13 +262,14 @@ class TodoyuTime {
 	/**
 	 * Get day-number of last day of month of given timestamp
 	 *
-	 * @param	Integer		$timestamp
+	 * @param	Integer		$time
 	 * @return	Integer
 	 */
-	public static function getLastDayNumberInMonth($timestamp) {
-		$timestampLastDay	= self::getMonthEnd($timestamp);
+	public static function getLastDayNumberInMonth($time = 0) {
+		$time		= self::time($time);
+		$timeLastDay= self::getMonthEnd($time);
 
-		return date('j', $timestampLastDay);
+		return date('j', $timeLastDay);
 	}
 
 
@@ -232,13 +278,13 @@ class TodoyuTime {
 	 * Get weekday of a timestamp. Like date('w'), but starts with monday
 	 * With $mondayFirst monday will be 0 and sunday 6
 	 *
-	 * @param	Integer		$timestamp
+	 * @param	Integer		$time
 	 * @param	Boolean		$mondayFirst
 	 * @return	Integer		0 = monday, 6 = sunday
 	 */
-	public static function getWeekday($timestamp, $mondayFirst = true) {
-		$timestamp	= intval($timestamp);
-		$weekday	= date('w', $timestamp);
+	public static function getWeekday($time = 0, $mondayFirst = true) {
+		$time	= self::time($time);
+		$weekday= date('w', $time);
 
 		return $mondayFirst ? ($weekday + 6) % 7 : $weekday;
 	}
@@ -312,6 +358,19 @@ class TodoyuTime {
 
 
 	/**
+	 * @static
+	 * @param	Integer		$seconds
+	 * @return	String
+	 */
+	public static function sec2Min($seconds) {
+		$timeParts	= self::getTimeParts($seconds);
+
+		return sprintf('%02d:%02d', $timeParts['minutes'], $timeParts['seconds']);
+	}
+
+
+
+	/**
 	 * Format time values 23:59 or 23:59:59
 	 *
 	 * @param	Integer		$seconds
@@ -376,22 +435,32 @@ class TodoyuTime {
 	 * @param	Boolean		$largerUnitsThanDays	Don't format in larger unit than days?
 	 * @return	String
 	 */
-	public static function formatDuration($seconds, $largerUnitsThanDays = false) {
+	public static function formatDuration($seconds, $largerUnitsThanDays = false, $withSubunit = true) {
+		$subunit = false;
+
 		if( $largerUnitsThanDays && $seconds >= TodoyuTime::SECONDS_WEEK ) {
 				// Weeks
+			$subUnitValue	= $seconds % TodoyuTime::SECONDS_WEEK;
 			$value	= $seconds / TodoyuTime::SECONDS_WEEK;
+			if( $withSubunit == true && $subUnitValue >= TodoyuTime::SECONDS_DAY) {
+				$subunit	= self::formatDuration($subUnitValue, false, false);
+			}
 			$unit	= 'week';
 		} elseif( $seconds >= TodoyuTime::SECONDS_DAY ) {
 				// Days
-			$value	= $seconds / TodoyuTime::SECONDS_DAY;
+			$subUnitValue	= $seconds % TodoyuTime::SECONDS_DAY;
+			$value			= ($seconds - $subUnitValue) / TodoyuTime::SECONDS_DAY;
+			if( $withSubunit == true && $subUnitValue >= TodoyuTime::SECONDS_HOUR) {
+				$subunit	= self::formatDuration($subUnitValue, false, false);
+			}
 			$unit	= 'day';
 		} elseif( $seconds >= TodoyuTime::SECONDS_HOUR ) {
 				// Hours
-			$value	= $seconds / TodoyuTime::SECONDS_HOUR;
+			$value = ($withSubunit) ? self::sec2hour($seconds) : intval($seconds / TodoyuTime::SECONDS_HOUR);
 			$unit	= 'time.hour';
 		} elseif( $seconds >= TodoyuTime::SECONDS_MIN ) {
 				// Minutes
-			$value	= $seconds / TodoyuTime::SECONDS_MIN;
+			$value	= ($withSubunit) ? self::sec2Min($seconds) : intval($seconds / TodoyuTime::SECONDS_MIN);
 			$unit	= 'time.minute';
 		} else {
 				// Seconds
@@ -408,7 +477,7 @@ class TodoyuTime {
 			$unit .= 's';
 		}
 
-		return $value . ' ' . Todoyu::Label('core.date.' . $unit);
+		return $value . ' ' . Todoyu::Label('core.date.' . $unit) . ($subunit ? ' ' . $subunit : '');
 	}
 
 
@@ -457,7 +526,7 @@ class TodoyuTime {
 
 
 	/**
-	 * Parse sql date to timestamp
+	 * Parse SQL date to timestamp
 	 *
 	 * @param	String		$sqlDate
 	 * @return	Integer
@@ -518,7 +587,7 @@ class TodoyuTime {
 		$dateString	= trim($dateString);
 		$time		= 0;
 
-			// Standard date from mysql date type
+			// Standard date from MySQL date type
 		if( self::isStandardDate($dateString) ) {
 			$format	= '%Y-%m-%d';
 		} else {

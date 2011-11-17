@@ -61,7 +61,7 @@ Todoyu.Notification = {
 	 * @property	closeDelaySticky
 	 * @type		Number
 	 */
-	closeDelaySticky: 20,
+	closeDelaySticky: 15,
 
 	/**
 	 * Template object
@@ -90,8 +90,8 @@ Todoyu.Notification = {
 	 * @param	{String}		identifier		Optional identifier to remove preceding notifications of the same event
 	 */
 	notify: function(type, message, sticky, delay, identifier) {
-		delay		= delay || this.closeDelay;
-		identifier	= (identifier || '').replace('.', '-');
+		delay			= delay || this.closeDelay;
+		var identClass	= this.getIdentifierClass(identifier);
 
 		this.loadTemplate();
 
@@ -100,7 +100,7 @@ Todoyu.Notification = {
 			id:			id,
 			type:		type,
 			message:	message,
-			identifier:	identifier
+			identifier:	identClass
 		};
 
 		var note				= this.template.evaluate(data);
@@ -108,8 +108,8 @@ Todoyu.Notification = {
 		var delayBeforeAppend	= 0;
 
 			// Close preceding note(s) if any
-		if( identifier ) {
-			if( this.closeTypeNotes(identifier) ) {
+		if( identClass ) {
+			if( this.closeTypeNotes(identClass) ) {
 				delayBeforeAppend = 0.5;
 			}
 		}
@@ -123,6 +123,21 @@ Todoyu.Notification = {
 
 
 
+	/**
+	 * Convert identifier to ident clas
+	 * Replace points with dashes
+	 *
+	 * @param	{String}	identifier
+	 * @return	{String}
+	 */
+	getIdentifierClass: function(identifier) {
+		identifier	= identifier || 'r' + Math.round(Math.random() * 1000);
+
+		return identifier.replace(/\./g, '-');
+	},
+
+
+	
 	/**
 	 * Init notification HTML template
 	 *
@@ -174,7 +189,7 @@ Todoyu.Notification = {
 	 *
 	 * @method	notifyError
 	 * @param	{String}		message
-	 * @param	{String}		identifiert
+	 * @param	{String}		identifier
 	 */
 	notifyError: function(message, identifier) {
 		this.notify(this.ERROR, message, true, this.closeDelay, identifier);
@@ -285,7 +300,7 @@ Todoyu.Notification = {
 	 * @return	{Boolean}				Any old notes found and closed?
 	 */
 	closeTypeNotes: function(identifier) {
-		identifier	= identifier.replace('.', '-');
+		identifier	= this.getIdentifierClass(identifier);
 		var notes	= $('notes').select('.note-' + identifier);
 
 		if( notes.size() > 0 ) {

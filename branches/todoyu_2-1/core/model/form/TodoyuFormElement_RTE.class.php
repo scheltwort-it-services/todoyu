@@ -50,12 +50,16 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 	private function buildRTEjs() {
 		$options	= array(
 			'mode'					=> 'exact',
-			'plugins'				=> 'autoresize',
+			'plugins'				=> 'autoresize,paste',
 			'elements'				=> $this->getHtmlID(),
 			'theme'					=> 'simple',
 			'content_css'			=> 'core/asset/css/tinymce.css',
 			'valid_elements'		=> 'strong/b,em/i,p,br,u,ol,ul,li,pre,span[style]',
-			'autoresize_max_height'	=> 400
+			'autoresize_max_height'	=> 400,
+			'paste_remove_spans'	=> '--true',
+			'paste_remove_styles'	=> '--true',
+			'paste_text_linebreaktype'	=> 'p',
+			'paste_postprocess'		=> '--Todoyu.Ui.onTinyMcePasteCleanup'
 		);
 
 			// Load config
@@ -67,14 +71,27 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 
 			// Generate config code
 		$jsCode	= "tinyMCE.init({\n";
-		$tmpOpt	= array();
 
+		$tmpOpt	= array();
 		foreach($options as $name => $value) {
-			$tmpOpt[] = $name . ' : "' . $value . '"';
+			$value	= trim($value);
+			$val	= substr($value, 0, 2) === '--' ? substr($value, 2) : '"' . $value . '"';
+
+			$tmpOpt[] = $name . ' : ' . $val;
+		}
+
+			// If RTE is first field in form: focus it
+		$allFields	= parent::getForm()->getFieldnames();
+
+		$idField	= $options['elements'];
+		$idParts	= explode('-', $idField);
+		$nameField	= $idParts[0];
+
+		if( $allFields[0] === $nameField ) {
+			$tmpOpt[]	= 'auto_focus: "' . $idField . '"';
 		}
 
 		$jsCode .= implode(",\n", $tmpOpt) . "\n});\n";
-//		$jsCode .= 'Todoyu.Ui.initRTEfocus(\'' . $options['elements'] . '\');';
 
 		return $jsCode;
 	}

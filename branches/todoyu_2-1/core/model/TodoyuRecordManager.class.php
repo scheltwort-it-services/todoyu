@@ -49,9 +49,28 @@ class TodoyuRecordManager {
 
 			return $object;
 		} else {
-			TodoyuLogger::logError('Record class not found: ' . $className);
+			TodoyuLogger::logError('Record class not found: "' . $className . '", Record ID: ' . $idRecord);
 			return false;
 		}
+	}
+
+
+
+	/**
+	 * Get a list of records of a specific class
+	 *
+	 * @param	String		$className
+	 * @param	Array		$recordIDs
+	 * @return	Array		List of objects
+	 */
+	public static function getRecordList($className, array $recordIDs) {
+		$records	= array();
+
+		foreach($recordIDs as $idRecord) {
+			$records[$idRecord] = self::getRecord($className, $idRecord);
+		}
+
+		return $records;
 	}
 
 

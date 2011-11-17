@@ -167,7 +167,7 @@ class TodoyuFileManager {
 
 
 	/**
-	 * Delete given directory
+	 * Delete given directory and all contained files
 	 *
 	 * @param	String		$pathFolder
 	 * @return	Boolean
@@ -342,7 +342,7 @@ class TodoyuFileManager {
 		$content= Todoyu::render($templateFile, $data);
 
 		if( $wrapAsPhp ) {
-				// Add php start and end tag
+				// Add PHP start and end tag
 			$content= TodoyuString::wrap($content, '<?php|?>');
 		}
 
@@ -367,7 +367,7 @@ class TodoyuFileManager {
 			$fileName	= NOW . '_' . $fileName;
 		}
 
-		$targetFile	= self::pathAbsolute($storagePath . '/' . $fileName);
+		$targetFile	= self::pathAbsolute($storagePath . DIR_SEP . $fileName);
 		$fileMoved	= rename($sourceFile, $targetFile);
 
 		return $fileMoved ? $targetFile : false;
