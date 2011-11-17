@@ -395,6 +395,8 @@ class TodoyuInstallerManager {
 		self::disableInstaller();
 		self::removeIndexRedirector();
 
+		TodoyuCacheManager::clearAllCache();
+
 		TodoyuSession::remove('installer');
 
 		self::goToLogInPage();
@@ -818,6 +820,8 @@ class TodoyuInstallerManager {
 
 			// Sort by version
 		uksort($updates, 'version_compare');
+
+		var_dump($updates);
 
 			// Execute all updates which are between last and current version
 		foreach($updates as $version => $files) {
