@@ -1,4 +1,0 @@
-API Documentation:
-
-	http://www.todoyu.com/apidoc/
-	http://www.todoyu.com/index.php?id=documentation
