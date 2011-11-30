@@ -936,6 +936,19 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 		return $parentFieldsets;
 	}
 
+
+
+	/**
+	 * Check whether current elemenet is first element in form
+	 *
+	 * @return	Boolean
+	 */
+	public function isFirstElement() {
+		$allFields	= $this->getForm()->getFieldnames();
+
+		return $allFields[0] === $this->getName();
+	}
+	
 }
 
 ?>
