@@ -68,23 +68,53 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 		$customConfig	= TodoyuArray::assure($this->config['calendar']);
 		$config			= array_merge($defaultConfig, $customConfig);
 
+		$htmlID	= $this->getHtmlID();
+		$format	= $this->getFormat();
+
+			// Setup JsCal
+		$jsCode	= self::getCalendarSetupJS($config);
+		$jsCode.= self::getCalendarFormatSetupJS($htmlID, $format);
+
+			// Add onchange validation observer
+		$jsCode.= 'Todoyu.DateField.addValidator(\'' . $htmlID . '\', \'' . $format . '\');';
+
+		return TodoyuString::wrapScript($jsCode);
+	}
+
+
+
+
+	/**
+	 * Get JavaScript setup code for calendar
+	 *
+	 * @param	Array	$config
+	 * @return	String
+	 */
+	public static function getCalendarSetupJS(array $config) {
 		$jsConf	= array();
 
 		foreach($config as $key => $value) {
 			$jsConf[] = $key . ' : ' . $value;
 		}
 
-		$htmlID	= $this->getHtmlID();
-		$format	= $this->getFormat();
+		return 'Calendar.setup({' . implode(',', $jsConf) . '});';
+	}
 
-			// Setup JsCal
-		$jsCode	= 'Calendar.setup({' . implode(',', $jsConf) . '});';
-		$jsCode .= 'Todoyu.JsCalFormat["' . $htmlID . '"] = "' . $format . '";';
 
-			// Add onchange validation observer
-		$jsCode.= 'Todoyu.DateField.addValidator(\'' . $htmlID . '\', \'' . $format . '\');';
 
-		return TodoyuString::wrapScript($jsCode);
+	/**
+	 * Get JavaScript code for setting format of calendar
+	 *
+	 * @param	String	$htmlID
+	 * @param	String	$format
+	 * @return	String
+	 */
+	public static function getCalendarFormatSetupJS($htmlID, $format = '') {
+		if( empty($format) ) {
+			$format	= TodoyuTime::getFormat('date');
+		}
+
+		return 'Todoyu.JsCalFormat["' . $htmlID . '"] = "' . $format . '";';
 	}
 
 
@@ -95,12 +125,25 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 	 * @return	Array
 	 */
 	protected function getDefaultSetupOptions() {
+		return self::getSetupOptions($this->getHtmlID(), $this->getFormat());
+	}
+
+
+
+	/**
+	 * Get init options for calendar
+	 *
+	 * @param	String	$htmlID
+	 * @param	String	$format
+	 * @return	Array
+	 */
+	public static function getSetupOptions($htmlID, $format) {
 		return array(
-			'inputField'	=> '"' . $this->getHtmlID() . '"',
+			'inputField'	=> '"' . $htmlID . '"',
 			'range'			=> '[1990,2020]',
-			'ifFormat'		=> '"' . $this->getFormat() . '"',
+			'ifFormat'		=> '"' . $format . '"',
 			'align'			=> '"br"',
-			'button'		=> '"' . $this->getHtmlID() . '-calicon"',
+			'button'		=> '"' . $htmlID . '-calicon"',
 			'firstDay'		=> 1
 		);
 	}
@@ -186,24 +229,19 @@ class TodoyuFormElement_Date extends TodoyuFormElement {
 	 *
 	 * @return	Mixed		Integer or String
 	 */
-	public function getStorageData() {
-			// Check for no storage flag
-		if( $this->isNoStorageField() && $this->hasValidations() === false ) {
-			return false;
-		} else {
-			$storageData= $this->getValue();
+	protected function getStorageDataInternal() {
+		$storageData= $this->getValue();
 
-				// If storeAsDate, format in MySQL date format
-			if( $this->hasAttribute('storeAsDate') ) {
-					// Set to zero if no data entered
-				if( $storageData === false ) {
-					$storageData = '0000-00-00';
-				} else {
-					$storageData = date('Y-m-d', $storageData);
-				}
+			// If storeAsDate, format in MySQL date format
+		if( $this->hasAttribute('storeAsDate') ) {
+				// Set to zero if no data entered
+			if( $storageData === false ) {
+				$storageData = '0000-00-00';
 			} else {
-				$storageData	= intval($storageData);
+				$storageData = date('Y-m-d', $storageData);
 			}
+		} else {
+			$storageData = intval($storageData);
 		}
 
 		return $storageData;

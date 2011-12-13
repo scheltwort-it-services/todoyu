@@ -88,6 +88,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 		$this->setAttribute('nodeAttributes', $this->getAttribute('@attributes'));
 		$this->setAttribute('htmlId', $this->getForm()->makeID($this->name));
+		$this->setAttribute('disabled', isset($config['disabled']));
 
 			// Parse labels of comment fields
 		$this->setAfterFieldText($this->getAfterFieldText());
@@ -489,7 +490,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 *
 	 * @param	Mixed		$value
 	 */
-	protected function updateFormdata($value) {
+	protected function updateFormData($value) {
 		$this->getForm()->setFieldFormData($this->getName(), $value);
 	}
 
@@ -509,14 +510,27 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	/**
 	 * Get data of field to store in the database
 	 *
+	 * @param	Boolean		$force		Get the storage data, even if field is noStorage or disabled
 	 * @return	String
 	 */
-	public function getStorageData() {
-		if( $this->isNoStorageField() ) {
+	public final function getStorageData($force = false) {
+		if( !$force && ($this->isNoStorageField() || $this->isDisabled()) ) {
 			return false;
 		} else {
-			return $this->getValue();
+			return $this->getStorageDataInternal();
 		}
+	}
+
+
+
+	/**
+	 * Get storage data (internal version)
+	 * Only called if noStorageField and disabled are false
+	 *
+	 * @return	String
+	 */
+	protected function getStorageDataInternal() {
+		return $this->getValue();
 	}
 
 
@@ -552,6 +566,11 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	public final function isValid() {
 		$validations 	= $this->getValidations();
 		$formData		= $this->getForm()->getFormData();
+
+			// Don't validate disabled fields
+		if( $this->isDisabled() ) {
+			return true;
+		}
 
 			// Loop over all validators
 		foreach($validations as $validatorName => $validatorConfigs) {
@@ -606,7 +625,7 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @return	Boolean
 	 */
 	private final function runValidator($validatorName, array $validatorConfig) {
-		$isValid = TodoyuFormValidator::validate($validatorName, $this->getStorageData(), $validatorConfig, $this, $this->getForm()->getFormData());
+		$isValid = TodoyuFormValidator::validate($validatorName, $this->getStorageData(true), $validatorConfig, $this, $this->getForm()->getFormData());
 
 			// If validation failed, set error message
 		if( $isValid === false ) {
@@ -705,7 +724,11 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 	 * @return	Array
 	 */
 	public function getValidations() {
-		return is_array($this->config['validate']) ? $this->config['validate'] : array();
+		$validations	= TodoyuArray::assure($this->config['validate']);
+
+		unset($validations['comment']);
+
+		return $validations;
 	}
 
 
@@ -948,7 +971,33 @@ abstract class TodoyuFormElement implements TodoyuFormElementInterface {
 
 		return $allFields[0] === $this->getName();
 	}
-	
+
+
+
+	/**
+	 * Replace a field reference of a validator with a static value
+	 *
+	 * @param	String		$validatorName
+	 * @param	String		$value
+	 */
+	public function replaceFieldValidatorWithValue($validatorName, $value) {
+		if( isset($this->config['validate'][$validatorName]) ) {
+			unset($this->config['validate'][$validatorName]['field']);
+			$this->config['validate'][$validatorName]['value'] = $value;
+		}
+	}
+
+
+
+	/**
+	 * Remove a validator
+	 *
+	 * @param	String		$validatorName
+	 */
+	public function removeValidator($validatorName) {
+		unset($this->config['validate'][$validatorName]);
+	}
+
 }
 
 ?>

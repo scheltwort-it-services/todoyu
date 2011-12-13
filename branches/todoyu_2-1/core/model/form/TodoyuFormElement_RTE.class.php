@@ -80,9 +80,13 @@ class TodoyuFormElement_RTE extends TodoyuFormElement_Textarea {
 			$tmpOpt[] = $name . ' : ' . $val;
 		}
 
+//		if( $this->isFirstElement() ) {
+//			$tmpOpt[]	= 'auto_focus: "' . $this->getHtmlID() . '"';
+//		}
+
 		$jsCode .= implode(",\n", $tmpOpt) . "\n});\n";
 
-					// Add own callback to focus the active editor (auto_focus fails because of a bug)
+			// Add own callback to focus the active editor (auto_focus fails because of a bug)
 		if( $this->isFirstElement() && TodoyuRequest::isAjaxRequest() ) {
 			$jsCode .= 'setTimeout(function(){if(tinyMCE.activeEditor){tinyMCE.activeEditor.focus();}}, 2000);';
 		}

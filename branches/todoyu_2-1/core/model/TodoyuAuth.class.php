@@ -108,8 +108,8 @@ class TodoyuAuth {
 	 */
 	public static function login($idPerson) {
 			// Log successful login
-		TodoyuLogger::logNotice('Login person (' . $idPerson . ')', $idPerson);
-			// Generate a new session id for the logged in person
+		TodoyuLogger::logCore('Login person (' . $idPerson . ')', $idPerson);
+			// Generate a new session ID for the logged in person
 		session_regenerate_id(true);
 			// Set current person id
 		self::setPersonID($idPerson);
@@ -133,7 +133,7 @@ class TodoyuAuth {
 		TodoyuSession::clear();
 			// Delete relogin cookie
 		TodoyuCookieLogin::removeRemainLoginCookie();
-			// Generate a new session id for the logged out person
+			// Generate a new session ID for the logged out person
 		session_regenerate_id(true);
 	}
 
@@ -183,6 +183,17 @@ class TodoyuAuth {
 	 */
 	public static function isInternal() {
 		return self::getPerson()->isInternal();
+	}
+
+
+
+	/**
+	 * Check whether the current person is NOT working for the internal company
+	 *
+	 * @return  Boolean
+	 */
+	public static function isExternal() {
+		return self::getPerson()->isExternal();
 	}
 
 
@@ -256,7 +267,7 @@ class TodoyuAuth {
 
 
 	/**
-	 * Send header to inform the user that the AJAX request failed because of logout
+	 * Send header to inform the user that the AJAX request failed because of not being logged-in
 	 */
 	private static function sendNotLoggedInHeader() {
 		TodoyuHeader::sendTodoyuHeader('notLoggedIn', 1);

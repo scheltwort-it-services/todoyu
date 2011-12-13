@@ -479,9 +479,9 @@ Todoyu.Ui = {
 		var content = $(idElement);
 
 		if( content.visible() ) {
-			Effect.SlideUp( content, options );
+			Effect.SlideUp(content, options);
 		} else {
-			Effect.SlideDown( content, options );
+			Effect.SlideDown(content, options);
 		}
 
 		toggle.toggleClassName('expand');
@@ -496,8 +496,8 @@ Todoyu.Ui = {
 	 * @param	{Element}		element
 	 */
 	twinkle: function(element) {
-		Todoyu.Ui.hide( element );
-		Effect.Appear( element );
+		Todoyu.Ui.hide(element);
+		Effect.Appear(element);
 	},
 
 
@@ -515,6 +515,22 @@ Todoyu.Ui = {
 		} else {
 			return false;
 		}
+	},
+
+
+
+	/**
+	 * Detect whether capsLock is on during given keyPress event
+	 *
+	 * @method	isCapsLock
+	 * @param	{Event}		event
+	 * @return	{Boolean}
+	 */
+	isCapsLock: function(event) {
+		charCode = event.keyCode ? event.keyCode : event.which;
+ 		shiftKey = event.shiftKey ? event.shiftKey: ( charCode === 16 );
+
+		return (( charCode >= 65 && charCode <= 90) && !shiftKey) || ((charCode >= 97 && charCode <= 122) && shiftKey);
 	},
 
 
@@ -634,45 +650,6 @@ Todoyu.Ui = {
 	 */
 	addBodyClickObserver: function(func) {
 		this.bodyClickObservers.push(func);
-	},
-
-
-
-	/**
-	 * Stop event bubbling
-	 * Useful when handling onclick-events of nested elements
-	 * whose parents have onclick handlers which should be not fired than
-	 *
-	 * @method	addBodyClickObserver
-	 * @param	{Event}	event
-	 * @todo	Remove, because never used? Was a workaround for bad dom structure which was fixed meanwhile
-	 */
-	stopEventBubbling: function(event) {
-		if( event ) {
-			Event.extend(event);
-			event.stop();
-		}
-	},
-
-
-
-	/**
-	 * Simulate sending a keystroke to RTE to initialize it, so that focus is given also for special keys like [BACKSPACE], [CTRL]+[A], etc.
-	 * Necessary if there are more than one instance of tiny_mce open
-	 *
-	 * @method	initRTEfocus
-	 * @param	{Element}	textControlElement
-	 */
-	initRTEfocus: function(textControlElement) {
-		var textControl = tinyMCE.get(textControlElement);
-
-		if( textControl ) {
-				// get content
-			var tempContent = textControl.getContent();
-
-				// return content
-			textControl.setContent(tempContent);
-		}
 	},
 
 

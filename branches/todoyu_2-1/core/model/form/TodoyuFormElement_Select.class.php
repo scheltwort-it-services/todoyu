@@ -65,7 +65,7 @@ class TodoyuFormElement_Select extends TodoyuFormElement {
 	 * @return	Boolean
 	 */
 	protected function isLazyInit() {
-		return isset( $this->config['source']['lazyInit'] );
+		return isset($this->config['source']['lazyInit']);
 	}
 
 
@@ -378,7 +378,7 @@ class TodoyuFormElement_Select extends TodoyuFormElement {
 	 *
 	 * @return	String
 	 */
-	public function getStorageData() {
+	protected function getStorageDataInternal() {
 		return implode(',', $this->getValue());
 	}
 

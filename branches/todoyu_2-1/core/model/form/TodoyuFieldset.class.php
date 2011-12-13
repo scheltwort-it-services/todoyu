@@ -50,7 +50,7 @@ class TodoyuFieldset implements ArrayAccess {
 	/**
 	 * Elements of the fieldsets. Can be a mix of fieldsets and FormElements
 	 *
-	 * @var	Array
+	 * @var	TodoyuFormElement[]
 	 */
 	private $elements = array();
 
@@ -359,12 +359,13 @@ class TodoyuFieldset implements ArrayAccess {
 	 * @param	String		$fieldName
 	 * @param	String		$fieldType
 	 * @param	Array		$fieldConfig
+	 * @param	String		$position
 	 * @return	TodoyuFormElement
 	 */
-	public function addFieldElement($fieldName, $fieldType, array $fieldConfig) {
+	public function addFieldElement($fieldName, $fieldType, array $fieldConfig, $position = null) {
 		$field	= TodoyuFormFactory::createField($fieldType, $fieldName, $this, $fieldConfig);
 
-		return $this->addField($fieldName, $field);
+		return $this->addField($fieldName, $field, $position);
 	}
 
 

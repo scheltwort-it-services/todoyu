@@ -333,7 +333,7 @@ class TodoyuFormValidator {
 	/**
 	 * Check whether the checked value (date) is before another date from within $config array
 	 *
-	 * @param	String				$value				Readable date format which works with strtotime()
+	 * @param	String				$value
 	 * @param	Array				$validatorConfig	Field config array
 	 * @param	TodoyuFormElement	$formElement
 	 * @param	Array				$formData
@@ -349,20 +349,60 @@ class TodoyuFormValidator {
 		if( $value == 0 && array_key_exists('allowEmpty', $validatorConfig) ) {
 			return true;
 		}
-
-			// Validate
-		if( array_key_exists('field', $validatorConfig) ) {
-			$compareFieldName	= $validatorConfig['field'];
-			$compareValue		= $formData[$compareFieldName];
-		} else {
-			$compareValue	=	intval($validatorConfig['value']);
+		
+			// Get compare value from referenced field or value
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
 
+
 			// Convert dates to timestamps
-		$fieldDate			= intval($value);
-		$compareDate	= intval($compareValue);
+		$fieldDate	= intval($value);
+		$compareDate= intval($compareValue);
 
 		return $fieldDate < $compareDate;
+	}
+
+
+
+	/**
+	 * Get field value. Field name can be prefixed with 'parent:'.
+	 * Then it will look for the field in the parent form if it exists
+	 *
+	 * @param	TodoyuForm	$form
+	 * @param	String		$fieldName
+	 * @return	Mixed|Boolean
+	 */
+	public static function lookupFieldValue(TodoyuForm $form, $fieldName) {
+		if( substr($fieldName, 0, 7) === 'parent:' && $form->hasParentForm() ) {
+			$fieldName	= substr($fieldName, 7);
+			$form		= $form->getParentForm();
+		}
+
+		return $form->getFieldValue($fieldName);
+	}
+
+
+
+	/**
+	 * Get compare value
+	 * Either referenced field or static value from configuration
+	 * Detect which configuration is set and lookup the value
+	 *
+	 * @param	TodoyuFormElement	$formElement
+	 * @param	Array				$validatorConfig
+	 * @return	Mixed|Boolean
+	 */
+	public static function getCompareValue(TodoyuFormElement $formElement, array $validatorConfig) {
+			// Get compare value from referenced field
+		if( isset($validatorConfig['field']) ) {
+			$compareValue	= self::lookupFieldValue($formElement->getForm(), $validatorConfig['field']);
+		} else {
+			$compareValue	= $validatorConfig['value'];
+		}
+
+		return $compareValue;
 	}
 
 
@@ -378,7 +418,6 @@ class TodoyuFormValidator {
 	 * @return	Boolean
 	 */
 	public static function dateNotBefore($value, array $validatorConfig, TodoyuFormElement $formElement, array $formData) {
-
 			// Check for allowed exceptions
 		$allow	= self::checkAllow($validatorConfig, $formData);
 		if( $allow === true ) {
@@ -386,11 +425,15 @@ class TodoyuFormValidator {
 		}
 
 			// Validate
-		if( $value == 0 ) {
-			if( array_key_exists('allowEmpty', $validatorConfig) ) {
-					// Empty is allowed
-				return true;
-			}
+		if( $value == 0 && isset($validatorConfig['allowEmpty']) ) {
+				// Empty is allowed
+			return true;
+		}
+
+			// Get compare value from referenced field or value
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
 
 		return self::dateBefore($value, $validatorConfig, $formElement, $formData) === false;
@@ -417,14 +460,12 @@ class TodoyuFormValidator {
 			return true;
 		}
 
-			// Validate
-		if( array_key_exists('field', $validatorConfig) ) {
-		$compareFieldName	= $validatorConfig['field'];
-		$compareValue		= $formData[$compareFieldName];
-		} else {
-			$compareValue	= $validatorConfig['value'];
+			// Get compare value from referenced field or value
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
-
+		
 			// Convert dates to timestamps
 		$fieldDate	= intval($value);
 		$compareDate= intval($compareValue);
@@ -454,6 +495,12 @@ class TodoyuFormValidator {
 			return true;
 		}
 
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
+		}
+
+
 			// Validate
 		return self::dateAfter($value, $validatorConfig, $formElement, $formData) === false;
 	}
@@ -475,18 +522,15 @@ class TodoyuFormValidator {
 			return true;
 		}
 
-			// Validate
-		if( array_key_exists('field', $validatorConfig) ) {
-			$secondFieldName= $validatorConfig['field'];
-			$secondValue	= $formData[$secondFieldName];
-		} else {
-			$secondValue	= intval($validatorConfig['value']);
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
+		
+		$fieldDate		= intval($value);
+		$compareDate	= intval($compareValue);
 
-		$fieldDate	= intval($value);
-		$secondDate	= intval($secondValue);
-
-		return $fieldDate < $secondDate || $fieldDate === 0 || $secondDate === 0;
+		return $fieldDate < $compareDate || $fieldDate === 0 || $compareDate === 0;
 	}
 
 
@@ -506,18 +550,15 @@ class TodoyuFormValidator {
 			return true;
 		}
 
-			// Validate
-		if( array_key_exists('field', $validatorConfig) ) {
-			$secondFieldName= $validatorConfig['field'];
-			$secondValue	= $formData[$secondFieldName];
-		} else {
-			$secondValue	= intval($formData['value']);
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
+		
+		$fieldDate		= intval($value);
+		$compareDate	= intval($compareValue);
 
-		$fieldDate			= intval($value);
-		$secondDate	= intval($secondValue);
-
-		if( $fieldDate === 0 || $secondDate === 0) {
+		if( $fieldDate === 0 || $compareDate === 0) {
 			return true;
 		}
 
@@ -541,18 +582,15 @@ class TodoyuFormValidator {
 			return true;
 		}
 
-			// Validate
-		if( array_key_exists('field', $validatorConfig) ) {
-			$secondFieldName= $validatorConfig['field'];
-			$secondValue	= $formData[$secondFieldName];
-		} else {
-			$secondValue	= $validatorConfig['value'];
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
-
+		
 		$fieldDate		= intval($value);
-		$secondDate= intval($secondValue);
+		$compareDate	= intval($compareValue);
 
-		return $fieldDate > $secondDate;
+		return $fieldDate > $compareDate;
 	}
 
 
@@ -569,6 +607,11 @@ class TodoyuFormValidator {
 	public static function dateTimeNotAfter($value, array $validatorConfig, TodoyuFormElement $formElement, array $formData) {
 			// Check for allowed exceptions
 		if( self::checkAllow($validatorConfig, $formData) === true ) {
+			return true;
+		}
+
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
 			return true;
 		}
 
@@ -647,17 +690,14 @@ class TodoyuFormValidator {
 			return true;
 		}
 
-			// Validate
-		if( array_key_exists('field', $validatorConfig) ) {
-			$secondFieldName= $validatorConfig['field'];
-			$secondValue	= $formData[$secondFieldName];
-		} else {
-			$secondValue	= $validatorConfig['value'];
+		$compareValue	= self::getCompareValue($formElement, $validatorConfig);
+		if( $compareValue === false ) {
+			return true;
 		}
+		
+		$allowEmpty		= isset($validatorConfig['allowEmpty']);
 
-		$allowEmpty	= isset($validatorConfig['allowEmpty']);
-
-		$equal		= $secondValue === $value;
+		$equal		= $compareValue === $value;
 		$notEmpty	= $allowEmpty ? true : $value !== '';
 
 		return $equal && $notEmpty;

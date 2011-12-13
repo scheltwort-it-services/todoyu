@@ -274,7 +274,7 @@ class TodoyuRequest {
 	/**
 	 * Get current valid request vars
 	 * The basic request vars (ext,controller,action,area) will be processed by
-	 * the core/onload hooks. These hooks can modifiy the request vars (for login or what ever)
+	 * the core/onload hooks. These hooks can modify the request vars (for login or what ever)
 	 *
 	 * @return	Array
 	 */
@@ -292,7 +292,7 @@ class TodoyuRequest {
 	 * This is the first hook which processes the request vars
 	 *
 	 * @param	Array		$requestVars				Current request vars (may have been modified)
-	 * @param	Array		$originalRequestVars		Originaly provided request vars
+	 * @param	Array		$originalRequestVars		Originally provided request vars
 	 * @return	Array
 	 */
 	public static function hookSetDefaultRequestVars(array $requestVars, array $originalRequestVars) {
@@ -356,7 +356,7 @@ class TodoyuRequest {
 	 * @throws	TodoyuException
 	 */
 	public static function sendPostRequest($host, $getQuery = '', array $data = array(), $dataVar = 'data', array $headers = array(), $port = 80, $timeout = 10) {
-		TodoyuLogger::logDebug('Open connection to host ' . $host);
+		TodoyuLogger::logCore('Open connection to host ' . $host);
 
 			// Disable error handler
 		TodoyuErrorHandler::setActive(false);
@@ -373,7 +373,7 @@ class TodoyuRequest {
 			// Encode data
 		$postData 	= $dataVar . '=' . urlencode(json_encode($data));
 
-		TodoyuLogger::logDebug('Start sending data to host ' . $host);
+		TodoyuLogger::logCore('Start sending data to host ' . $host);
 
 			// Send HTTP headers
 		fwrite($sock, "POST /$getQuery HTTP/1.0\r\n");
@@ -392,7 +392,7 @@ class TodoyuRequest {
 		fwrite($sock, "$postData\r\n");
 		fwrite($sock, "\r\n");
 
-		TodoyuLogger::logDebug('Start reading response data from host ' . $host);
+		TodoyuLogger::logCore('Start reading response data from host ' . $host);
 
 			// Receive data
 		$content	= '';
@@ -403,7 +403,7 @@ class TodoyuRequest {
 
 		fclose($sock);
 
-		TodoyuLogger::logDebug('Closed connection to host ' . $host);
+		TodoyuLogger::logCore('Closed connection to host ' . $host);
 
 			// Parse response data
 		$requestParts	= explode("\r\n\r\n", $content, 2);
