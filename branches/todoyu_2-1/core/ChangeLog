@@ -3,6 +3,7 @@ todoyu core changelog
 core 2.1.5 - not released yet
 	* Bugfix: Add form id to template data
 	* Bugfix: Prevent disabled option to get disabled
+	* Added: TodoyuDatabase::buildInArrayQuery()
 
 core 2.1.4 - 2011-12-13
 	* Bugfix: Hovering multiple quick-info elements subsequently in direct sequence did only show the first info, no following ones
