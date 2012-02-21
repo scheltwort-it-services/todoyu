@@ -259,6 +259,19 @@ var Todoyu = {
 		return area;
 	},
 
+	
+
+	/**
+	 * Check whether given area is currently open
+	 *
+	 * @method	isInArea
+	 * @param	{String}	areaKey
+	 * @return  {Boolean}
+	 */
+	isInArea: function(areaKey) {
+		return areaKey === this.getArea();
+	},
+
 
 
 	/**
