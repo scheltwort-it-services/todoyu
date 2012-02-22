@@ -875,6 +875,33 @@ class TodoyuTime {
 
 		return mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'] + $days, $date['year']);
 	}
+
+
+
+	/**
+	 * Get index of week end day (compare to date('w')
+	 *
+	 * @return	Array
+	 */
+	public static function getWeekEndDayIndexes() {
+		return array(6, 0);
+	}
+
+
+
+	/**
+	 * Check whether a date is during the weekend
+	 *
+	 * @param	Integer		$date
+	 * @return	Boolean
+	 */
+	public static function isWeekendDate($date) {
+		$weekDay		= date('w', $date);
+		$weekendDays	= self::getWeekEndDayIndexes();
+
+		return in_array($weekDay, $weekendDays);
+	}
+
 }
 
 ?>
