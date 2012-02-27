@@ -1,5 +1,8 @@
 todoyu core changelog
 
+core 2.1.6 - not released yet
+	* Added: Todoyu.Helper.cloneObject() for deep object copy (alternative to Object.clone())
+
 core 2.1.5 - 2012-02-02
 	* Bugfix: Add form id to template data
 	* Bugfix: Prevent disabled option to get disabled
