@@ -2,6 +2,7 @@ todoyu core changelog
 
 core 2.1.6 - not released yet
 	* Bugfix: Assure object data is always an array
+	* Bugfix: Database updater problem with multiple changed field definitons
 	* Added: Todoyu.Helper.cloneObject() for deep object copy (alternative to Object.clone())
 
 core 2.1.5 - 2012-02-02

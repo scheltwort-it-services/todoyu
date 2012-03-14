@@ -252,8 +252,10 @@ class TodoyuSQLManager {
 		}
 
 			// Build queries for changed columns
-		foreach($structureDifferences['changedColumns'] as $table => $columnStructure) {
-			$queries['change'][] = self::buildChangeColumnQueriesFromStructure($table, $columnStructure);
+		foreach($structureDifferences['changedColumns'] as $table => $columnStructures) {
+			foreach($columnStructures as $columnName => $columnStructure) {
+				$queries['change'][] = self::buildChangeColumnQueriesFromStructure($table, $columnStructure);
+			}
 		}
 
 		foreach($structureDifferences['missingKeys'] as $table => $keyStructures) {
@@ -363,7 +365,6 @@ class TodoyuSQLManager {
 	 * @return	String
 	 */
 	private static function buildChangeColumnQueriesFromStructure($table, array $columnStructure) {
-		$columnStructure= array_shift($columnStructure);
 		$columnSQL		= self::buildColumnSQL($columnStructure);
 
 		$query	= 'ALTER TABLE `' . $table . '` CHANGE `' . $columnStructure['field'] . '` ' . $columnSQL;
