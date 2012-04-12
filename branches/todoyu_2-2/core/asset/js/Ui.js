@@ -55,6 +55,7 @@ Todoyu.Ui = {
 	calendarOptions: {},
 
 
+
 	/**
 	 * Get options for RTE element
 	 *
@@ -456,7 +457,7 @@ Todoyu.Ui = {
 		if( location.hash !== '') {
 			var anchor	= location.hash.substr(1);
 
-			this.scrollToAnchor.bind(this, anchor).delay(0.3);
+			this.scrollToAnchor.bind(this, anchor).delay(0.4);
 		}
 	},
 
@@ -788,7 +789,7 @@ Todoyu.Ui = {
 		this.calendarOptions[fieldConfig.inputField] = Object.clone(fieldConfig);
 
 			// Add validator if not disabled
-		if( !fieldConfig.noValidator ) {
+		if( fieldConfig.validate !== false ) {
 			Todoyu.DateField.addValidator(fieldConfig.inputField, fieldConfig.ifFormat);
 		}
 
@@ -936,6 +937,26 @@ Todoyu.Ui = {
 	 */
 	onTinyMcePasteCleanup: function(plugin, pasteObject) {
 		pasteObject.node.innerHTML = pasteObject.node.innerHTML.replace('<br />', '');
+	},
+
+
+
+	/**
+	 * @method	showInfoBalloon
+	 * @param	{String}	key
+	 */
+	showInfoBalloon: function(key) {
+		$('info-balloon-' + key).show();
+	},
+
+
+
+	/**
+	 * @method	hideInfoBalloon
+	 * @param	{String}	key
+	 */
+	hideInfoBalloon: function(key) {
+		$('info-balloon-' + key).hide();
 	}
 
 };
