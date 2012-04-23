@@ -312,10 +312,10 @@ class TodoyuArray {
 	 *
 	 * Only keep items which have a uid between 1 and 9 AND have 352, 80, 440 or 240 pages
 	 *
-	 * $products	= $this->getArray('*', 'ext_shop_products');
+	 * $products	= Todoyu::db()->getArray('*', 'ext_shop_products');
 	 * $filter		= array('uid'	=> array(1,2,3,4,5,6,7,8,9),
 	 *						'pages'	=> array(352,80,440,240));
-	 * $filteredProducts = tx_sfp::arrayFilter($prodcuts, $filter);
+	 * $filteredProducts = TodoyuArray::filter($prodcuts, $filter);
 	 *
 	 *
 	 * @param	Array		$dataArray			Array with the element which are checked against the filter
@@ -632,6 +632,25 @@ class TodoyuArray {
 		$merged		= call_user_func_array('array_merge', $funcArgs);
 
 		return array_values(array_unique($merged));
+	}
+
+
+
+	/**
+	 * Merge data from $fallbackData into $baseData if not set or empty
+	 *
+	 * @param	Array		$baseData
+	 * @param	Array		$fallbackData
+	 * @return	Array
+	 */
+	public static function mergeEmptyFields(array $baseData, array $fallbackData) {
+		foreach($fallbackData as $key => $value) {
+			if( !isset($baseData[$key]) || empty($baseData[$key]) ) {
+				$baseData[$key] = $fallbackData[$key];
+			}
+		}
+
+		return $baseData;
 	}
 
 

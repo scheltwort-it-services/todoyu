@@ -41,7 +41,7 @@ class TodoyuString {
 	/**
 	 * Check whether the given string has an upper-cased first letter
 	 *
-	 * @param	String	$word
+	 * @param	String		$string
 	 * @return	Boolean
 	 */
 	public static function isUcFirst($string) {
@@ -186,6 +186,18 @@ class TodoyuString {
 
 
 	/**
+	 * Remove all whitespace from given string
+	 *
+	 * @param	String	$string
+	 * @return	String
+	 */
+	public static function removeAllWhitespace($string) {
+		return preg_replace('/\s+/','',$string);
+	}
+
+
+
+	/**
 	 * Wrap string with given pipe-separated wrapper string, e.g. HTML tags
 	 *
 	 * @param	String	$string
@@ -236,6 +248,8 @@ class TodoyuString {
 		$text	= str_replace(array("\n", "\r"), '', $text);
 		$text	= self::br2nl($text);
 		$text	= str_replace('</p>', "\n\n", $text);
+		$text	= str_replace('</li>', "\n", $text);
+		$text	= str_replace('<li>', ' - ', $text);
 		$text	= strip_tags($text);
 
 		if( $decodeEntity ) {
@@ -481,7 +495,7 @@ class TodoyuString {
 	 * @return	String
 	 */
 	public static function wrapScript($jsCode) {
-		return '<script language="javascript" type="text/javascript">' . $jsCode . '</script>';
+		return '<script type="text/javascript">' . $jsCode . '</script>';
 	}
 
 
@@ -489,21 +503,23 @@ class TodoyuString {
 	/**
 	 * Build an URL with given parameters prefixed with todoyu path
 	 *
-	 * @param	Array		$params		Parameters as key=>value
-	 * @param	String		$hash		Hash (#hash)
-	 * @param	Boolean		$absolute	Absolute URL with host server
+	 * @param	Array		$params			Parameters as key=>value
+	 * @param	String		$hash			Hash (#hash)
+	 * @param	Boolean		$absolute		Absolute URL with host server
+	 * @param	Boolean		$dontEncode		Don't encode html entities (use & instead of &amp; as argument separator)
 	 * @return	String
 	 */
-	public static function buildUrl(array $params = array(), $hash = '', $absolute = false) {
-		$query	= '/' . ltrim(rtrim(PATH_WEB, '/\\') . '/index.php', '/');
-		
+	public static function buildUrl(array $params = array(), $hash = '', $absolute = false, $dontEncode = false) {
+		$query			= '/' . ltrim(PATH_WEB . '/index.php', '/');
+		$argSeparator	= $dontEncode ? '&' : '&amp;';
+
 			// Add question mark if there are query parameters
 		if( sizeof($params) > 0 ) {
 			$query .= '?';
 		}
 
 			// Add all parameters encoded
-		$query .= http_build_query($params);
+		$query .= http_build_query($params, null, $argSeparator);
 
 			// Add hash
 		if( ! empty($hash) ) {
@@ -775,8 +791,7 @@ class TodoyuString {
 	 * @param	String	$bcc
 	 * @return	String
 	 */
-	public static function getMailtoTag($emailAddress, $label = '', $returnAsArray = false, $subject = '', $mailBody = '', $cc ='', $bcc = '') {
-		$attributes	= array();
+	public static function buildMailtoATag($emailAddress, $label = '', $returnAsArray = false, $subject = '', $mailBody = '', $cc ='', $bcc = '') {
 		$linkParts	= array();
 
 		if( $subject ) {
@@ -792,13 +807,13 @@ class TodoyuString {
 			$linkParts[] = 'ccc=' . $bcc;
 		}
 
-		$attributes['href']	= 'mailto:' . $emailAddress . '?' . implode('&', $linkParts);
+		$url				= 'mailto:' . $emailAddress . '?' . implode('&', $linkParts);
 
 		if( $label === '' ) {
 			$label = $emailAddress;
 		}
 
-		$aTag	= self::buildHtmlTag('a', $attributes, $label);
+		$aTag	= self::buildATag($url, $label);
 
 		if( $returnAsArray ) {
 			return array(
@@ -820,11 +835,14 @@ class TodoyuString {
 	 * @param	String	$target
 	 * @return	String
 	 */
-	public static function getATag($url, $label, $target = '_blank') {
+	public static function buildATag($url, $label, $target = '') {
 		$attributes	= array(
-			'href'	=> $url,
-			'target'=> $target
+			'href'	=> $url
 		);
+
+		if( $target ) {
+			$attributes['target'] = $target;
+		}
 
 		return self::buildHtmlTag('a', $attributes, $label);
 	}
@@ -977,7 +995,7 @@ class TodoyuString {
 			case 'double';
 				break;
 			case 'string':
-				$value = '\'' . $value . '\'';
+				$value = '\'' . addslashes($value) . '\'';
 				break;
 			case 'NULL':
 				$value = 'null';
@@ -1002,13 +1020,13 @@ class TodoyuString {
 	/**
 	 * Convert an array to it's php code representation
 	 *
-	 * @param	Array		$data
+	 * @param	Array		$array
 	 * @return	String
 	 */
-	public static function toPhpCodeArray(array $data) {
+	public static function toPhpCodeArray(array $array) {
 		$pairs	= array();
 
-		foreach($data as $key => $value) {
+		foreach($array as $key => $value) {
 			$pairs[] = self::toPhpCode($key) . '=>' . self::toPhpCode($value);
 		}
 
@@ -1038,7 +1056,7 @@ class TodoyuString {
 	 * @param	String		$pathString
 	 * @return	String
 	 */
-	public static function removePathInfos($pathString) {
+	public static function removePathParts($pathString) {
 		return pathinfo($pathString, PATHINFO_FILENAME);
 	}
 

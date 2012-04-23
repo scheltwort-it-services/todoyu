@@ -312,7 +312,7 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testWrapscript() {
 		$script	= 'var x = 44;';
-		$expect	= '<script language="javascript" type="text/javascript">' . $script . '</script>';
+		$expect	= '<script type="text/javascript">' . $script . '</script>';
 		$result	= TodoyuString::wrapscript($script);
 
 		$this->assertEquals($expect, $result);
@@ -345,41 +345,56 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 	}
 
 
+	public function testToPhpCodeString() {
+		// no test, see testToPhpCode()
+	}
+
 
 	/**
 	 * Test phpCodeString
 	 */
-	public function testToPhpCodeString() {
+	public function testToPhpCode() {
 		$var1	= 'already a string';
 		$expect1= "'already a string'";
-		$result1= TodoyuString::toPhpCodeString($var1);
+		$result1= TodoyuString::toPhpCode($var1);
 
 		$var2	= 12345;
 		$expect2= '12345';
-		$result2= TodoyuString::toPhpCodeString($var2);
+		$result2= TodoyuString::toPhpCode($var2);
 
 		$var3	= 123.45;
 		$expect3= '123.45';
-		$result3= TodoyuString::toPhpCodeString($var3);
+		$result3= TodoyuString::toPhpCode($var3);
 
 		$var4	= array(1,2,3);
 		$expect4= 'array(0=>1,1=>2,2=>3)';
-		$result4= TodoyuString::toPhpCodeString($var4);
+		$result4= TodoyuString::toPhpCode($var4);
 
 		$var5	= array('a' => 1, 'b' => 'test', 3 => 'xxx');
 		$expect5= 'array(\'a\'=>1,\'b\'=>\'test\',3=>\'xxx\')';
-		$result5= TodoyuString::toPhpCodeString($var5);
+		$result5= TodoyuString::toPhpCode($var5);
 
-		$var5	= new stdClass();
-		$var5->member	= 'tes\'t';
-		$expect5= 'unserialize(stripslashes(\'O:8:\"stdClass\":1:{s:6:\"member\";s:5:\"tes\\\'t\";}\'))';
-		$result5= TodoyuString::toPhpCodeString($var5);
-
+		$var6	= new stdClass();
+		$var6->member	= 'tes\'t';
+		$expect6= 'unserialize(\'O:8:"stdClass":1:{s:6:"member";s:5:"tes\'t";}\')';
+		$result6= TodoyuString::toPhpCode($var6);
+		
 		$this->assertEquals($expect1, $result1);
 		$this->assertEquals($expect2, $result2);
 		$this->assertEquals($expect3, $result3);
 		$this->assertEquals($expect4, $result4);
 		$this->assertEquals($expect5, $result5);
+		$this->assertEquals($expect6, $result6);
+	}
+
+
+	public function testToPhpCodeArray() {
+		$array	= array('a' => 1, 'b' => 'test', 3 => 'xxx');
+		$expect	= 'array(\'a\'=>1,\'b\'=>\'test\',3=>\'xxx\')';
+
+		$result	= TodoyuString::toPhpCodeArray($array);
+
+		$this->assertEquals($expect, $result);
 	}
 
 
@@ -388,30 +403,24 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 	 * Test buildUrl
 	 */
 	public function testBuildUrl() {
-//		$params	= array(
-//			'a'	=> 'alpha',
-//			'b'	=> 'beta',
-//			'g'	=> 'gamma'
-//		);
-//		$hash	= 'task-123';
-//
-//			// Check relative URL
-//		$result1	= TodoyuString::buildUrl($params, $hash);
-//		$expect1	= '/index.php?a=alpha&b=beta&g=gamma#task-123';
-//
-//		$this->assertEquals($expect1, $result1);
-//
-//			// Check absolute URL
-//		$result2	= TodoyuString::buildUrl($params, $hash, true);
-//		$expect2	= SERVER_URL . '/index.php?a=alpha&b=beta&g=gamma#task-123';
-//
-//		$this->assertEquals($expect2, $result2);
-
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-			'This test has not been implemented yet.'
+		$params	= array(
+			'a'	=> 'alpha',
+			'b'	=> 'beta',
+			'g'	=> 'gamma'
 		);
+		$hash	= 'task-123';
 
+			// Check relative URL
+		$result1	= TodoyuString::buildUrl($params, $hash, false, true);
+		$expect1	= PATH_WEB . '/index.php?a=alpha&b=beta&g=gamma#task-123';
+
+		$this->assertEquals($expect1, $result1);
+
+			// Check absolute URL
+		$result2	= TodoyuString::buildUrl($params, $hash, true);
+		$expect2	= TODOYU_URL . '/index.php?a=alpha&amp;b=beta&amp;g=gamma#task-123';
+
+		$this->assertEquals($expect2, $result2);
 	}
 
 
@@ -436,13 +445,18 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Test getATag
 	 */
-	public function testGetATag() {
-		$url	= 'unit/test.html';
-		$label	= 'Link Text';
-		$expect	= '<a href="' . $url . '" target="_blank">' . $label . '</a>';
-		$result	= TodoyuString::getATag($url, $label);
+	public function testbuildATag() {
+		$url		= 'unit/test.html';
+		$label		= 'Link Text';
 
-		$this->assertEquals($expect, $result);
+		$expect1	= '<a href="' . $url . '">' . $label . '</a>';
+		$result1	= TodoyuString::buildATag($url, $label);
+
+		$expect2	= '<a href="' . $url . '" target="_customFrame">' . $label . '</a>';
+		$result2	= TodoyuString::buildATag($url, $label, '_customFrame');
+
+		$this->assertEquals($expect1, $result1);
+		$this->assertEquals($expect2, $result2);
 	}
 
 
@@ -450,7 +464,7 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Test getMailtoTag
 	 */
-	public function testGetMailtoTag() {
+	public function testBuildMailtoATag() {
 		$email	= 'team@todoyu.com';
 		$label	= 'Send message to todoyu team';
 		$subject= 'Mail Subject';
@@ -458,7 +472,7 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 		$cc		= 'sales@todoyu.com';
 
 		$expect	= '<a href="mailto:' . $email . '?subject=' . urlencode($subject) . '&body=' . urlencode($content) . '&cc=' . $cc . '">' . $label . '</a>';
-		$result	= TodoyuString::getMailtoTag($email, $label, false, $subject, $content, $cc);
+		$result	= TodoyuString::buildMailtoATag($email, $label, false, $subject, $content, $cc);
 
 		$this->assertEquals($expect, $result);
 	}
@@ -619,11 +633,10 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 			'ext'		=> 'project',
 			'controller'=> 'test',
 		);
-		$expect1	= '<a href="' . PATH_WEB . '/index.php?ext=project&controller=test">Link Text</a>';
+		$expect1	= '<a href="' . PATH_WEB . '/index.php?ext=project&amp;controller=test">Link Text</a>';
 		$result1	= TodoyuString::wrapTodoyuLink('Link Text', 'project', $params1);
 
 		$this->assertEquals($expect1, $result1);
-
 
 			// Check wrapped link with hash parameter and target attribute
 		$params2	= array(
@@ -631,7 +644,7 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 			'controller'	=> 'test',
 			'action'		=> 'foo'
 		);
-		$expect2	= '<a href="' . PATH_WEB . '/index.php?ext=project&controller=test&action=foo#myHash" target="_blank">Link</a>';
+		$expect2	= '<a href="' . PATH_WEB . '/index.php?ext=project&amp;controller=test&amp;action=foo#myHash" target="_blank">Link</a>';
 		$result2	= TodoyuString::wrapTodoyuLink('Link', 'project', $params2, 'myHash', '_blank');
 
 		$this->assertEquals($expect2, $result2);
@@ -703,6 +716,63 @@ class TodoyuStringTest extends PHPUnit_Framework_TestCase {
 		$this->assertRegExp('/[a-z]/', $password);
 		$this->assertRegExp('/[A-Z]/', $password);
 		$this->assertRegExp('/[#&@$_%?+-]/', $password);
+	}
+
+
+	public function testRemovePathParts() {
+		$input1		= '/etc/passwd';
+		$expect1	= 'passwd';
+		$result1	= TodoyuString::removePathParts($input1);
+
+		$input2		= '../../../other/folder/file.txt';
+		$expect2	= 'file';
+		$result2	= TodoyuString::removePathParts($input2);
+
+		$this->assertEquals($expect1, $result1);
+		$this->assertEquals($expect2, $result2);
+	}
+
+
+	public function testEndsWith() {
+		$text	= 'Hallo World';
+
+		$isEnding	= TodoyuString::endsWith($text, 'World');
+		$notEnding	= TodoyuString::endsWith($text, 'todoyu');
+
+		$this->assertTrue($isEnding);
+		$this->assertFalse($notEnding);
+	}
+
+	public function testIsUcFirst() {
+		$text1	= 'Hello World';
+		$text2	= 'hello world';
+
+		$isUcFirst	= TodoyuString::isUcFirst($text1);
+		$notUcFirst	= TodoyuString::isUcFirst($text2);
+
+		$this->assertTrue($isUcFirst);
+		$this->assertFalse($notUcFirst);
+	}
+
+
+	public function testIsContainingHtml() {
+		$textHtml	= 'test <strong>strong</strong>';
+		$textPlain	= 'test not strong';
+
+		$hasHtml	= TodoyuString::isContainingHTML($textHtml);
+		$noHtml		= TodoyuString::isContainingHTML($textPlain);
+
+		$this->assertTrue($hasHtml);
+		$this->assertFalse($noHtml);
+	}
+
+
+	public function testRemoveAllWhitespace() {
+		$text	= ' 	 d df ad	sdfasdf   ';
+		$expect	= 'ddfadsdfasdf';
+		$result	= TodoyuString::removeAllWhitespace($text);
+
+		$this->assertEquals($expect, $result);
 	}
 
 }

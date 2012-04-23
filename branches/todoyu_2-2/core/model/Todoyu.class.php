@@ -94,7 +94,7 @@ class Todoyu {
 		self::db();
 
 			// Add autoloader clear cache hook
-		TodoyuHookManager::registerHook('core', 'clearCache', 'TodoyuAutoloader::clearCacheHook');
+		TodoyuHookManager::registerHook('core', 'clearCache', 'TodoyuAutoloader::hookClearCache');
 	}
 
 
@@ -355,7 +355,7 @@ class Todoyu {
 	 *
 	 * @param	String			$template		Path to template file (or a template object)
 	 * @param	Array			$data			Data for template rendering
-	 * @param	Dwoo_ICompiler	$compiler		Custom compiler
+	 * @param	Dwoo_Compiler	$compiler		Custom compiler
 	 * @param	Boolean			$output			Output directly with echo
 	 * @return	String			Rendered template
 	 */

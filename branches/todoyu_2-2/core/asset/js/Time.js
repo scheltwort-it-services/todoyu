@@ -188,29 +188,31 @@ Todoyu.Time = {
 
 
 	/**
-	 * Get timestamp at start of week (being sunday or monday depending on system config)
+	 * Get date at start of week (being sunday or monday depending on system config)
 	 *
 	 * @method	getWeekStart
 	 * @param	{Date}		date
 	 * @return	{Date}
 	 */
 	getWeekStart: function(date) {
+		var newDate, shiftByDays;
 		date.setHours(0);
 		date.setMinutes(0);
 		date.setSeconds(0);
 
-		var newTime = parseInt(date.getTime() / 1000, 10);
-		var shift = (((date.getDay() % 7) - 1) * -1);
-
-			// Adjust 1st day of week from monday to sunday
-		var firstDayIsSunday	=  Todoyu.Config.system.firstDayOfWeek === 0;
-		if( firstDayIsSunday ) {
-			shift = shift -1;
+		if( date.getDay() !== Todoyu.Config.system.firstDayOfWeek ) {
+				// Adjust 1st day of week from monday to sunday
+			if( Todoyu.Config.system.firstDayOfWeek === 0 ) {
+				shiftByDays = date.getDay();
+			} else {
+				shiftByDays = (date.getDay()+6) % 7;
+			}
+			newDate = date.addDays(-shiftByDays, true);
+		} else {
+			newDate = new Date(date);
 		}
 
-		newTime += shift * this.seconds.day;
-
-		return new Date(newTime*1000);
+		return newDate;
 	},
 
 
@@ -357,7 +359,34 @@ Todoyu.Time = {
 		var compareDate1	= dateString1.replace(/0*(\d*)/gi,"$1").replace(/0{1,2}:0{1,2}/gi, '').strip();
 		var compareDate2	= dateString2.replace(/0*(\d*)/gi,"$1").replace(/0{1,2}:0{1,2}/gi, '').strip();
 
+		compareDate1		= this.reduceYear(compareDate1);
+		compareDate2		= this.reduceYear(compareDate2);
+
 		return compareDate1 === compareDate2;
+	},
+
+	
+
+	/**
+	 * Reduce year to two digit year for better comparison
+	 * 2012 => 12
+	 * 12	=> 12
+	 *
+	 * @param	{String}	dateString
+	 * @return	{String}
+	 */
+	reduceYear: function(dateString) {
+		var dateParts	= dateString.split(/\W+/);
+		var yearPart	= dateParts.find(function(datePart){
+			return datePart > 1000;
+		});
+
+		if( yearPart ) {
+			var smallYear = yearPart.substr(2);
+			dateString = dateString.replace(yearPart, smallYear);
+		}
+
+		return dateString;
 	},
 
 
