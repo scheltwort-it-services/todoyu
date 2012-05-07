@@ -1,5 +1,8 @@
 todoyu core changelog
 
+core 2.2.1 - not released yet
+	* Bugfix: TodoyuSql::buildInListQueryPart() value when negated and input is empty
+
 core 2.2.0 - 2012-05-03
 	* Added: Parity of list items in widgets is refreshed on drop/resort
 	* Added: Balloon info rendering, style and JS
