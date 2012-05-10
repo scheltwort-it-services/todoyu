@@ -5,6 +5,8 @@ core 2.2.1 - not released yet
 	* Bugfix: Duration Pickers configuration failed
 	* Bugfix: Class for fieldset didn't work properly/clean
 	* Added: Form element time was not available
+	* Added: Todoyu.Form.isFirstInputInForm()
+	* Changed: Use js version instead of php the check for the first input in form
 	* Changed: Update form XSD validation to match know field types only
 	* Changed: Created instances for parsing form xml files to prevent overlapping when multiple forms are parsed parallel
 	* Changed: Group label of selectgrouped is now parsed as label
