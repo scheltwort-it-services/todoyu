@@ -12,6 +12,7 @@ core 2.2.1 - not released yet
 	* Changed: Group label of selectgrouped is now parsed as label
 	* Changed: Removed unused parameter $preParseValues from form instantiation
 	* Changed: Added $formData as default $params value in form instantiation
+	* Library: Highcharts 2.2.3
 
 
 core 2.2.0 - 2012-05-03
