@@ -8,6 +8,8 @@ core 2.2.1 - not released yet
 	* Changed: Update form XSD validation to match know field types only
 	* Changed: Created instances for parsing form xml files to prevent overlapping when multiple forms are parsed parallel
 	* Changed: Group label of selectgrouped is now parsed as label
+	* Changed: Removed unused parameter $preParseValues from form instantiation
+	* Changed: Added $formData as default $params value in form instantiation
 
 
 core 2.2.0 - 2012-05-03
