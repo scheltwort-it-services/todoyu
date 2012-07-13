@@ -82,7 +82,7 @@ require_once( PATH_LIB . '/php/FirePHPCore/FirePHP.class.php' );
 spl_autoload_register( array('TodoyuAutoloader', 'load') );
 
 	// Register error handler
-set_error_handler(array('TodoyuErrorHandler', 'handleError'));
+//set_error_handler(array('TodoyuErrorHandler', 'handleError'));
 
 	// Load global functions @todo: Only load dwoo plugins when needed
 require_once( PATH_CORE . '/inc/version.php' );

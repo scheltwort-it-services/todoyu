@@ -4,6 +4,7 @@ core 2.2.1 - not released yet
 	* Bugfix: TodoyuSql::buildInListQueryPart() value when negated and input is empty
 	* Bugfix: Duration Pickers configuration failed
 	* Bugfix: Class for fieldset didn't work properly/clean
+	* Bugfix: Contenttab did not store selected tab correctly
 	* Added: Form element time was not available
 	* Added: Todoyu.Form.isFirstInputInForm()
 	* Changed: Use js version instead of php the check for the first input in form
