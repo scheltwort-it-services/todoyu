@@ -5,6 +5,10 @@ core 2.2.1 - not released yet
 	* Bugfix: Duration Pickers configuration failed
 	* Bugfix: Class for fieldset didn't work properly/clean
 	* Bugfix: Contenttab did not store selected tab correctly
+	* Bugfix: Add tab key as class name for content item tabs
+	* Bugfix: Active item tabs are unique
+	* Bugfix: Auto linking found also background image source as link
+	* Bugfix: isRequired() checks now for available field and for false value
 	* Added: Form element time was not available
 	* Added: Todoyu.Form.isFirstInputInForm()
 	* Changed: Use js version instead of php the check for the first input in form
