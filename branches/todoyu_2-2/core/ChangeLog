@@ -1,6 +1,6 @@
 todoyu core changelog
 
-core 2.2.1 - not released yet
+core 2.2.1 - 2012-07-20
 	* Bugfix: TodoyuSql::buildInListQueryPart() value when negated and input is empty
 	* Bugfix: Duration Pickers configuration failed
 	* Bugfix: Class for fieldset didn't work properly/clean
