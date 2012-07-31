@@ -29,3 +29,26 @@ INSTRUCTIONS TO UPGRADE AN EXISTING todoyu VERSION
 6. Open todoyu in your browser, you will be redirected to the update dialog.
 7. Follow the update instructions.
 8. Enjoy the new features ;-)
+
+
+
+Things to do if you're upgrading from a version prior to v2.2.0
+----------------------------------------------------------------
+* With v2.2.0 the two extensions "sysmanager" and "admin", are merged inside the sysmanager extension. 
+Please delete the folder ext/admin and make sure that the list of installed extensions inside the 
+file config/extensions.php does not contain the "admin" item any more.
+
+* In the system configuration inside todoyu's sysmanager area you can define the first day of a week. 
+
+* The comment extension now includes presets which you can define as comment fallback records.
+
+* Please setup the following rights in todoyu's sysmanager area:
+	-Comment Extension - Right "Request Feedback" moved to general rights
+	-Comment Extension - Right "Send Comment by Email" moved to general rights
+	-Comment Extension - New Feedback form rights
+	-Comment Extension - New Send as Email to rights
+	-Project Extension - Rigths for the new task status "waiting" added
+	 		     "see", "add", "edit", "edit detail", "change status" from/to 
+	-Sysmanager Extension - New right to use rights manager
+	-Sysmanager Extension - Various new rights for extension settings and roles management
+	
