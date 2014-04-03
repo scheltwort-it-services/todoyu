@@ -806,7 +806,7 @@ Todoyu.Ui = {
 		tinyMCE.init(options);
 
 		if( config.focus && Todoyu.Form.isFirstInputInForm(idElement) ) {
-			this.setFocusOnActiveRTE.bind(this).delay(2);
+			this.setFocusOnActiveRTE.bind(this).delay(0.1);
 		}
 	},
 
@@ -821,7 +821,7 @@ Todoyu.Ui = {
 		if( tinyMCE.activeEditor ) {
 			tinyMCE.activeEditor.focus();
 		} else {
-			this.setFocusOnActiveRTE.bind(this).delay(1);
+			this.setFocusOnActiveRTE.bind(this).delay(0.1);
 		}
 	},
 
