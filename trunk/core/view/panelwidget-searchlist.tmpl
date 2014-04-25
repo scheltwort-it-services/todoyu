@@ -8,7 +8,7 @@
 
 {foreach $items item}
 	<li id="panelwidget-{$id}-item-{$item.id}" class="{$item.class}">
-		<a href="javascript:void(0)" {if $item.title}title="{$item.title}"{/if}>
+		<a href="javascript:void(0)" {if $item.title}title="{htmlencode $item.title}"{/if}>
 			{htmlencode $item.label}
 		</a>
 	</li>
