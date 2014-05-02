@@ -136,8 +136,10 @@ Todoyu.Tabs = {
 
 		var tabWidth, tabLabelEl, tabLabel, shortenedLabel = postFix.length;
 
-			// Remove chars until the total width is not any more larger than maxWidth 
-		while( totalWidth > this.maxWidth ) {
+			// Remove chars until the total width is not any more larger than maxWidth
+		var previousWidth = 0;
+		while ((totalWidth > this.maxWidth) && (previousWidth != totalWidth)) {
+			previousWidth = totalWidth;
 			tooLongTabs.each(function(tab, index) {
 				tabWidth	= parseInt(tab.getWidth(), 10);
 					// Is tab longer than the crop width?
