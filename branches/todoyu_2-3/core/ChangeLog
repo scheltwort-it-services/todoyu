@@ -3,6 +3,8 @@ todoyu core changelog
 core 2.3.2 - not released yet
 	* Added: Indonesian Language. Credits to Abdush Shomad.
 	* Changed: Reduced delay for RTE initialization
+	* Bugfix: Html encode title attribute
+	* Bugfix: Fixed crop-method for tabs. Prevents endless-loops
 
 core 2.3.1 - 2013-12-31
 	* Added: Enlarged width of rte - input
