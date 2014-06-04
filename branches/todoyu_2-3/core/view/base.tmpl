@@ -48,7 +48,7 @@
 
 {include "core/view/footer.tmpl"}
 
-<ul id="contextmenu"></ul>
+<ul id="contextmenu" onmousemove="Todoyu.ContextMenu.onMouseMove(event)" onmouseover="Todoyu.ContextMenu.onMouseOver(event)" onmouseout="Todoyu.ContextMenu.onMouseOut(event)"></ul>
 
 {if $jsInlines}
 <script type="text/javascript">

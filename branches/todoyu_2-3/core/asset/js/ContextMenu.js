@@ -35,7 +35,7 @@ Todoyu.ContextMenu = {
 	bodyClickObserver: null,
 
 	/**
-	 * Currently visible sub menu (for the delay workaround)
+	 * Currently visible sub menu
 	 */
 	visibleSubmenu: null,
 
@@ -43,6 +43,28 @@ Todoyu.ContextMenu = {
 	 * Timeout callback for sub menu (for the delay workaround)
 	 */
 	hideSubmenuDelay: null,
+
+	/**
+	 * @var {Object}
+	 */
+	Mouse: {
+		posX: 0,
+		posY: 0,
+		previousPosX: 0,
+		previousPosY: 0
+	},
+
+	/**
+	 * @var {Integer}
+	 */
+	timeoutId: null,
+
+	/**
+	 * Currently hovered submenu
+	 *
+	 * @var {String}
+	 */
+	hoveredSubmenu: null,
 
 
 
@@ -298,21 +320,17 @@ Todoyu.ContextMenu = {
 				itemOffset		= menuItem.viewportOffset(),
 				subMenuHeight	= subMenuItem.getHeight(),
 				subMenuWidth	= subMenuItem.getWidth(),
-				subMenuLeft		= menuItem.getWidth() - 5,
-				subMenuTop		= itemOffset.top - menuOffset.top + 5;
+				subMenuLeft		= menuItem.getWidth(),
+				subMenuTop		= itemOffset.top - menuOffset.top ;
 
 				// Fix top position
 			if( subMenuHeight + itemOffset.top > document.viewport.getHeight() ) {
 				subMenuTop	= subMenuTop - subMenuHeight + 20;
-			} else {
-				subMenuTop	+= 5;
 			}
 
 				// Fix left position
 			if( subMenuWidth + itemOffset.left + menuItem.getWidth() > document.viewport.getWidth() ) {
 				subMenuLeft	= subMenuLeft - subMenuWidth - menuItem.getWidth()  + 10;
-			} else {
-				subMenuLeft	-= 5;
 			}
 
 			subMenuItem.setStyle({
@@ -333,6 +351,81 @@ Todoyu.ContextMenu = {
 		}
 
 		return true;
+	},
+
+
+
+	/**
+	 * Detects mouse movements within the context menu
+	 *
+	 * @method	onMouseMove
+	 * @param	{Event}			event	MouseEvent
+	 */
+	onMouseMove: function(event) {
+		Todoyu.ContextMenu.Mouse.posX = event.clientX;
+		Todoyu.ContextMenu.Mouse.posY = event.clientY;
+	},
+
+
+
+	/**
+	 * Called when the mouse enters the context menu
+	 *
+	 * @method	onMouseOver
+	 */
+	onMouseOver: function() {
+		Todoyu.ContextMenu.detectMouseMovement();
+	},
+
+
+
+	/**
+	 * Called when the mouse leaves the context menu
+	 *
+	 * @method	onMouseOut
+	 */
+	onMouseOut: function() {
+		clearTimeout(Todoyu.ContextMenu.timeoutId);
+	},
+
+
+
+	/**
+	 * This method detects the mouse movement and hides or shows the corresponding submenus
+	 *
+	 * @method	detectMouseMovement
+	 */
+	detectMouseMovement: function() {
+		if ( Todoyu.ContextMenu.visibleSubmenu !== Todoyu.ContextMenu.hoveredSubmenu && !Todoyu.ContextMenu.isMouseMovingRightAndDown() ) {
+			Todoyu.ContextMenu.submenu(Todoyu.ContextMenu.visibleSubmenu, false, true); //hide previous submenu
+			Todoyu.ContextMenu.submenu(Todoyu.ContextMenu.hoveredSubmenu, true, true); //show current submenu
+		}
+
+		Todoyu.ContextMenu.Mouse.previousPosX = Todoyu.ContextMenu.Mouse.posX;
+		Todoyu.ContextMenu.Mouse.previousPosY = Todoyu.ContextMenu.Mouse.posY;
+
+		Todoyu.ContextMenu.timeoutId = setTimeout(Todoyu.ContextMenu.detectMouseMovement, 100);
+	},
+
+
+
+	/**
+	 * @method	isMouseMovingRightAndDown
+	 * @return	{Boolean}
+	 */
+	isMouseMovingRightAndDown: function() {
+		return	Todoyu.ContextMenu.Mouse.previousPosX < Todoyu.ContextMenu.Mouse.posX
+			&& 	Todoyu.ContextMenu.Mouse.previousPosY < Todoyu.ContextMenu.Mouse.posY;
+	},
+
+
+
+	/**
+	 * @method	setHoveredSubmenu
+	 * @param	{String}
+	 */
+	setHoveredSubmenu: function(submenuKey) {
+		Todoyu.ContextMenu.hoveredSubmenu = submenuKey;
 	}
 
 };

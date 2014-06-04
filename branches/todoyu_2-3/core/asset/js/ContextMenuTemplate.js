@@ -46,7 +46,7 @@ Todoyu.ContextMenu.Template = {
 	 * @type		Object
 	 */
 	html: {
-		item:		'<li class="#{key}" id="contextmenu-#{key}" onmouseover="Todoyu.ContextMenu.submenu(\'#{key}\', true)" onmouseout="Todoyu.ContextMenu.submenu(\'#{key}\', false)"><a onclick="#{jsAction}" href="javascript:void(0)" class="#{class}">#{label}</a>#{submenu}</li>',
+		item:		'<li class="#{key}" id="contextmenu-#{key}" onmouseover="Todoyu.ContextMenu.setHoveredSubmenu(\'#{key}\')"><a onclick="#{jsAction}" href="javascript:void(0)" class="#{class}">#{label}</a>#{submenu}</li>',
 		submenu:	'<ul class="context-submenu" id="contextmenu-#{parentKey}-submenu">#{submenu}</ul>'
 	},
 
