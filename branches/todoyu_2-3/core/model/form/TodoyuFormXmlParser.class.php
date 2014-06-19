@@ -283,7 +283,7 @@ class TodoyuFormXmlParser {
 					$function	= $right['@attributes']['function'];
 
 					if( TodoyuFunction::isFunctionReference($function) ) {
-						$allowed	= TodoyuFunction::callUserFunction($function, $config);
+						$allowed	= TodoyuFunction::callUserFunction($function, $config, $this->form);
 
 						if( $allowed && !$and ) {
 							return true;
