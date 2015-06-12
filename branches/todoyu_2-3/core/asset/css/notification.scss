@@ -6,8 +6,8 @@
 	position:fixed;
 	z-index:5000;
 	width:100%;
-	left:0px;
-	top:0px;
+	left:0;
+	top:0;
 
 	div {
 		&.notes {
@@ -21,6 +21,23 @@
 			background-color:$white;
 			opacity:.95;
 			box-shadow:2px 2px 7px $colorNeutral06;
+			position: relative;
+
+			.closeButton {
+				position: absolute;
+				right: 43px;
+				top: 12px;
+				display: none;
+				width: 21px;
+				height: 21px;
+				background: url(../img/icons.png) no-repeat 5px -1127px; }
+
+			&.closeable {
+				cursor: pointer;
+
+				.closeButton {
+					display: block; }
+			}
 
 			td {
 				&.icon {
