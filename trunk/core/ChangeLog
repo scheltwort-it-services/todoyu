@@ -1,6 +1,7 @@
 todoyu core changelog
 
 core 2.3.2 - not released yet
+	* Changed: Improved handling of warning notifications.
 	* Added: Indonesian Language. Credits to Abdush Shomad.
 	* Changed: Reduced delay for RTE initialization
 	* Changed: improved context menu look and implemented amazon like hover effect

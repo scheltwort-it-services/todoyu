@@ -149,11 +149,13 @@ Todoyu.Notification = {
 	loadTemplate: function() {
 		if( this.template === null ) {
 			this.template = new Template(
-				'<div class="note #{type} note-#{identifier}" id="notification-note-#{id}">'
+				'<div class="note #{type} note-#{identifier}" id="notification-note-#{id}" title="[LLL:core.global.notification.clickToClose]">'
 				+	'<table width="100%"><tr>'
 				+		'<td class="icon">&nbsp;</td>'
 				+		'<td class="message">#{message}</td>'
-				+	'</tr></table></div>'
+				+	'</tr></table>'
+				+	'<div class="closeButton"></div>'
+				+'</div>'
 			);
 		}
 	},
@@ -335,8 +337,11 @@ Todoyu.Notification = {
 
 		var htmlID	= 'notification-note-' + idNote;
 
-			// Observe mouse over of note
+			// Observe mouse over/out/click of note
 		$(htmlID).on('mouseover', this.onMouseOver.bind(this, idNote));
+		$(htmlID).on('mouseout', this.onMouseOut.bind(this, idNote));
+		$(htmlID).on('click', this.onMouseClick.bind(this, idNote));
+
 			// Hide the note before appearing
 		$(htmlID).hide();
 			// Appear with effect
@@ -355,7 +360,55 @@ Todoyu.Notification = {
 	 * @param	{Event}		event
 	 */
 	onMouseOver: function(idNote, event) {
+		this.showCloseButton(idNote);
+	},
+
+
+
+	/**
+	 * Handler for note mouse out
+	 *
+	 * @method	onMouseOut
+	 * @param	{Number}	idNote
+	 * @param	{Event}		event
+	 */
+	onMouseOut: function(idNote, event) {
+		this.hideCloseButton(idNote);
+	},
+
+
+
+	/**
+	 * Handler for note mouse click
+	 *
+	 * @method	onMouseOut
+	 * @param	{Number}	idNote
+	 * @param	{Event}		event
+	 */
+	onMouseClick: function(idNote, event) {
 		this.closeNote(idNote);
+	},
+
+
+
+	/**
+	 * Shows a close button in the note
+	 *
+	 * @param	{Number}	idNote
+	 */
+	showCloseButton: function(idNote) {
+		$('notification-note-' + idNote).addClassName('closeable');
+	},
+
+
+
+	/**
+	 * Hides the close button in the note
+	 *
+	 * @param	{Number}	idNote
+	 */
+	hideCloseButton: function(idNote) {
+		$('notification-note-' + idNote).removeClassName('closeable');
 	},
 
 
