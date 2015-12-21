@@ -219,6 +219,9 @@ class TodoyuMail extends PHPMailer {
 			$this->Password	= $account->getPassword();
 		}
 
+		$this->SMTPSecure = $account->isSSL() ? 'ssl' : '';
+		$this->SMTPSecure = $account->isTLS() ? 'tls' : '';
+
 		$senderName	= $account->hasForcedName() ? $account->getForcedName() : Todoyu::person()->getFullName();
 
 		$this->SetFrom($account->getUsername(), $senderName);
