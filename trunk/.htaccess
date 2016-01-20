@@ -49,6 +49,7 @@ RedirectMatch 403 /log/(.*)
 # Disallow file download from cache
 RedirectMatch 403 /cache/language/(.*)
 RedirectMatch 403 /cache/tmpl/(.*)
+RedirectMatch 403 /cache/previews/(.*)
 
 # Disallow any direct file access (in extensions)
 RedirectMatch 403 /ext/(.*)/config/(.*)
